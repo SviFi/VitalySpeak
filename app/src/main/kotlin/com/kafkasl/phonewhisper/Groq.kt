@@ -21,8 +21,14 @@ object Groq {
      * Whisper "prompt": biases spelling and tells the model that mixed Russian/English
      * is expected, which helps it keep code-switched speech instead of translating it.
      */
-    const val DEFAULT_VOCAB =
-        "Привет, проверь pull request в репозитории. DeskMe, Invest for Excel, AionLegs, Porvoo, Groq, Claude."
+    const val DEFAULT_VOCAB = "DeskMe, Invest for Excel, AionLegs, Porvoo, Groq, Claude"
+
+    /**
+     * Short bilingual context for Whisper (keeps RU/EN code-switching). Deliberately contains
+     * no names: Whisper sometimes echoes its prompt after trailing silence, so names/terms are
+     * given to the cleanup model instead, which only fixes their spelling.
+     */
+    const val WHISPER_HINT = "Привет, проверь pull request."
 
     // SharedPreferences keys
     const val PREFS = "phonewhisper"

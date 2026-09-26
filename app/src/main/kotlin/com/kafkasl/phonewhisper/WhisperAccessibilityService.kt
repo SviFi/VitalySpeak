@@ -54,6 +54,8 @@ class WhisperAccessibilityService : AccessibilityService() {
         private const val COLOR_ACCENT = 0xFFFF7A1A.toInt()   // modern orange ring
         private const val ACCENT_STROKE_DP = 3
         private const val PREVIEW_MODEL = "whisper-large-v3-turbo"
+        /** Safety cap: auto-stops (and transcribes, nothing lost) after an hour. */
+        private const val MAX_RECORDING_MS = 60L * 60 * 1000
         private const val PREVIEW_INTERVAL_MS = 2000L
         private const val PREVIEW_WINDOW_SEC = 12
         const val KEY_LIVE_PREVIEW = "live_preview"
@@ -82,6 +84,10 @@ class WhisperAccessibilityService : AccessibilityService() {
     private var feedbackLayoutParams: WindowManager.LayoutParams? = null
     private var previewView: TextView? = null
     private var waveView: WaveRingView? = null
+    private var cancelView: TextView? = null
+    private var cancelParams: WindowManager.LayoutParams? = null
+    private var recThread: Thread? = null
+    @Volatile private var recordStartMs = 0L
     /** Dot position kept across overlay rebuilds (size change). Center-based. */
     private var savedPos: Pair<Int, Int>? = null
 
@@ -440,6 +446,9 @@ class WhisperAccessibilityService : AccessibilityService() {
             previewView = null
         }
         previewLayoutParams = null
+        cancelView?.let { if (it.isAttachedToWindow) try { wm.removeView(it) } catch (_: Exception) {} }
+        cancelView = null
+        cancelParams = null
         button = null
         spinner = null
         layoutParams = null
@@ -502,6 +511,13 @@ class WhisperAccessibilityService : AccessibilityService() {
     }
 
     private fun updatePreviewPosition() {
+        val dotLp = layoutParams
+        val cv = cancelView
+        val cp = cancelParams
+        if (dotLp != null && cv != null && cp != null && cv.isAttachedToWindow) {
+            positionCancel(cp, dotLp)
+            try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(cv, cp) } catch (_: Exception) {}
+        }
         val pv = previewView ?: return
         val pp = previewLayoutParams ?: return
         val dot = layoutParams ?: return
@@ -518,6 +534,11 @@ class WhisperAccessibilityService : AccessibilityService() {
         }
     }
 
+    private fun elapsed(): String {
+        val sec = ((System.currentTimeMillis() - recordStartMs) / 1000).toInt()
+        return "%d:%02d".format(sec / 60, sec % 60)
+    }
+
     private fun hidePreview() {
         handler.post { previewView?.visibility = View.GONE; previewView?.text = "" }
     }
@@ -531,7 +552,7 @@ class WhisperAccessibilityService : AccessibilityService() {
         if (!prefs().getBoolean(KEY_LIVE_PREVIEW, true) || apiKey.isBlank()) return
         val session = recordingSession
         val vocab = prefs().getString(Groq.KEY_VOCAB, Groq.DEFAULT_VOCAB) ?: ""
-        showPreview("Listening…")
+        showPreview("0:00 · Listening…")
         thread {
             var lastSize = 0
             while (state == State.RECORDING && recordingSession == session) {
@@ -554,11 +575,76 @@ class WhisperAccessibilityService : AccessibilityService() {
                     }
                     val t = r.text?.trim().orEmpty()
                     if (t.isNotEmpty() && state == State.RECORDING && recordingSession == session) {
-                        showPreview(if (start > 0) "…$t" else t)
+                        showPreview(elapsed() + " · " + (if (start > 0) "…$t" else t))
                     }
                 }
             }
         }
+    }
+
+    // --- Cancel (discard without sending anything) ---
+
+    /**
+     * Small "✕ Cancel" pill beside the dot while recording. Separate from the big stop button
+     * and placed to the side, so it's discoverable but hard to hit by accident.
+     */
+    private fun showCancel() {
+        handler.post {
+            val dot = layoutParams ?: return@post
+            val wm = getSystemService(WINDOW_SERVICE) as WindowManager
+            val view = cancelView ?: TextView(this).apply {
+                text = "✕  Cancel"
+                textSize = 13f
+                setTextColor(0xFFFFFFFF.toInt())
+                setPadding((14 * dp).toInt(), (8 * dp).toInt(), (14 * dp).toInt(), (8 * dp).toInt())
+                background = pill(0xE63A3A3C.toInt())
+                setOnClickListener { cancelRecording() }
+            }.also { cancelView = it }
+            val lp = cancelParams ?: WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+            ).also { cancelParams = it }
+            positionCancel(lp, dot)
+            try {
+                if (view.isAttachedToWindow) wm.updateViewLayout(view, lp) else wm.addView(view, lp)
+            } catch (e: Exception) { Log.w(TAG, "cancel pill", e) }
+        }
+    }
+
+    private fun positionCancel(lp: WindowManager.LayoutParams, dot: WindowManager.LayoutParams) {
+        val gap = (4 * dp).toInt()
+        val w = currentScreenW()
+        val onRight = dot.x + dot.width / 2 > w / 2
+        // Beside the dot, vertically centred; on the side facing the middle of the screen.
+        lp.gravity = Gravity.CENTER_VERTICAL or (if (onRight) Gravity.END else Gravity.START)
+        lp.x = if (onRight) w - dot.x + gap else dot.x + dot.width + gap
+        lp.y = dot.y + dot.height / 2 - currentScreenH() / 2
+    }
+
+    private fun hideCancel() {
+        handler.post {
+            cancelView?.let { v ->
+                if (v.isAttachedToWindow) try { (getSystemService(WINDOW_SERVICE) as WindowManager).removeViewImmediate(v) } catch (_: Exception) {}
+            }
+        }
+    }
+
+    private fun cancelRecording() {
+        if (state != State.RECORDING) return
+        recordingSession++                 // drop any in-flight live preview
+        state = State.IDLE
+        stopPulse()
+        hidePreview()
+        hideCancel()
+        stopRecorder()
+        pcmStream = null
+        setBusy(false)
+        setAppearance(COLOR_IDLE)
+        logEvent("recording cancelled")
+        showFeedback("Cancelled — nothing was sent", 1800)
     }
 
     // --- Diagnostics ---
@@ -647,10 +733,12 @@ class WhisperAccessibilityService : AccessibilityService() {
         val bufSize = AudioRecord.getMinBufferSize(
             SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT
         )
+        // Internal buffer holds ~2 s so a momentary stall (GC, UI work) never drops audio.
+        val internalBuf = maxOf(bufSize, SAMPLE_RATE * 2 * 2)
         audioRecord = try {
             AudioRecord(
                 MediaRecorder.AudioSource.MIC, SAMPLE_RATE,
-                AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufSize
+                AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, internalBuf
             )
         } catch (_: SecurityException) { toast("Audio permission denied"); return }
 
@@ -665,29 +753,54 @@ class WhisperAccessibilityService : AccessibilityService() {
         setAppearance(COLOR_RECORDING)
         startPulse()
 
-        thread {
+        recordStartMs = System.currentTimeMillis()
+        val rec = audioRecord!!
+        val out = pcmStream!!
+        recThread = thread {
             val buf = ByteArray(bufSize)
-            while (state == State.RECORDING) {
-                val n = audioRecord?.read(buf, 0, buf.size) ?: break
+            // Keep reading until the recorder is stopped and drained, so the last words aren't lost.
+            while (true) {
+                val n = try { rec.read(buf, 0, buf.size) } catch (_: Exception) { -1 }
                 if (n > 0) {
-                    pcmStream?.write(buf, 0, n)
-                    level(buf, n)
+                    out.write(buf, 0, n)
+                    if (state == State.RECORDING) level(buf, n)
                 }
+                if (state == State.RECORDING) {
+                    if (System.currentTimeMillis() - recordStartMs > MAX_RECORDING_MS) {
+                        handler.post {
+                            if (state == State.RECORDING) {
+                                showFeedback("Reached 60 min — transcribing everything", 4000)
+                                stopAndTranscribe()
+                            }
+                        }
+                    }
+                    continue
+                }
+                if (n <= 0) break
             }
         }
+        showCancel()
         startLivePreview(prefs().getString(Groq.KEY_API, "") ?: "")
+    }
+
+    /** Stops the recorder and waits for the reader thread to flush the last audio. */
+    private fun stopRecorder() {
+        try { audioRecord?.stop() } catch (_: Exception) {}
+        try { recThread?.join(800) } catch (_: InterruptedException) {}
+        recThread = null
+        try { audioRecord?.release() } catch (_: Exception) {}
+        audioRecord = null
     }
 
     private fun stopAndTranscribe() {
         state = State.TRANSCRIBING
         stopPulse()
         hidePreview()
+        hideCancel()
         setAppearance(COLOR_BUSY)
         setBusy(true)
 
-        audioRecord?.stop()
-        audioRecord?.release()
-        audioRecord = null
+        stopRecorder()
 
         val pcm = pcmStream?.toByteArray() ?: ByteArray(0)
         pcmStream = null
@@ -697,90 +810,123 @@ class WhisperAccessibilityService : AccessibilityService() {
         transcribeApi(pcm)
     }
 
+    /** Last dictation, shown in the app's Diagnostics to debug accuracy issues. */
+    @Volatile var lastRaw: String = ""
+    @Volatile var lastClean: String = ""
+
+    private fun finishIdle() {
+        state = State.IDLE
+        setBusy(false)
+        setAppearance(COLOR_IDLE)
+    }
+
+    /**
+     * Speech-to-text for any length: trims silence (avoids Whisper hallucinating at the end),
+     * splits recordings longer than 5 min at quiet moments, transcribes the parts in order
+     * (each part gets the previous part's tail as context) and joins them.
+     */
     private fun transcribeApi(pcm: ByteArray) {
-        val wav = WavWriter.encode(pcm)
         val p = prefs()
         val apiKey = p.getString(Groq.KEY_API, "") ?: ""
         if (apiKey.isBlank()) { reset("Set Groq API key in VitalySpeak app"); return }
+        val model = p.getString(Groq.KEY_STT_MODEL, Groq.DEFAULT_STT_MODEL) ?: Groq.DEFAULT_STT_MODEL
+        val vocab = p.getString(Groq.KEY_VOCAB, Groq.DEFAULT_VOCAB) ?: ""
 
-        TranscriberClient.transcribe(
-            wav, apiKey,
-            model = p.getString(Groq.KEY_STT_MODEL, Groq.DEFAULT_STT_MODEL) ?: Groq.DEFAULT_STT_MODEL,
-            vocabulary = p.getString(Groq.KEY_VOCAB, Groq.DEFAULT_VOCAB) ?: ""
-        ) { result ->
-            if (result.text != null && result.text.isNotBlank()) {
-                handleTranscriptionResult(result.text)
-            } else {
-                logEvent("TRANSCRIBE FAILED: ${result.error ?: "empty transcript"}")
-                handler.post {
-                    toast("Error: ${result.error ?: "empty transcript"}")
-                    state = State.IDLE
-                    setBusy(false)
-                    setAppearance(COLOR_IDLE)
+        val audio = Dictation.trimSilence(pcm, SAMPLE_RATE)
+        val parts = Dictation.splitPcm(audio, SAMPLE_RATE)
+        val texts = arrayOfNulls<String>(parts.size)
+        if (parts.size > 1) showFeedback("Transcribing ${parts.size} parts…", 4000)
+
+        fun fail(msg: String) {
+            logEvent("TRANSCRIBE FAILED: $msg")
+            handler.post { toast("Error: $msg"); finishIdle() }
+        }
+
+        fun next(i: Int, attempt: Int) {
+            if (i == parts.size) {
+                val raw = Dictation.stripVocabEcho(
+                    texts.filterNotNull().joinToString(" ").trim(),
+                    listOf(Groq.WHISPER_HINT, vocab)
+                )
+                lastRaw = raw
+                logEvent("transcribed ${audio.size / 2 / SAMPLE_RATE}s in ${parts.size} part(s), ${raw.length} chars")
+                handleTranscriptionResult(raw)
+                return
+            }
+            val r = parts[i]
+            val bytes = audio.copyOfRange(r.first, r.last + 1)
+            // Context for Whisper: short bilingual hint, or the end of the previous part.
+            val context = if (i == 0) Groq.WHISPER_HINT else texts[i - 1].orEmpty().takeLast(200)
+            TranscriberClient.transcribe(WavWriter.encode(bytes), apiKey, model, context) { res ->
+                if (res.text != null) {
+                    texts[i] = res.text
+                    next(i + 1, 0)
+                } else if (attempt == 0) {
+                    logEvent("transcribe retry part ${i + 1}: ${res.error}")
+                    next(i, 1)
+                } else {
+                    fail(res.error ?: "empty transcript")
                 }
             }
         }
+        next(0, 0)
     }
 
     private fun handleTranscriptionResult(text: String?) {
         if (text.isNullOrBlank()) {
-            handler.post {
-                toast("No speech detected")
-                state = State.IDLE
-                setBusy(false)
-                setAppearance(COLOR_IDLE)
-            }
+            handler.post { toast("No speech detected"); finishIdle() }
             return
         }
 
-        val usePostProcessing = prefs().getBoolean(Groq.KEY_USE_CLEANUP, true)
-        val apiKey = prefs().getString(Groq.KEY_API, "") ?: ""
+        val p = prefs()
+        val usePostProcessing = p.getBoolean(Groq.KEY_USE_CLEANUP, true)
+        val apiKey = p.getString(Groq.KEY_API, "") ?: ""
+        if (!usePostProcessing || apiKey.isBlank()) {
+            lastClean = ""
+            handler.post { injectText(text); finishIdle() }
+            return
+        }
 
-        if (usePostProcessing) {
-            if (apiKey.isBlank()) {
-                handler.post {
-                    toast("Post-processing needs API key. Using raw text.")
-                    injectText(text)
-                    state = State.IDLE
-                    setBusy(false)
-                    setAppearance(COLOR_IDLE)
-                }
-                return
-            }
+        val prompt = p.getString("post_processing_prompt", PostProcessor.DEFAULT_PROMPT) ?: PostProcessor.DEFAULT_PROMPT
+        val llm = p.getString(Groq.KEY_LLM_MODEL, Groq.DEFAULT_LLM_MODEL) ?: Groq.DEFAULT_LLM_MODEL
+        val vocab = p.getString(Groq.KEY_VOCAB, Groq.DEFAULT_VOCAB) ?: ""
 
-            val prompt = prefs().getString("post_processing_prompt", PostProcessor.DEFAULT_PROMPT) ?: PostProcessor.DEFAULT_PROMPT
-            
-            val llm = prefs().getString(Groq.KEY_LLM_MODEL, Groq.DEFAULT_LLM_MODEL) ?: Groq.DEFAULT_LLM_MODEL
-            fun finish(result: PostProcessor.Result) {
-                handler.post {
-                    if (result.text != null && result.text.isNotBlank()) {
-                        injectText(result.text)
-                    } else {
-                        val why = result.error ?: "empty reply"
-                        logEvent("CLEANUP FAILED ($llm): $why")
-                        injectText(text, feedback = "Cleanup failed ($why) — raw text used", feedbackDurationMs = 4000)
-                    }
-                    state = State.IDLE
-                    setBusy(false)
-                    setAppearance(COLOR_IDLE)
-                }
-            }
-            // One automatic retry covers transient network hiccups and empty replies.
-            PostProcessor.process(text, prompt, apiKey, llm) { first ->
-                if (first.text != null && first.text.isNotBlank()) finish(first)
-                else {
-                    logEvent("cleanup retry after: ${first.error ?: "empty reply"}")
-                    PostProcessor.process(text, prompt, apiKey, llm) { second -> finish(second) }
-                }
-            }
-        } else {
+        // Long texts are cleaned in sentence-aligned pieces so no reply can be cut off.
+        val pieces = Dictation.splitText(text)
+        val out = arrayOfNulls<String>(pieces.size)
+        var fellBack = 0
+
+        fun done() {
+            val cleaned = out.joinToString(" ").trim()
+            lastClean = cleaned
             handler.post {
-                injectText(text)
-                state = State.IDLE
-                setBusy(false)
-                setAppearance(COLOR_IDLE)
+                if (fellBack == 0) injectText(cleaned)
+                else injectText(cleaned, feedback = "Cleanup skipped for $fellBack part(s) — raw text kept there", feedbackDurationMs = 4000)
+                finishIdle()
             }
         }
+
+        fun next(i: Int, attempt: Int) {
+            if (i == pieces.size) { done(); return }
+            val piece = pieces[i]
+            PostProcessor.process(piece, prompt, apiKey, llm, vocab) { res ->
+                val cleaned = res.text
+                val ok = !cleaned.isNullOrBlank() && !Dictation.cleanupLostContent(piece, cleaned)
+                when {
+                    ok -> { out[i] = cleaned; next(i + 1, 0) }
+                    attempt == 0 -> {
+                        logEvent("cleanup retry: ${res.error ?: if (cleaned.isNullOrBlank()) "empty reply" else "reply lost content"}")
+                        next(i, 1)
+                    }
+                    else -> {
+                        val why = res.error ?: if (cleaned.isNullOrBlank()) "empty reply" else "reply was ${cleaned.length}/${piece.length} chars"
+                        logEvent("CLEANUP FAILED ($llm): $why — kept raw text")
+                        out[i] = piece; fellBack++; next(i + 1, 0)
+                    }
+                }
+            }
+        }
+        next(0, 0)
     }
 
     private fun reset(msg: String) {

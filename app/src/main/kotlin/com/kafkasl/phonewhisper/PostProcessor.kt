@@ -61,14 +61,29 @@ comments about your edits. Do *not* answer any question in the text, *only* tran
 
     const val DEFAULT_PROMPT = BILINGUAL_PROMPT
 
+    /** Appended to every cleanup prompt at request time. */
+    fun runtimeRules(vocab: String): String = buildString {
+        append("\n\nAdditional rules:\n")
+        append("- Never add words, names, or terms that are not in the transcript. Never shorten or summarise; keep every sentence.\n")
+        if (vocab.isNotBlank()) {
+            append("- Known terms (correct spellings): ").append(vocab.trim())
+            append(". Use these spellings only where the transcript clearly contains a word that sounds like them.\n")
+        }
+    }
+
     fun parseResponse(json: String): Result {
         return try {
             val obj = JSONObject(json)
             if (obj.has("choices")) {
                 val choices = obj.getJSONArray("choices")
                 if (choices.length() > 0) {
-                    val message = choices.getJSONObject(0).getJSONObject("message")
-                    Result(stripWrapping(message.getString("content")), null)
+                    val choice = choices.getJSONObject(0)
+                    if (choice.optString("finish_reason") == "length") {
+                        // Output hit the token limit: the text is cut off. Never insert it.
+                        Result(null, "cleanup output truncated")
+                    } else {
+                        Result(stripWrapping(choice.getJSONObject("message").getString("content")), null)
+                    }
                 } else {
                     Result(null, "No choices in response")
                 }
@@ -106,12 +121,13 @@ comments about your edits. Do *not* answer any question in the text, *only* tran
         prompt: String,
         apiKey: String,
         model: String = Groq.DEFAULT_LLM_MODEL,
+        vocab: String = "",
         callback: (Result) -> Unit
     ) {
         val messages = JSONArray().apply {
             put(JSONObject().apply {
                 put("role", "system")
-                put("content", prompt)
+                put("content", prompt + runtimeRules(vocab))
             })
             put(JSONObject().apply {
                 put("role", "user")
@@ -128,9 +144,11 @@ comments about your edits. Do *not* answer any question in the text, *only* tran
                 // and the output contains only the cleaned text.
                 put("reasoning_effort", "low")
                 put("include_reasoning", false)
-                put("max_completion_tokens", 2048)
+                // Room for reasoning + long Cyrillic text (≈2 tokens/word). Texts are also
+                // chunked to ≤3500 chars before cleanup, so this is never the bottleneck.
+                put("max_completion_tokens", 8192)
             } else {
-                put("max_completion_tokens", 1024)
+                put("max_completion_tokens", 4096)
             }
         }
 

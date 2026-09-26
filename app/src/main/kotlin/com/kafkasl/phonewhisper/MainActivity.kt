@@ -121,9 +121,16 @@ class MainActivity : AppCompatActivity() {
         root.addView(sliderRow("Dot size", "Size of the floating mic dot",
             WhisperAccessibilityService.KEY_DOT_SIZE, 100, 60, 160) { v -> "$v%" })
 
-        root.addView(settingsRow("Diagnostics", "Mic dot decisions and any transcription/cleanup errors — tap to view") {
-            val log = WhisperAccessibilityService.instance?.visibilityLog?.joinToString("\n")
+        root.addView(settingsRow("Diagnostics", "Last dictation (raw vs cleaned), errors, mic dot decisions") {
+            val svc = WhisperAccessibilityService.instance
+            val events = svc?.visibilityLog?.joinToString("\n")
                 ?.ifBlank { null } ?: "No events yet. Open another app, tap a text field, then come back."
+            val last = if (svc != null && svc.lastRaw.isNotBlank())
+                "LAST DICTATION\nRaw (${svc.lastRaw.length} chars):\n${svc.lastRaw}\n\n" +
+                    (if (svc.lastClean.isNotBlank()) "Cleaned (${svc.lastClean.length} chars):\n${svc.lastClean}\n\n" else "") +
+                    "EVENTS\n"
+                else ""
+            val log = last + events
             android.app.AlertDialog.Builder(this)
                 .setTitle("Diagnostics (newest first)")
                 .setMessage(log)
@@ -501,7 +508,7 @@ class MainActivity : AppCompatActivity() {
         }
         android.app.AlertDialog.Builder(this)
             .setTitle("Vocabulary hint")
-            .setMessage("Sent to Whisper as context. List names, product terms, and a short mixed RU/EN phrase.")
+            .setMessage("Names and terms you use. The cleanup step fixes their spelling (only when you actually said them).")
             .setView(input.apply { setPadding(dp(24), dp(8), dp(24), dp(8)) })
             .setPositiveButton("Save") { _, _ ->
                 prefs().edit().putString(Groq.KEY_VOCAB, input.text.toString().trim()).apply()

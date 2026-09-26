@@ -42,7 +42,8 @@ class WhisperAccessibilityService : AccessibilityService() {
         private const val PAD_DP = 22
         private const val MARGIN_DP = 8
         private const val TAP_THRESHOLD_DP = 10
-        private const val RING_DP = 100
+        private const val RING_DP = 100          // busy spinner
+        private const val WINDOW_DP = 140        // overlay window: room for the wave ring
         private const val FEEDBACK_OFFSET_DP = 64
 
         private const val COLOR_IDLE = 0xDD1C1C1E.toInt()
@@ -63,6 +64,11 @@ class WhisperAccessibilityService : AccessibilityService() {
     private var state = State.IDLE
         set(value) {
             field = value
+            // Stop square while recording makes it obvious a second tap is needed.
+            handler.post {
+                button?.setImageResource(if (value == State.RECORDING) R.drawable.ic_stop else R.drawable.ic_mic)
+                if (value == State.RECORDING) waveView?.start() else waveView?.stop()
+            }
             // After dictation ends, hide the dot again if the keyboard went away meanwhile.
             if (value == State.IDLE) scheduleVisibilityCheck(400)
         }
@@ -73,6 +79,7 @@ class WhisperAccessibilityService : AccessibilityService() {
     private var layoutParams: WindowManager.LayoutParams? = null
     private var feedbackLayoutParams: WindowManager.LayoutParams? = null
     private var previewView: TextView? = null
+    private var waveView: WaveRingView? = null
     private var previewLayoutParams: WindowManager.LayoutParams? = null
     @Volatile private var recordingSession = 0
     @Volatile private var previewInFlight = false
@@ -257,7 +264,8 @@ class WhisperAccessibilityService : AccessibilityService() {
     private fun showOverlay() {
         val wm = getSystemService(WINDOW_SERVICE) as WindowManager
         val buttonSize = (BTN_DP * dp).toInt()
-        val ringSize = (RING_DP * dp).toInt()
+        val spinnerSize = (RING_DP * dp).toInt()
+        val ringSize = (WINDOW_DP * dp).toInt()
         val pad = (PAD_DP * dp).toInt()
         val margin = (MARGIN_DP * dp).toInt()
 
@@ -267,6 +275,9 @@ class WhisperAccessibilityService : AccessibilityService() {
             visibility = View.GONE
         }
 
+        val wave = WaveRingView(this, buttonSize / 2f).apply { visibility = View.INVISIBLE }
+        waveView = wave
+
         val img = ImageView(this).apply {
             setImageResource(R.drawable.ic_mic)
             scaleType = ImageView.ScaleType.FIT_CENTER
@@ -275,7 +286,8 @@ class WhisperAccessibilityService : AccessibilityService() {
         }
 
         val overlay = FrameLayout(this).apply {
-            addView(ring, FrameLayout.LayoutParams(ringSize, ringSize, Gravity.CENTER))
+            addView(wave, FrameLayout.LayoutParams(ringSize, ringSize, Gravity.CENTER))
+            addView(ring, FrameLayout.LayoutParams(spinnerSize, spinnerSize, Gravity.CENTER))
             addView(img, FrameLayout.LayoutParams(buttonSize, buttonSize, Gravity.CENTER))
         }
 
@@ -555,16 +567,27 @@ class WhisperAccessibilityService : AccessibilityService() {
     /** Called from the recording thread with each audio buffer. */
     private fun level(buf: ByteArray, n: Int) {
         var sum = 0.0
+        var crossings = 0
+        var prev = 0
         var i = 0
+        val samples = maxOf(1, n / 2)
         while (i + 1 < n) {
-            val v = ((buf[i + 1].toInt() shl 8) or (buf[i].toInt() and 0xFF)).toShort().toDouble()
-            sum += v * v
+            val v = ((buf[i + 1].toInt() shl 8) or (buf[i].toInt() and 0xFF)).toShort().toInt()
+            sum += v.toDouble() * v
+            if ((v >= 0) != (prev >= 0)) crossings++
+            prev = v
             i += 2
         }
-        val rms = kotlin.math.sqrt(sum / maxOf(1, n / 2))
-        val scale = 1f + (minOf(1.0, rms / 3000.0) * 0.18).toFloat()
+        val rms = kotlin.math.sqrt(sum / samples)
+        // Loudness 0..1 (speech is roughly 500–4000 RMS on phone mics).
+        val loud = minOf(1.0, maxOf(0.0, (rms - 250.0) / 2200.0)).toFloat()
+        // Zero-crossing rate as a cheap "pitch/brightness" estimate, 0..1 over ~300–3000 Hz.
+        val zcrHz = crossings * SAMPLE_RATE / (2.0 * samples)
+        val pitch = minOf(1.0, maxOf(0.0, (zcrHz - 300.0) / 2700.0)).toFloat()
+        waveView?.update(loud, pitch)
+        val scale = 1f + loud * 0.28f
         handler.post {
-            if (state == State.RECORDING) button?.animate()?.scaleX(scale)?.scaleY(scale)?.setDuration(80)?.start()
+            if (state == State.RECORDING) button?.animate()?.scaleX(scale)?.scaleY(scale)?.setDuration(70)?.start()
         }
     }
 

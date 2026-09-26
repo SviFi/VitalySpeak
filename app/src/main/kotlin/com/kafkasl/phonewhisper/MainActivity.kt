@@ -102,6 +102,16 @@ class MainActivity : AppCompatActivity() {
             WhisperAccessibilityService.instance?.refreshOverlayVisibility()
         })
 
+        root.addView(settingsRow("Diagnostics", "Why the mic dot was shown or hidden — tap to view") {
+            val log = WhisperAccessibilityService.instance?.visibilityLog?.joinToString("\n")
+                ?.ifBlank { null } ?: "No events yet. Open another app, tap a text field, then come back."
+            android.app.AlertDialog.Builder(this)
+                .setTitle("Mic dot decisions (newest first)")
+                .setMessage(log)
+                .setPositiveButton("OK", null)
+                .show()
+        })
+
         // --- Models ---
         root.addView(sectionHeader("Models"))
 

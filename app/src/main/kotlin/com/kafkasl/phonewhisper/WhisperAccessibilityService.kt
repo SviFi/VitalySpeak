@@ -81,6 +81,19 @@ class WhisperAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         instance = this
+        // Apply the event types/flags in code too, so they work even if Android kept the old
+        // service config after an app update (config XML is only re-read on service restart).
+        try {
+            serviceInfo = serviceInfo.apply {
+                eventTypes = eventTypes or
+                    AccessibilityEvent.TYPE_VIEW_FOCUSED or
+                    AccessibilityEvent.TYPE_VIEW_CLICKED or
+                    AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED or
+                    AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
+                    AccessibilityEvent.TYPE_WINDOWS_CHANGED
+                flags = flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+            }
+        } catch (e: Exception) { Log.w(TAG, "Could not update serviceInfo", e) }
         showOverlay()
         scheduleVisibilityCheck(0)
     }
@@ -89,19 +102,47 @@ class WhisperAccessibilityService : AccessibilityService() {
 
     private var overlayShown = true
     private val visibilityCheck = Runnable { updateOverlayVisibility() }
+    private val visibilityRecheck = Runnable { updateOverlayVisibility() }
+
+    /** Set from events: the last focused/clicked/selected view was an editable text field. */
+    private var lastEventEditable = false
+
+    /** Recent show/hide decisions, shown in the app under "Diagnostics". */
+    val visibilityLog = ArrayDeque<String>()
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        when (event?.eventType) {
-            AccessibilityEvent.TYPE_WINDOWS_CHANGED,
-            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
-            AccessibilityEvent.TYPE_VIEW_FOCUSED -> scheduleVisibilityCheck(150)
+        event ?: return
+        if (event.packageName == packageName) return  // ignore our own overlay
+        when (event.eventType) {
+            AccessibilityEvent.TYPE_VIEW_FOCUSED,
+            AccessibilityEvent.TYPE_VIEW_CLICKED,
+            AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
+                lastEventEditable = isEditableSource(event)
+                scheduleVisibilityCheck(80)
+            }
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                // New screen/app: forget the old field until something new is focused.
+                lastEventEditable = false
+                scheduleVisibilityCheck(150)
+            }
+            AccessibilityEvent.TYPE_WINDOWS_CHANGED -> scheduleVisibilityCheck(80)
         }
     }
 
-    /** Debounced so switching between fields doesn't make the dot flicker. */
+    private fun isEditableSource(event: AccessibilityEvent): Boolean = try {
+        event.source?.isEditable == true ||
+            event.className?.toString()?.contains("EditText", ignoreCase = true) == true
+    } catch (_: Exception) { false }
+
+    /**
+     * Debounced so switching between fields doesn't flicker; a second look a bit later
+     * catches the keyboard, which finishes animating in ~300 ms after the field is focused.
+     */
     private fun scheduleVisibilityCheck(delayMs: Long) {
         handler.removeCallbacks(visibilityCheck)
+        handler.removeCallbacks(visibilityRecheck)
         handler.postDelayed(visibilityCheck, delayMs)
+        handler.postDelayed(visibilityRecheck, delayMs + 450)
     }
 
     /** Called from settings when "Only while typing" is toggled. */
@@ -109,14 +150,21 @@ class WhisperAccessibilityService : AccessibilityService() {
 
     private fun onlyWhileTyping() = prefs().getBoolean(KEY_ONLY_WHILE_TYPING, true)
 
-    /** Screen bounds of the on-screen keyboard, or null if no keyboard is showing. */
+    /** Screen bounds of the on-screen keyboard, or null if no keyboard is reported. */
     private fun keyboardBounds(): Rect? = try {
         windows.firstOrNull { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }
             ?.let { w -> Rect().also { w.getBoundsInScreen(it) } }
     } catch (_: Exception) { null }
 
+    /** Is an editable field input-focused in the active window or any app window? */
     private fun editableFocused(): Boolean = try {
-        rootInActiveWindow?.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)?.isEditable == true
+        val roots = buildList {
+            rootInActiveWindow?.let { add(it) }
+            windows.filter { it.type == AccessibilityWindowInfo.TYPE_APPLICATION }
+                .mapNotNull { it.root }.forEach { add(it) }
+        }
+        roots.any { it.packageName != packageName &&
+            it.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)?.isEditable == true }
     } catch (_: Exception) { false }
 
     private fun updateOverlayVisibility() {
@@ -125,11 +173,20 @@ class WhisperAccessibilityService : AccessibilityService() {
         if (state != State.IDLE) { setOverlayShown(true); return }
         if (!onlyWhileTyping()) { setOverlayShown(true); return }
 
+        // Any one signal is enough: keyboard window, focused editable node, or the last
+        // focus/click/cursor event coming from a text field. Phones differ in which they report.
         val kb = keyboardBounds()
-        // Keyboard visible is the main signal (works in browsers and custom editors too);
-        // a focused editable field is the fallback for devices that don't report IME windows.
-        val typing = kb != null || (windows.isNullOrEmpty() && editableFocused())
-        if (typing && kb != null) keepAboveKeyboard(kb)
+        val focused = editableFocused()
+        val typing = kb != null || focused || lastEventEditable
+        if (kb != null) keepAboveKeyboard(kb)
+
+        val line = "${java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.US).format(java.util.Date())} " +
+            "${if (typing) "SHOW" else "hide"} · keyboard=${kb != null} field=$focused event=$lastEventEditable " +
+            "app=${rootInActiveWindow?.packageName ?: "?"}"
+        if (visibilityLog.firstOrNull()?.substringAfter(' ') != line.substringAfter(' ')) {
+            visibilityLog.addFirst(line)
+            while (visibilityLog.size > 12) visibilityLog.removeLast()
+        }
         setOverlayShown(typing)
     }
 

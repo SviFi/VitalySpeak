@@ -61,6 +61,11 @@ class WaveRingView(
     private var pitch = 0f
     private var phase = 0f
 
+    fun setColors(front: Int, middle: Int, back: Int) {
+        frontFill.color = front; backFill.color = middle; darkFill.color = back
+        invalidate()
+    }
+
     fun start() { active = true; visibility = VISIBLE; postInvalidateOnAnimation() }
 
     fun stop() {

@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.PixelFormat
 import android.graphics.drawable.GradientDrawable
@@ -60,13 +61,13 @@ class WhisperAccessibilityService : AccessibilityService() {
         private const val MIN_FREE_BYTES = 50L * 1024 * 1024
         const val KEY_LAST_DICTATION = "last_dictation"
         const val KEY_KEEP_AUDIO = "keep_audio"
-        const val KEY_WAVE_SPEED = "wave_speed"     // percent of base speed, 100..500 (default 200)
-        const val KEY_WAVE_COUNT = "wave_count"     // percent of base wave count, 100..300 (default 200)
+        const val KEY_WAVE_SPEED = Appearance.KEY_WAVE_SPEED
+        const val KEY_WAVE_COUNT = Appearance.KEY_WAVE_COUNT
         private const val PREVIEW_INTERVAL_MS = 2000L
         private const val PREVIEW_WINDOW_SEC = 12
         const val KEY_LIVE_PREVIEW = "live_preview"
-        const val KEY_REACTION = "voice_reaction"   // 0..100, default 70
-        const val KEY_DOT_SIZE = "dot_size"         // percent 60..160, default 100
+        const val KEY_REACTION = Appearance.KEY_REACTION
+        const val KEY_DOT_SIZE = Appearance.KEY_DOT_SIZE
     }
 
     private enum class State { IDLE, RECORDING, TRANSCRIBING }
@@ -76,6 +77,7 @@ class WhisperAccessibilityService : AccessibilityService() {
             field = value
             // Stop square while recording makes it obvious a second tap is needed.
             if (value != State.RECORDING) exitPocketMode()
+            handler.post { resizeOverlay(roomy = value != State.IDLE) }
             handler.post {
                 button?.setImageResource(if (value == State.RECORDING) R.drawable.ic_stop else R.drawable.ic_mic)
                 if (value == State.RECORDING) waveView?.start() else waveView?.stop()
@@ -91,6 +93,7 @@ class WhisperAccessibilityService : AccessibilityService() {
     private var feedbackLayoutParams: WindowManager.LayoutParams? = null
     private var previewView: TextView? = null
     private var waveView: WaveRingView? = null
+    private var dotButtonSize = 0
     private var cancelView: LinearLayout? = null
     private var pocketView: FrameLayout? = null
     private var cancelParams: WindowManager.LayoutParams? = null
@@ -99,9 +102,29 @@ class WhisperAccessibilityService : AccessibilityService() {
     /** Dot position kept across overlay rebuilds (size change). Center-based. */
     private var savedPos: Pair<Int, Int>? = null
 
-    private fun reaction() = prefs().getInt(KEY_REACTION, 70).coerceIn(0, 100) / 100f
-    private fun waveSpeed() = prefs().getInt(KEY_WAVE_SPEED, 200).coerceIn(100, 500) / 100f
-    private fun waveCount() = prefs().getInt(KEY_WAVE_COUNT, 200).coerceIn(100, 300) / 100f
+    /**
+     * Idle: the window hugs the dot (so taps next to it reach the app underneath).
+     * Recording/transcribing: 2× room for the animated shape and spinner. Centre stays put.
+     */
+    private fun resizeOverlay(roomy: Boolean) {
+        val v = overlayView ?: return
+        val lp = layoutParams ?: return
+        val size = if (roomy) dotButtonSize * 2 else (dotButtonSize * 1.12f).toInt()
+        if (size <= 0 || lp.width == size) return
+        val cx = lp.x + lp.width / 2
+        val cy = lp.y + lp.height / 2
+        lp.width = size; lp.height = size
+        lp.x = cx - size / 2; lp.y = cy - size / 2
+        if (v.isAttachedToWindow) try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(v, lp) } catch (_: Exception) {}
+    }
+
+    private fun reaction() = prefs().getInt(KEY_REACTION, Appearance.DEF_REACTION).coerceIn(0, 100) / 100f
+    private fun waveSpeed() = prefs().getInt(KEY_WAVE_SPEED, Appearance.DEF_WAVE_SPEED).coerceIn(100, 500) / 100f
+    private fun waveCount() = prefs().getInt(KEY_WAVE_COUNT, Appearance.DEF_WAVE_COUNT).coerceIn(100, 300) / 100f
+    private fun ringColor() = Appearance.ring(prefs())
+    private fun applyColors(w: WaveRingView?) {
+        w?.setColors(Appearance.front(prefs()), Appearance.middle(prefs()), Appearance.back(prefs()))
+    }
 
     /** Settings changed: reaction applies live; size needs the overlay rebuilt. */
     fun applyAppearanceSettings() {
@@ -109,6 +132,7 @@ class WhisperAccessibilityService : AccessibilityService() {
             waveView?.reaction = reaction()
             waveView?.speed = waveSpeed()
             waveView?.waveMult = waveCount()
+            applyColors(waveView)
             if (state != State.IDLE) return@post
             layoutParams?.let { lp -> savedPos = lp.x + lp.width / 2 to lp.y + lp.height / 2 }
             removeOverlay()
@@ -134,6 +158,7 @@ class WhisperAccessibilityService : AccessibilityService() {
     // Crash-safe recording: audio goes to disk in ~5-min parts, transcribed in the background.
     private val store by lazy { DictationStore(java.io.File(filesDir, "sessions")) }
     private val worker = java.util.concurrent.Executors.newSingleThreadExecutor()
+    val stats by lazy { Stats(java.io.File(filesDir, "stats.tsv")) }
     @Volatile private var session: DictationStore.Session? = null
     private var writer: ChunkWriter? = null
     @Volatile private var ring: PcmRing? = null
@@ -170,6 +195,10 @@ class WhisperAccessibilityService : AccessibilityService() {
         // Anything on disk now is from before a crash/restart: keep it, offer retry in the app.
         worker.execute {
             store.sessions().forEach { it.isRecording = false }
+            // First run with stats: seed them from existing history entries.
+            if (!stats.exists()) store.sessions().forEach { h ->
+                h.raw()?.takeIf { it.isNotBlank() }?.let { stats.record(h.startedAt, h.durationSec(), Stats.wordCount(it)) }
+            }
             val n = store.sessions().size
             if (n > 0) logEvent("$n unfinished dictation(s) saved — retry from the app")
         }
@@ -322,7 +351,7 @@ class WhisperAccessibilityService : AccessibilityService() {
 
     private fun showOverlay() {
         val wm = getSystemService(WINDOW_SERVICE) as WindowManager
-        val sizeScale = prefs().getInt(KEY_DOT_SIZE, 100).coerceIn(60, 160) / 100f
+        val sizeScale = prefs().getInt(KEY_DOT_SIZE, Appearance.DEF_DOT_SIZE).coerceIn(60, 160) / 100f
         val buttonSize = (BTN_DP * sizeScale * dp).toInt()
         val spinnerSize = (RING_DP * sizeScale * dp).toInt()
         // Window leaves room around the dot for the shape-shifting blob.
@@ -340,6 +369,7 @@ class WhisperAccessibilityService : AccessibilityService() {
             visibility = View.INVISIBLE
             speed = waveSpeed(); waveMult = waveCount()
         }
+        applyColors(wave)
         waveView = wave
 
         val img = ImageView(this).apply {
@@ -350,7 +380,7 @@ class WhisperAccessibilityService : AccessibilityService() {
         }
 
         val overlay = FrameLayout(this).apply {
-            addView(wave, FrameLayout.LayoutParams(ringSize, ringSize, Gravity.CENTER))
+            addView(wave, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER))
             addView(ring, FrameLayout.LayoutParams(spinnerSize, spinnerSize, Gravity.CENTER))
             addView(img, FrameLayout.LayoutParams(buttonSize, buttonSize, Gravity.CENTER))
         }
@@ -368,15 +398,38 @@ class WhisperAccessibilityService : AccessibilityService() {
 
         var startX = 0; var startY = 0
         var touchX = 0f; var touchY = 0f
+        var longPressed = false
+        var tracking = false
+        val openApp = Runnable {
+            if (state == State.IDLE) {
+                longPressed = true
+                overlay.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
+                try {
+                    startActivity(Intent(this, MainActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+                } catch (e: Exception) { Log.w(TAG, "open app", e) }
+            }
+        }
+        dotButtonSize = buttonSize
 
         overlay.setOnTouchListener { v, ev ->
             when (ev.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    // Only the visible dot reacts, not the transparent margin around it.
+                    val dx = ev.x - v.width / 2f
+                    val dy = ev.y - v.height / 2f
+                    val r = buttonSize / 2f * (if (state == State.IDLE) 1.08f else 1.35f)
+                    if (dx * dx + dy * dy > r * r) { tracking = false; return@setOnTouchListener false }
+                    tracking = true
+                    longPressed = false
                     startX = params.x; startY = params.y
                     touchX = ev.rawX; touchY = ev.rawY
+                    handler.postDelayed(openApp, 600)   // long-press → open VitalySpeak
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
+                    if (!tracking) return@setOnTouchListener false
+                    if (abs(ev.rawX - touchX) + abs(ev.rawY - touchY) > TAP_THRESHOLD_DP * dp) handler.removeCallbacks(openApp)
                     params.x = startX + (ev.rawX - touchX).toInt()
                     params.y = startY + (ev.rawY - touchY).toInt()
                     wm.updateViewLayout(v, params)
@@ -386,13 +439,19 @@ class WhisperAccessibilityService : AccessibilityService() {
                     }
                     true
                 }
-                MotionEvent.ACTION_UP -> {
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    handler.removeCallbacks(openApp)
+                    if (!tracking) return@setOnTouchListener false
+                    tracking = false
                     val moved = abs(ev.rawX - touchX) + abs(ev.rawY - touchY)
-                    if (moved < TAP_THRESHOLD_DP * dp) {
+                    if (longPressed || ev.action == MotionEvent.ACTION_CANCEL) {
+                        // long-press already handled
+                    } else if (moved < TAP_THRESHOLD_DP * dp) {
                         onTap()
                     } else {
-                        params.x = if (params.x + ringSize / 2 > screenW / 2)
-                            screenW - ringSize - margin else margin
+                        val w = params.width
+                        params.x = if (params.x + w / 2 > screenW / 2)
+                            screenW - w - margin else margin
                         wm.updateViewLayout(v, params)
                         feedbackLayoutParams?.let {
                             positionFeedback(it, params)
@@ -434,7 +493,7 @@ class WhisperAccessibilityService : AccessibilityService() {
             ellipsize = android.text.TextUtils.TruncateAt.START
             maxWidth = (currentScreenW() * 0.7).toInt()
             setPadding((14 * dp).toInt(), (10 * dp).toInt(), (14 * dp).toInt(), (10 * dp).toInt())
-            background = pill(COLOR_FEEDBACK_BG).apply { setStroke((1.5f * dp).toInt(), COLOR_ACCENT) }
+            background = pill(COLOR_FEEDBACK_BG).apply { setStroke((1.5f * dp).toInt(), ringColor()) }
             visibility = View.GONE
         }
         val previewParams = WindowManager.LayoutParams(
@@ -457,6 +516,7 @@ class WhisperAccessibilityService : AccessibilityService() {
         feedbackView = feedback
         layoutParams = params
         feedbackLayoutParams = feedbackParams
+        handler.post { resizeOverlay(roomy = state != State.IDLE) }
     }
 
     private fun removeOverlay() {
@@ -486,7 +546,7 @@ class WhisperAccessibilityService : AccessibilityService() {
     private fun circle(color: Int) = GradientDrawable().apply {
         shape = GradientDrawable.OVAL
         setColor(color)
-        setStroke((ACCENT_STROKE_DP * dp).toInt(), COLOR_ACCENT)
+        setStroke((ACCENT_STROKE_DP * dp).toInt(), ringColor())
     }
 
     private fun pill(color: Int) = GradientDrawable().apply {
@@ -663,14 +723,29 @@ class WhisperAccessibilityService : AccessibilityService() {
         handler.post {
             if (state != State.RECORDING || pocketView != null) return@post
             val wm = getSystemService(WINDOW_SERVICE) as WindowManager
-            val label = TextView(this).apply {
-                textSize = 13f
-                setTextColor(0xFF3A3A3C.toInt())
-                text = "● Recording — double-tap to wake"
+            // Big, friendly instructions for 5 s (with countdown), then the screen dims and
+            // the hint stays as faint white text so it's always clear how to get back.
+            val title = TextView(this).apply {
+                text = "Double-tap to wake"
+                textSize = 30f
+                setTextColor(0xFFFFFFFF.toInt())
+                typeface = android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)
+                gravity = Gravity.CENTER
+            }
+            val sub = TextView(this).apply {
+                textSize = 15f
+                setTextColor(0xB3FFFFFF.toInt())
+                gravity = Gravity.CENTER
+                setPadding(0, (12 * dp).toInt(), 0, 0)
+            }
+            val label = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER_HORIZONTAL
+                addView(title); addView(sub)
             }
             val root = FrameLayout(this).apply {
                 setBackgroundColor(0xFF000000.toInt())
-                addView(label, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT))
+                addView(label, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
             }
             val detector = android.view.GestureDetector(this, object : android.view.GestureDetector.SimpleOnGestureListener() {
                 override fun onDown(e: MotionEvent) = true
@@ -687,25 +762,41 @@ class WhisperAccessibilityService : AccessibilityService() {
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.OPAQUE
             ).apply {
-                screenBrightness = 0.0f            // lowest backlight
+                screenBrightness = -1f             // normal brightness while the instructions show
                 gravity = Gravity.TOP or Gravity.START
             }
             try { wm.addView(root, lp) } catch (e: Exception) { Log.w(TAG, "pocket", e); return@post }
             pocketView = root
             logEvent("screen-off mode on")
-            // Move the dim label every 20 s (no burn-in) and show elapsed time.
+            // 5-second countdown, then dim: lowest backlight + faint text.
+            var left = 5
+            val countdown = object : Runnable {
+                override fun run() {
+                    if (pocketView !== root) return
+                    if (left > 0) {
+                        sub.text = "Recording continues · screen dims in $left"
+                        left--
+                        handler.postDelayed(this, 1000)
+                    } else {
+                        sub.text = "Recording continues"
+                        label.animate().alpha(0.14f).setDuration(800).start()
+                        lp.screenBrightness = 0.0f
+                        try { wm.updateViewLayout(root, lp) } catch (_: Exception) {}
+                    }
+                }
+            }
+            handler.post(countdown)
+            // Every 20 s: drift the text a little (no burn-in) and update the elapsed time.
             val mover = object : Runnable {
                 override fun run() {
                     if (pocketView !== root) return
-                    label.text = "● Recording ${elapsed()} — double-tap to wake"
-                    val w = maxOf(1, root.width - label.width)
-                    val h = maxOf(1, root.height - label.height)
-                    label.x = (Math.random() * w).toFloat()
-                    label.y = (Math.random() * h).toFloat()
+                    if (left <= 0) sub.text = "Recording ${elapsed()}"
+                    label.translationX = ((Math.random() - 0.5) * root.width * 0.5).toFloat()
+                    label.translationY = ((Math.random() - 0.5) * root.height * 0.5).toFloat()
                     handler.postDelayed(this, 20_000)
                 }
             }
-            handler.postDelayed(mover, 300)
+            handler.postDelayed(mover, 20_000)
         }
     }
 
@@ -1010,7 +1101,11 @@ class WhisperAccessibilityService : AccessibilityService() {
         val raw = Dictation.stripVocabEcho(joined, listOf(Groq.WHISPER_HINT, vocab))
         lastRaw = raw
         logEvent("transcribed ${sess.audioSeconds(SAMPLE_RATE)}s in ${sess.partCount()} part(s), ${raw.length} chars")
+        val firstTime = !sess.rawTxt.exists()
         try { sess.saveRaw(raw) } catch (e: Exception) { Log.e(TAG, "save raw", e) }
+        if (firstTime && raw.isNotBlank()) {
+            try { stats.record(sess.startedAt, sess.durationSec(), Stats.wordCount(raw)) } catch (_: Exception) {}
+        }
         // Every part is verifiably transcribed and saved: the audio may go (unless kept).
         if (!prefs().getBoolean(KEY_KEEP_AUDIO, false) && sess.rawTxt.exists()) {
             try { sess.deleteAudio() } catch (e: Exception) { Log.e(TAG, "delete audio", e) }

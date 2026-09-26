@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recoveryRow: LinearLayout
     private lateinit var recoverySub: TextView
     private lateinit var usageContainer: LinearLayout
+    private lateinit var statsContainer: LinearLayout
     /** Last model switch made in this session, for the one-tap undo row. */
     private data class ModelSwitch(val stt: Boolean, val from: String, val to: String)
     private var lastSwitch: ModelSwitch? = null
@@ -53,13 +54,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val root = vertical(0, 0)
+        val root = vertical(0, 0).apply { setPadding(0, 0, 0, dp(32)) }
 
-        root.addView(TextView(this).apply {
-            text = "VitalySpeak"
-            textSize = 32f
-            setPadding(dp(24), dp(64), dp(24), dp(24))
-        })
+        // ← back (same as the back gesture: returns to the app you came from), logo, name
+        root.addView(Ui.topBar(this, "VitalySpeak", showLogo = true) { finish() })
 
         val statusRow = settingsRow("Status", "Checking...")
         statusSubtitle = statusRow.findViewWithTag("subtitle")
@@ -69,8 +67,12 @@ class MainActivity : AppCompatActivity() {
         alertsContainer = vertical(0)
         root.addView(alertsContainer)
 
+        // --- Your stats ---
+        statsContainer = vertical(0)
+        root.addView(statsContainer)
+
         // --- Setup ---
-        root.addView(sectionHeader("Setup"))
+        root.addView(Ui.section(this, "Setup"))
 
         val audioRow = settingsRow("Audio permission", "Checking...") {
             if (!hasPerm(Manifest.permission.RECORD_AUDIO)) {
@@ -90,89 +92,35 @@ class MainActivity : AppCompatActivity() {
         keyRowSub = keyRow.findViewWithTag("subtitle")
         root.addView(keyRow)
 
-        val typingSwitch = MaterialSwitch(this).apply {
-            isChecked = prefs().getBoolean(WhisperAccessibilityService.KEY_ONLY_WHILE_TYPING, true)
-            isClickable = false
-        }
-        root.addView(settingsRow(
-            "Show mic only while typing",
-            "The dot appears when the keyboard is open, like Wispr Flow",
-            typingSwitch
-        ) {
-            val v = !typingSwitch.isChecked
-            prefs().edit().putBoolean(WhisperAccessibilityService.KEY_ONLY_WHILE_TYPING, v).apply()
-            typingSwitch.isChecked = v
+        // --- Dictation ---
+        root.addView(Ui.section(this, "Dictation"))
+
+        root.addView(switchRow("Show mic only while typing", "The dot appears when the keyboard is open. Long-press the dot to open this screen.",
+            WhisperAccessibilityService.KEY_ONLY_WHILE_TYPING, true) {
             WhisperAccessibilityService.instance?.refreshOverlayVisibility()
         })
+        root.addView(switchRow("Live preview while speaking", "Shows your words in a bubble by the dot (extra fast-Whisper requests)",
+            WhisperAccessibilityService.KEY_LIVE_PREVIEW, true))
 
-        val previewSwitch = MaterialSwitch(this).apply {
-            isChecked = prefs().getBoolean(WhisperAccessibilityService.KEY_LIVE_PREVIEW, true)
-            isClickable = false
-        }
-        root.addView(settingsRow(
-            "Live preview while speaking",
-            "Shows your words in a bubble by the dot (extra fast-Whisper requests to Groq)",
-            previewSwitch
-        ) {
-            val v = !previewSwitch.isChecked
-            prefs().edit().putBoolean(WhisperAccessibilityService.KEY_LIVE_PREVIEW, v).apply()
-            previewSwitch.isChecked = v
-        })
+        val vocabRow = settingsRow("Vocabulary", "") { promptVocabulary() }
+        vocabRowSub = vocabRow.findViewWithTag("subtitle")
+        vocabRowSub.maxLines = 2
+        vocabRowSub.ellipsize = android.text.TextUtils.TruncateAt.END
+        root.addView(vocabRow)
 
-        root.addView(sliderRow("Voice reaction", "How wildly the dot reacts to your voice",
-            WhisperAccessibilityService.KEY_REACTION, 70, 0, 100) { v -> if (v < 34) "Calm" else if (v < 67) "Lively" else "Wild" })
-        root.addView(sliderRow("Dot size", "Size of the floating mic dot",
-            WhisperAccessibilityService.KEY_DOT_SIZE, 100, 60, 160) { v -> "$v%" })
-
-        root.addView(sliderRow("Wave speed", "How fast the recording shape moves",
-            WhisperAccessibilityService.KEY_WAVE_SPEED, 200, 100, 500) { v -> "%.1f×".format(v / 100f) })
-        root.addView(sliderRow("Wave count", "How many ripples around the shape",
-            WhisperAccessibilityService.KEY_WAVE_COUNT, 200, 100, 300) { v -> "%.1f×".format(v / 100f) })
+        root.addView(switchRow("Keep audio", "Off: audio is deleted once every part is transcribed. On: keep recordings (~115 MB/hour)",
+            WhisperAccessibilityService.KEY_KEEP_AUDIO, false))
 
         // --- History ---
-        root.addView(sectionHeader("History"))
+        root.addView(Ui.section(this, "History"))
         recoveryRow = settingsRow("Transcription history", "") {
             startActivity(Intent(this, HistoryActivity::class.java))
         }
         recoverySub = recoveryRow.findViewWithTag("subtitle")
         root.addView(recoveryRow)
 
-        val keepAudioSwitch = MaterialSwitch(this).apply {
-            isChecked = prefs().getBoolean(WhisperAccessibilityService.KEY_KEEP_AUDIO, false)
-            isClickable = false
-        }
-        root.addView(settingsRow("Keep audio",
-            "Off: audio is deleted once every part is transcribed. On: keep recordings (~115 MB per hour)",
-            keepAudioSwitch) {
-            val v = !keepAudioSwitch.isChecked
-            prefs().edit().putBoolean(WhisperAccessibilityService.KEY_KEEP_AUDIO, v).apply()
-            keepAudioSwitch.isChecked = v
-        })
-
-        // --- Groq usage ---
-        root.addView(sectionHeader("Groq usage"))
-        usageContainer = vertical(0)
-        root.addView(usageContainer)
-
-        root.addView(settingsRow("Diagnostics", "Last dictation (raw vs cleaned), errors, mic dot decisions") {
-            val svc = WhisperAccessibilityService.instance
-            val events = svc?.visibilityLog?.joinToString("\n")
-                ?.ifBlank { null } ?: "No events yet. Open another app, tap a text field, then come back."
-            val last = if (svc != null && svc.lastRaw.isNotBlank())
-                "LAST DICTATION\nRaw (${svc.lastRaw.length} chars):\n${svc.lastRaw}\n\n" +
-                    (if (svc.lastClean.isNotBlank()) "Cleaned (${svc.lastClean.length} chars):\n${svc.lastClean}\n\n" else "") +
-                    "EVENTS\n"
-                else ""
-            val log = last + events
-            android.app.AlertDialog.Builder(this)
-                .setTitle("Diagnostics (newest first)")
-                .setMessage(log)
-                .setPositiveButton("OK", null)
-                .show()
-        })
-
         // --- Models ---
-        root.addView(sectionHeader("Models"))
+        root.addView(Ui.section(this, "Models"))
 
         val sttRow = settingsRow("Speech-to-text", sttModel()) { pickModel(stt = true) }
         sttRowSub = sttRow.findViewWithTag("subtitle")
@@ -182,33 +130,15 @@ class MainActivity : AppCompatActivity() {
         llmRowSub = llmRow.findViewWithTag("subtitle")
         root.addView(llmRow)
 
-        val vocabRow = settingsRow("Vocabulary hint", "") { promptVocabulary() }
-        vocabRowSub = vocabRow.findViewWithTag("subtitle")
-        vocabRowSub.maxLines = 2
-        vocabRowSub.ellipsize = android.text.TextUtils.TruncateAt.END
-        root.addView(vocabRow)
-
         val checkRow = settingsRow("Check for new models & updates", "") { runChecks(manual = true) }
         checkRowSub = checkRow.findViewWithTag("subtitle")
         root.addView(checkRow)
 
         // --- Cleanup ---
-        root.addView(sectionHeader("Cleanup"))
+        root.addView(Ui.section(this, "Cleanup"))
 
-        val cleanupSwitch = MaterialSwitch(this).apply {
-            isChecked = prefs().getBoolean(Groq.KEY_USE_CLEANUP, true)
-            isClickable = false
-        }
-        root.addView(settingsRow(
-            "Cleanup transcript",
-            "Uses a Groq LLM to fix grammar, punctuation, and remove filler words",
-            cleanupSwitch
-        ) {
-            val v = !cleanupSwitch.isChecked
-            prefs().edit().putBoolean(Groq.KEY_USE_CLEANUP, v).apply()
-            cleanupSwitch.isChecked = v
-            refresh()
-        })
+        root.addView(switchRow("Cleanup transcript", "Fixes grammar and punctuation, removes filler words",
+            Groq.KEY_USE_CLEANUP, true) { refresh() })
 
         promptContainer = vertical(0)
         for (preset in promptPresets()) promptContainer.addView(buildPromptRow(preset))
@@ -220,8 +150,34 @@ class MainActivity : AppCompatActivity() {
         promptRowSub.ellipsize = android.text.TextUtils.TruncateAt.END
         root.addView(promptRow)
 
-        // --- About ---
-        root.addView(sectionHeader("About"))
+        // --- Appearance (details on their own screen) ---
+        root.addView(Ui.section(this, "Appearance"))
+        root.addView(settingsRow("Look & animation  ›", "Dot size, voice reaction, waves, colours, reset to defaults") {
+            startActivity(Intent(this, AppearanceActivity::class.java))
+        })
+
+        // --- Groq usage (estimates, low-key) ---
+        root.addView(Ui.section(this, "Groq usage · estimates"))
+        usageContainer = vertical(0)
+        root.addView(usageContainer)
+
+        // --- Advanced ---
+        root.addView(Ui.section(this, "Advanced"))
+        root.addView(settingsRow("Diagnostics", "Last dictation (raw vs cleaned), errors, mic dot decisions") {
+            val svc = WhisperAccessibilityService.instance
+            val events = svc?.visibilityLog?.joinToString("\n")
+                ?.ifBlank { null } ?: "No events yet. Open another app, tap a text field, then come back."
+            val last = if (svc != null && svc.lastRaw.isNotBlank())
+                "LAST DICTATION\nRaw (${svc.lastRaw.length} chars):\n${svc.lastRaw}\n\n" +
+                    (if (svc.lastClean.isNotBlank()) "Cleaned (${svc.lastClean.length} chars):\n${svc.lastClean}\n\n" else "") +
+                    "EVENTS\n"
+                else ""
+            android.app.AlertDialog.Builder(this)
+                .setTitle("Diagnostics (newest first)")
+                .setMessage(last + events)
+                .setPositiveButton("OK", null)
+                .show()
+        })
         root.addView(settingsRow("Version", "Build ${installedVersionCode()} · tap to open GitHub") {
             openUrl("https://github.com/${UpdateChecker.REPO}/releases")
         })
@@ -239,6 +195,76 @@ class MainActivity : AppCompatActivity() {
         refresh()
         // Background checks when the app is opened — never on the dictation path.
         runChecks(manual = false)
+    }
+
+    /** A settings row with a switch bound to a boolean preference. */
+    private fun switchRow(title: String, subtitle: String, key: String, def: Boolean, onChange: () -> Unit = {}): LinearLayout {
+        val sw = MaterialSwitch(this).apply { isChecked = prefs().getBoolean(key, def); isClickable = false }
+        return settingsRow(title, subtitle, sw) {
+            val v = !sw.isChecked
+            prefs().edit().putBoolean(key, v).apply()
+            sw.isChecked = v
+            onChange()
+        }
+    }
+
+    /** "Your dictation" card: lifetime numbers and a 14-day activity chart. */
+    private fun renderStats() {
+        statsContainer.removeAllViews()
+        val file = java.io.File(filesDir, "stats.tsv")
+        val st = Stats(file)
+        val s = st.summary()
+        if (s.sessions == 0) return
+        val card = vertical(0).apply {
+            setPadding(dp(20), dp(18), dp(20), dp(16))
+            background = android.graphics.drawable.GradientDrawable().apply {
+                cornerRadius = dp(20).toFloat()
+                setColor(attrColor(com.google.android.material.R.attr.colorSurfaceContainer))
+            }
+            layoutParams = LinearLayout.LayoutParams(LP_MATCH, LP_WRAP).apply { setMargins(dp(16), dp(8), dp(16), dp(4)) }
+        }
+        card.addView(TextView(this).apply {
+            text = "YOUR DICTATION"
+            textSize = 11f; letterSpacing = 0.1f
+            setTextColor(attrColor(android.R.attr.textColorSecondary))
+        })
+        val grid = GridLayout(this).apply { columnCount = 3; setPadding(0, dp(8), 0, dp(8)) }
+        fun stat(value: String, label: String) = grid.addView(vertical(0).apply {
+            layoutParams = GridLayout.LayoutParams(GridLayout.spec(GridLayout.UNDEFINED, 1f), GridLayout.spec(GridLayout.UNDEFINED, 1f)).apply { width = 0 }
+            setPadding(0, dp(6), dp(4), dp(6))
+            addView(TextView(this@MainActivity).apply {
+                text = value; textSize = 22f
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            })
+            addView(TextView(this@MainActivity).apply {
+                text = label; textSize = 12f
+                setTextColor(attrColor(android.R.attr.textColorSecondary))
+            })
+        })
+        stat(Stats.formatDuration(s.totalSeconds), "spoken")
+        stat("%,d".format(s.totalWords), "words")
+        stat("${s.sessions}", "dictations")
+        stat(Stats.formatDuration(s.averageSeconds), "average")
+        stat(Stats.formatDuration(s.longestSeconds), "longest")
+        stat(if (s.streakDays > 0) "${s.streakDays} 🔥" else "–", "day streak")
+        card.addView(grid)
+        if (s.wordsPerMinute > 0) card.addView(TextView(this).apply {
+            text = "You speak about ${s.wordsPerMinute} words per minute — roughly ${maxOf(1, s.wordsPerMinute / 40)}× faster than typing on a phone."
+            textSize = 12f
+            setTextColor(attrColor(android.R.attr.textColorSecondary))
+            setPadding(0, 0, 0, dp(10))
+        })
+        card.addView(TextView(this).apply {
+            text = "Last 14 days · minutes"
+            textSize = 11f
+            setTextColor(attrColor(android.R.attr.textColorSecondary))
+            setPadding(0, 0, 0, dp(6))
+        })
+        card.addView(BarChartView(this,
+            attrColor(com.google.android.material.R.attr.colorPrimary),
+            attrColor(com.google.android.material.R.attr.colorOutlineVariant),
+            attrColor(android.R.attr.textColorSecondary)).apply { values = s.daily })
+        statsContainer.addView(card)
     }
 
     override fun onResume() { super.onResume(); refresh() }
@@ -509,6 +535,7 @@ class MainActivity : AppCompatActivity() {
 
         renderAlerts()
         refreshRecovery()
+        renderStats()
     }
 
     private fun refreshRecovery() {
@@ -570,7 +597,7 @@ class MainActivity : AppCompatActivity() {
             setPadding(dp(24), dp(10), dp(24), dp(10))
             addView(TextView(context).apply {
                 text = title + "  " + "${(f * 100).toInt()}%"
-                textSize = 15f
+                textSize = 13f
                 setTextColor(if (warn) 0xFFC62828.toInt() else attrColor(android.R.attr.textColorPrimary))
             })
             addView(com.google.android.material.progressindicator.LinearProgressIndicator(context).apply {
@@ -582,7 +609,7 @@ class MainActivity : AppCompatActivity() {
             })
             addView(TextView(context).apply {
                 text = subtitle
-                textSize = 13f
+                textSize = 11f
                 setTextColor(attrColor(android.R.attr.textColorSecondary))
             })
         }

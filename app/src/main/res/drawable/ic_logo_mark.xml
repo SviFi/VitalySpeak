@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- VitalySpeak mark: a mic capsule (warm orange gradient) with three "air / speed" lines
+     trailing behind it. Drawn on the 108dp adaptive-icon grid, inside the 66dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M28,36 H43" android:strokeColor="#FFFFFFFF" android:strokeWidth="3.8" android:strokeLineCap="round" />
+    <path android:pathData="M33,44 H43" android:strokeColor="#B3FFFFFF" android:strokeWidth="3.8" android:strokeLineCap="round" />
+    <path android:pathData="M30,52 H41" android:strokeColor="#66FFFFFF" android:strokeWidth="3.8" android:strokeLineCap="round" />
+    <path android:pathData="M48,47 A16,16 0 0 0 80,47" android:strokeColor="#FFFFFFFF" android:strokeWidth="3.8" android:strokeLineCap="round" />
+    <path android:pathData="M64,63 V71" android:strokeColor="#FFFFFFFF" android:strokeWidth="3.8" android:strokeLineCap="round" />
+    <path android:pathData="M57,73 H71" android:strokeColor="#FFFFFFFF" android:strokeWidth="3.8" android:strokeLineCap="round" />
+    <path android:pathData="M55,35 A9,9 0 0 1 73,35 V49 A9,9 0 0 1 55,49 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear"
+                android:startX="55" android:startY="26" android:endX="73" android:endY="58"
+                android:startColor="#FFFFB25C" android:endColor="#FFFF4A3D" />
+        </aapt:attr>
+    </path>
+</vector>

@@ -28,11 +28,7 @@ class HistoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
-        root.addView(TextView(this).apply {
-            text = "History"
-            textSize = 32f
-            setPadding(dp(24), dp(56), dp(24), dp(8))
-        })
+        root.addView(Ui.topBar(this, "History") { finish() })
         root.addView(TextView(this).apply {
             text = "All your dictations. Tap one to copy or retry."
             textSize = 14f

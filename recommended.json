@@ -1,0 +1,5 @@
+{
+  "stt": "whisper-large-v3",
+  "llm": "llama-3.3-70b-versatile",
+  "note": "Best RU+EN accuracy on Groq as of Sep 2026"
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VitalySpeak</string>
+    <string name="accessibility_description">VitalySpeak dictation: records audio when you tap the floating dot, transcribes it with Groq, and inserts the text into the focused field.</string>
+</resources>

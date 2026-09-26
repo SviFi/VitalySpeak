@@ -38,11 +38,11 @@ class WhisperAccessibilityService : AccessibilityService() {
         private const val TAG = "VitalySpeak"
         const val KEY_ONLY_WHILE_TYPING = "overlay_only_while_typing"
         private const val SAMPLE_RATE = 16000
-        private const val BTN_DP = 44
-        private const val PAD_DP = 10
+        private const val BTN_DP = 84
+        private const val PAD_DP = 22
         private const val MARGIN_DP = 8
         private const val TAP_THRESHOLD_DP = 10
-        private const val RING_DP = 56
+        private const val RING_DP = 100
         private const val FEEDBACK_OFFSET_DP = 64
 
         private const val COLOR_IDLE = 0xDD1C1C1E.toInt()
@@ -50,6 +50,12 @@ class WhisperAccessibilityService : AccessibilityService() {
         private const val COLOR_BUSY = 0xDD6B6B6B.toInt()
         private const val COLOR_FEEDBACK_BG = 0xEE1C1C1E.toInt()
         private const val COLOR_RING = 0xFFE8EAED.toInt()
+        private const val COLOR_ACCENT = 0xFFFF7A1A.toInt()   // modern orange ring
+        private const val ACCENT_STROKE_DP = 3
+        private const val PREVIEW_MODEL = "whisper-large-v3-turbo"
+        private const val PREVIEW_INTERVAL_MS = 2000L
+        private const val PREVIEW_WINDOW_SEC = 12
+        const val KEY_LIVE_PREVIEW = "live_preview"
     }
 
     private enum class State { IDLE, RECORDING, TRANSCRIBING }
@@ -66,6 +72,11 @@ class WhisperAccessibilityService : AccessibilityService() {
     private var feedbackView: TextView? = null
     private var layoutParams: WindowManager.LayoutParams? = null
     private var feedbackLayoutParams: WindowManager.LayoutParams? = null
+    private var previewView: TextView? = null
+    private var previewLayoutParams: WindowManager.LayoutParams? = null
+    @Volatile private var recordingSession = 0
+    @Volatile private var previewInFlight = false
+    @Volatile private var previewBackoffUntil = 0L
     private var audioRecord: AudioRecord? = null
     private var pcmStream: ByteArrayOutputStream? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -258,7 +269,7 @@ class WhisperAccessibilityService : AccessibilityService() {
 
         val img = ImageView(this).apply {
             setImageResource(R.drawable.ic_mic)
-            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            scaleType = ImageView.ScaleType.FIT_CENTER
             setPadding(pad, pad, pad, pad)
             background = circle(COLOR_IDLE)
         }
@@ -295,7 +306,7 @@ class WhisperAccessibilityService : AccessibilityService() {
                     wm.updateViewLayout(v, params)
                     feedbackLayoutParams?.let {
                         positionFeedback(it, params)
-                        wm.updateViewLayout(feedbackView, it)
+                        wm.updateViewLayout(feedbackView, it); updatePreviewPosition()
                     }
                     true
                 }
@@ -309,7 +320,7 @@ class WhisperAccessibilityService : AccessibilityService() {
                         wm.updateViewLayout(v, params)
                         feedbackLayoutParams?.let {
                             positionFeedback(it, params)
-                            wm.updateViewLayout(feedbackView, it)
+                            wm.updateViewLayout(feedbackView, it); updatePreviewPosition()
                         }
                     }
                     true
@@ -323,6 +334,7 @@ class WhisperAccessibilityService : AccessibilityService() {
             setTextColor(0xFFFFFFFF.toInt())
             setPadding((12 * dp).toInt(), (8 * dp).toInt(), (12 * dp).toInt(), (8 * dp).toInt())
             background = pill(COLOR_FEEDBACK_BG)
+            maxWidth = (currentScreenW() * 0.7).toInt()
             alpha = 0f
             visibility = View.GONE
         }
@@ -338,8 +350,31 @@ class WhisperAccessibilityService : AccessibilityService() {
         }
         positionFeedback(feedbackParams, params)
 
+        // Live transcript bubble shown while recording (not touchable, never steals focus).
+        val preview = TextView(this).apply {
+            textSize = 14f
+            setTextColor(0xFFFFFFFF.toInt())
+            maxLines = 3
+            ellipsize = android.text.TextUtils.TruncateAt.START
+            maxWidth = (currentScreenW() * 0.7).toInt()
+            setPadding((14 * dp).toInt(), (10 * dp).toInt(), (14 * dp).toInt(), (10 * dp).toInt())
+            background = pill(COLOR_FEEDBACK_BG).apply { setStroke((1.5f * dp).toInt(), COLOR_ACCENT) }
+            visibility = View.GONE
+        }
+        val previewParams = WindowManager.LayoutParams(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            PixelFormat.TRANSLUCENT
+        )
+        positionFeedback(previewParams, params)
+
         wm.addView(overlay, params)
         wm.addView(feedback, feedbackParams)
+        wm.addView(preview, previewParams)
+        previewView = preview
+        previewLayoutParams = previewParams
         overlayView = overlay
         button = img
         spinner = ring
@@ -358,6 +393,11 @@ class WhisperAccessibilityService : AccessibilityService() {
             wm.removeView(it)
             feedbackView = null
         }
+        previewView?.let {
+            try { wm.removeView(it) } catch (_: Exception) {}
+            previewView = null
+        }
+        previewLayoutParams = null
         button = null
         spinner = null
         layoutParams = null
@@ -365,7 +405,9 @@ class WhisperAccessibilityService : AccessibilityService() {
     }
 
     private fun circle(color: Int) = GradientDrawable().apply {
-        shape = GradientDrawable.OVAL; setColor(color)
+        shape = GradientDrawable.OVAL
+        setColor(color)
+        setStroke((ACCENT_STROKE_DP * dp).toInt(), COLOR_ACCENT)
     }
 
     private fun pill(color: Int) = GradientDrawable().apply {
@@ -384,14 +426,104 @@ class WhisperAccessibilityService : AccessibilityService() {
         }
     }
 
+    private fun currentScreenW(): Int = try {
+        (getSystemService(WINDOW_SERVICE) as WindowManager).currentWindowMetrics.bounds.width()
+    } catch (_: Exception) { screenW }
+
+    private fun currentScreenH(): Int = try {
+        (getSystemService(WINDOW_SERVICE) as WindowManager).currentWindowMetrics.bounds.height()
+    } catch (_: Exception) { screenH }
+
+    /** Places a bubble window just above the dot, right edges aligned; below it if near the top. */
     private fun positionFeedback(
-        feedbackParams: WindowManager.LayoutParams,
-        bubbleParams: WindowManager.LayoutParams
+        bubble: WindowManager.LayoutParams,
+        dot: WindowManager.LayoutParams
     ) {
         val margin = (MARGIN_DP * dp).toInt()
-        val offset = (FEEDBACK_OFFSET_DP * dp).toInt()
-        feedbackParams.x = maxOf(margin, bubbleParams.x - offset)
-        feedbackParams.y = maxOf(margin, bubbleParams.y - margin)
+        val size = dot.height
+        val w = currentScreenW()
+        val h = currentScreenH()
+        val dotCenterX = dot.x + size / 2
+        val alignRight = dotCenterX > w / 2
+        val horizontal = if (alignRight) Gravity.END else Gravity.START
+        bubble.x = if (alignRight) maxOf(margin, w - (dot.x + size)) else maxOf(margin, dot.x)
+        if (dot.y > (140 * dp).toInt()) {
+            bubble.gravity = Gravity.BOTTOM or horizontal
+            bubble.y = maxOf(margin, h - dot.y + margin / 2)
+        } else {
+            bubble.gravity = Gravity.TOP or horizontal
+            bubble.y = dot.y + size + margin / 2
+        }
+    }
+
+    private fun updatePreviewPosition() {
+        val pv = previewView ?: return
+        val pp = previewLayoutParams ?: return
+        val dot = layoutParams ?: return
+        positionFeedback(pp, dot)
+        try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(pv, pp) } catch (_: Exception) {}
+    }
+
+    private fun showPreview(text: String) {
+        handler.post {
+            val pv = previewView ?: return@post
+            updatePreviewPosition()
+            pv.text = text
+            pv.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hidePreview() {
+        handler.post { previewView?.visibility = View.GONE; previewView?.text = "" }
+    }
+
+    /**
+     * While recording, every ~2 s send the last ~12 s of audio to Groq's fast Whisper turbo
+     * and show the text in the bubble. Runs in parallel; the final transcript is a separate,
+     * full-quality request, so this adds no delay after you stop.
+     */
+    private fun startLivePreview(apiKey: String) {
+        if (!prefs().getBoolean(KEY_LIVE_PREVIEW, true) || apiKey.isBlank()) return
+        val session = recordingSession
+        val vocab = prefs().getString(Groq.KEY_VOCAB, Groq.DEFAULT_VOCAB) ?: ""
+        showPreview("Listening…")
+        thread {
+            var lastSize = 0
+            while (state == State.RECORDING && recordingSession == session) {
+                try { Thread.sleep(PREVIEW_INTERVAL_MS) } catch (_: InterruptedException) { break }
+                if (state != State.RECORDING || recordingSession != session) break
+                if (previewInFlight || System.currentTimeMillis() < previewBackoffUntil) continue
+                val pcm = pcmStream?.toByteArray() ?: break
+                val bytesPerSec = SAMPLE_RATE * 2
+                if (pcm.size < bytesPerSec || pcm.size - lastSize < bytesPerSec / 2) continue
+                lastSize = pcm.size
+                val maxBytes = bytesPerSec * PREVIEW_WINDOW_SEC
+                var start = maxOf(0, pcm.size - maxBytes)
+                if (start % 2 != 0) start++
+                val slice = pcm.copyOfRange(start, pcm.size - (pcm.size - start) % 2)
+                previewInFlight = true
+                TranscriberClient.transcribe(WavWriter.encode(slice), apiKey, PREVIEW_MODEL, vocab) { r ->
+                    previewInFlight = false
+                    if (r.text == null && r.error?.contains("rate", ignoreCase = true) == true) {
+                        previewBackoffUntil = System.currentTimeMillis() + 10_000
+                    }
+                    val t = r.text?.trim().orEmpty()
+                    if (t.isNotEmpty() && state == State.RECORDING && recordingSession == session) {
+                        showPreview(if (start > 0) "…$t" else t)
+                    }
+                }
+            }
+        }
+    }
+
+    // --- Diagnostics ---
+
+    fun logEvent(msg: String) {
+        handler.post {
+            val ts = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.US).format(java.util.Date())
+            visibilityLog.addFirst("$ts $msg")
+            while (visibilityLog.size > 12) visibilityLog.removeLast()
+        }
     }
 
     private fun showFeedback(text: String, durationMs: Long = 2000) {
@@ -415,18 +547,32 @@ class WhisperAccessibilityService : AccessibilityService() {
     }
 
     private fun startPulse() {
-        button?.let {
-            it.animate().alpha(0.4f).setDuration(500).withEndAction {
-                it.animate().alpha(1f).setDuration(500).withEndAction {
-                    if (state == State.RECORDING) startPulse()
-                }.start()
-            }.start()
+        // Visual "mic is hearing you": the dot grows with your voice level (see level()).
+        button?.animate()?.cancel()
+        button?.alpha = 1f
+    }
+
+    /** Called from the recording thread with each audio buffer. */
+    private fun level(buf: ByteArray, n: Int) {
+        var sum = 0.0
+        var i = 0
+        while (i + 1 < n) {
+            val v = ((buf[i + 1].toInt() shl 8) or (buf[i].toInt() and 0xFF)).toShort().toDouble()
+            sum += v * v
+            i += 2
+        }
+        val rms = kotlin.math.sqrt(sum / maxOf(1, n / 2))
+        val scale = 1f + (minOf(1.0, rms / 3000.0) * 0.18).toFloat()
+        handler.post {
+            if (state == State.RECORDING) button?.animate()?.scaleX(scale)?.scaleY(scale)?.setDuration(80)?.start()
         }
     }
 
     private fun stopPulse() {
         button?.animate()?.cancel()
         button?.alpha = 1f
+        button?.scaleX = 1f
+        button?.scaleY = 1f
     }
 
     // --- State machine ---
@@ -460,6 +606,7 @@ class WhisperAccessibilityService : AccessibilityService() {
         // Open the TLS connection to Groq while the user speaks, so the upload
         // after "stop" skips the handshake. Runs off the hot path.
         Groq.warmUp(prefs().getString(Groq.KEY_API, "") ?: "")
+        recordingSession++
         state = State.RECORDING
         setBusy(false)
         setAppearance(COLOR_RECORDING)
@@ -469,14 +616,19 @@ class WhisperAccessibilityService : AccessibilityService() {
             val buf = ByteArray(bufSize)
             while (state == State.RECORDING) {
                 val n = audioRecord?.read(buf, 0, buf.size) ?: break
-                if (n > 0) pcmStream?.write(buf, 0, n)
+                if (n > 0) {
+                    pcmStream?.write(buf, 0, n)
+                    level(buf, n)
+                }
             }
         }
+        startLivePreview(prefs().getString(Groq.KEY_API, "") ?: "")
     }
 
     private fun stopAndTranscribe() {
         state = State.TRANSCRIBING
         stopPulse()
+        hidePreview()
         setAppearance(COLOR_BUSY)
         setBusy(true)
 
@@ -506,6 +658,7 @@ class WhisperAccessibilityService : AccessibilityService() {
             if (result.text != null && result.text.isNotBlank()) {
                 handleTranscriptionResult(result.text)
             } else {
+                logEvent("TRANSCRIBE FAILED: ${result.error ?: "empty transcript"}")
                 handler.post {
                     toast("Error: ${result.error ?: "empty transcript"}")
                     state = State.IDLE
@@ -545,16 +698,26 @@ class WhisperAccessibilityService : AccessibilityService() {
             val prompt = prefs().getString("post_processing_prompt", PostProcessor.DEFAULT_PROMPT) ?: PostProcessor.DEFAULT_PROMPT
             
             val llm = prefs().getString(Groq.KEY_LLM_MODEL, Groq.DEFAULT_LLM_MODEL) ?: Groq.DEFAULT_LLM_MODEL
-            PostProcessor.process(text, prompt, apiKey, llm) { result ->
+            fun finish(result: PostProcessor.Result) {
                 handler.post {
                     if (result.text != null && result.text.isNotBlank()) {
                         injectText(result.text)
                     } else {
-                        injectText(text, feedback = "Cleanup failed (${result.error ?: "empty reply"}) — raw text used", feedbackDurationMs = 4000)
+                        val why = result.error ?: "empty reply"
+                        logEvent("CLEANUP FAILED ($llm): $why")
+                        injectText(text, feedback = "Cleanup failed ($why) — raw text used", feedbackDurationMs = 4000)
                     }
                     state = State.IDLE
                     setBusy(false)
                     setAppearance(COLOR_IDLE)
+                }
+            }
+            // One automatic retry covers transient network hiccups and empty replies.
+            PostProcessor.process(text, prompt, apiKey, llm) { first ->
+                if (first.text != null && first.text.isNotBlank()) finish(first)
+                else {
+                    logEvent("cleanup retry after: ${first.error ?: "empty reply"}")
+                    PostProcessor.process(text, prompt, apiKey, llm) { second -> finish(second) }
                 }
             }
         } else {

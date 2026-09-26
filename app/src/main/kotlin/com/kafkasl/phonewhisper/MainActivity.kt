@@ -102,11 +102,25 @@ class MainActivity : AppCompatActivity() {
             WhisperAccessibilityService.instance?.refreshOverlayVisibility()
         })
 
-        root.addView(settingsRow("Diagnostics", "Why the mic dot was shown or hidden — tap to view") {
+        val previewSwitch = MaterialSwitch(this).apply {
+            isChecked = prefs().getBoolean(WhisperAccessibilityService.KEY_LIVE_PREVIEW, true)
+            isClickable = false
+        }
+        root.addView(settingsRow(
+            "Live preview while speaking",
+            "Shows your words in a bubble by the dot (extra fast-Whisper requests to Groq)",
+            previewSwitch
+        ) {
+            val v = !previewSwitch.isChecked
+            prefs().edit().putBoolean(WhisperAccessibilityService.KEY_LIVE_PREVIEW, v).apply()
+            previewSwitch.isChecked = v
+        })
+
+        root.addView(settingsRow("Diagnostics", "Mic dot decisions and any transcription/cleanup errors — tap to view") {
             val log = WhisperAccessibilityService.instance?.visibilityLog?.joinToString("\n")
                 ?.ifBlank { null } ?: "No events yet. Open another app, tap a text field, then come back."
             android.app.AlertDialog.Builder(this)
-                .setTitle("Mic dot decisions (newest first)")
+                .setTitle("Diagnostics (newest first)")
                 .setMessage(log)
                 .setPositiveButton("OK", null)
                 .show()

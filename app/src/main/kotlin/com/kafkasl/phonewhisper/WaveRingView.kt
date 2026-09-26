@@ -15,8 +15,8 @@ import kotlin.math.sin
  *
  *  - Front blob: solid red, no border. Its outline is a slow travelling wave, so the whole
  *    shape morphs with your voice.
- *  - Back blob: soft white, different wave count, counter-rotating — peeks out around
- *    the red one as a second shape.
+ *  - Middle blob: soft white, different wave count, counter-rotating.
+ *  - Back blob: near-black, a third wave pattern — three layered, shape-shifting outlines.
  *
  * Motion is deliberately calm: the waves rotate at a constant slow speed and only their
  * height follows the voice (fast attack, slow release), so it swells and settles smoothly
@@ -41,7 +41,12 @@ class WaveRingView(
         style = Paint.Style.FILL
         color = 0xE6F4F4F6.toInt()          // near-white, slightly translucent
     }
+    private val darkFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = 0xF0141416.toInt()          // near-black, back layer
+    }
     private val frontPath = Path()
+    private val darkPath = Path()
     private val backPath = Path()
 
     private var active = false
@@ -72,22 +77,27 @@ class WaveRingView(
         val k = if (targetLevel > level) 0.16f + 0.08f * r else 0.05f
         level += (targetLevel - level) * k
         pitch += (targetPitch - pitch) * 0.03f      // pitch only drifts: no jitter
-        phase += 0.035f                             // constant, slow rotation
+        phase += 0.07f                              // constant rotation (2× the earlier calm speed)
 
         val cx = width / 2f
         val cy = height / 2f
         val room = min(cx, cy) - 2f * density
 
         val growth = 0.08f + 0.32f * r              // how much the blob swells with loudness
-        val maxAmp = baseRadiusPx * (0.12f + 0.48f * r)
+        // Ripple height ~30% smaller than before: the shape stays close to the dot.
+        val maxAmp = baseRadiusPx * (0.12f + 0.48f * r) * 0.7f
         val base = baseRadiusPx * (1f + growth * level)
         val amp = level * (0.3f + 0.7f * pitch) * maxAmp
         // Never draw outside the overlay window.
-        val scale = if (base + amp * 1.15f > room) room / (base + amp * 1.15f) else 1f
+        val outer = base + amp * 0.7f + amp * 1.2f
+        val scale = if (outer > room) room / outer else 1f
 
-        buildBlob(backPath, cx, cy, (base + amp * 0.35f) * scale, amp * 1.15f * scale, waves = 3, phase = -phase * 0.8f)
-        buildBlob(frontPath, cx, cy, base * scale, amp * scale, waves = 4, phase = phase)
+        // More, shorter waves (9/7/5 around the circle) for a finer, livelier outline.
+        buildBlob(darkPath, cx, cy, (base + amp * 0.7f) * scale, amp * 1.2f * scale, waves = 5, phase = phase * 0.6f + 1.3f)
+        buildBlob(backPath, cx, cy, (base + amp * 0.35f) * scale, amp * 1.1f * scale, waves = 7, phase = -phase * 0.8f)
+        buildBlob(frontPath, cx, cy, base * scale, amp * scale, waves = 9, phase = phase)
 
+        canvas.drawPath(darkPath, darkFill)
         canvas.drawPath(backPath, backFill)
         canvas.drawPath(frontPath, frontFill)
 

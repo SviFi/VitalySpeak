@@ -27,7 +27,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import java.io.ByteArrayOutputStream
 import kotlin.concurrent.thread
 import kotlin.math.abs
 
@@ -54,8 +53,11 @@ class WhisperAccessibilityService : AccessibilityService() {
         private const val COLOR_ACCENT = 0xFFFF7A1A.toInt()   // modern orange ring
         private const val ACCENT_STROKE_DP = 3
         private const val PREVIEW_MODEL = "whisper-large-v3-turbo"
-        /** Safety cap: auto-stops (and transcribes, nothing lost) after an hour. */
-        private const val MAX_RECORDING_MS = 60L * 60 * 1000
+        /** Safety cap: auto-stops (and transcribes, nothing lost) after 4 hours. */
+        private const val MAX_RECORDING_MS = 4L * 60 * 60 * 1000
+        /** Don't start / keep recording with less free storage than this (≈ 25 min of audio). */
+        private const val MIN_FREE_BYTES = 50L * 1024 * 1024
+        const val KEY_LAST_DICTATION = "last_dictation"
         private const val PREVIEW_INTERVAL_MS = 2000L
         private const val PREVIEW_WINDOW_SEC = 12
         const val KEY_LIVE_PREVIEW = "live_preview"
@@ -119,7 +121,12 @@ class WhisperAccessibilityService : AccessibilityService() {
     @Volatile private var previewInFlight = false
     @Volatile private var previewBackoffUntil = 0L
     private var audioRecord: AudioRecord? = null
-    private var pcmStream: ByteArrayOutputStream? = null
+    // Crash-safe recording: audio goes to disk in ~5-min parts, transcribed in the background.
+    private val store by lazy { DictationStore(java.io.File(filesDir, "sessions")) }
+    private val worker = java.util.concurrent.Executors.newSingleThreadExecutor()
+    @Volatile private var session: DictationStore.Session? = null
+    private var writer: ChunkWriter? = null
+    @Volatile private var ring: PcmRing? = null
     private val handler = Handler(Looper.getMainLooper())
     private val hideFeedback = Runnable {
         feedbackView?.animate()?.alpha(0f)?.setDuration(180)?.withEndAction {
@@ -148,6 +155,12 @@ class WhisperAccessibilityService : AccessibilityService() {
         } catch (e: Exception) { Log.w(TAG, "Could not update serviceInfo", e) }
         showOverlay()
         scheduleVisibilityCheck(0)
+        // Anything on disk now is from before a crash/restart: keep it, offer retry in the app.
+        worker.execute {
+            store.sessions().forEach { it.isRecording = false }
+            val n = store.sessions().size
+            if (n > 0) logEvent("$n unfinished dictation(s) saved — retry from the app")
+        }
     }
 
     // --- Show the dot only while typing (keyboard up / text field focused) ---
@@ -551,24 +564,22 @@ class WhisperAccessibilityService : AccessibilityService() {
     private fun startLivePreview(apiKey: String) {
         if (!prefs().getBoolean(KEY_LIVE_PREVIEW, true) || apiKey.isBlank()) return
         val session = recordingSession
-        val vocab = prefs().getString(Groq.KEY_VOCAB, Groq.DEFAULT_VOCAB) ?: ""
         showPreview("0:00 · Listening…")
         thread {
-            var lastSize = 0
+            var lastTotal = 0L
             while (state == State.RECORDING && recordingSession == session) {
                 try { Thread.sleep(PREVIEW_INTERVAL_MS) } catch (_: InterruptedException) { break }
                 if (state != State.RECORDING || recordingSession != session) break
                 if (previewInFlight || System.currentTimeMillis() < previewBackoffUntil) continue
-                val pcm = pcmStream?.toByteArray() ?: break
+                val rb = ring ?: break
                 val bytesPerSec = SAMPLE_RATE * 2
-                if (pcm.size < bytesPerSec || pcm.size - lastSize < bytesPerSec / 2) continue
-                lastSize = pcm.size
-                val maxBytes = bytesPerSec * PREVIEW_WINDOW_SEC
-                var start = maxOf(0, pcm.size - maxBytes)
-                if (start % 2 != 0) start++
-                val slice = pcm.copyOfRange(start, pcm.size - (pcm.size - start) % 2)
+                val total = rb.total
+                if (total < bytesPerSec || total - lastTotal < bytesPerSec / 2) continue
+                lastTotal = total
+                val slice = rb.snapshot()
+                val start = if (total > slice.size) 1 else 0     // ring is full → earlier audio exists
                 previewInFlight = true
-                TranscriberClient.transcribe(WavWriter.encode(slice), apiKey, PREVIEW_MODEL, vocab) { r ->
+                TranscriberClient.transcribe(WavWriter.encode(slice), apiKey, PREVIEW_MODEL, Groq.WHISPER_HINT) { r ->
                     previewInFlight = false
                     if (r.text == null && r.error?.contains("rate", ignoreCase = true) == true) {
                         previewBackoffUntil = System.currentTimeMillis() + 10_000
@@ -640,7 +651,10 @@ class WhisperAccessibilityService : AccessibilityService() {
         hidePreview()
         hideCancel()
         stopRecorder()
-        pcmStream = null
+        val sess = session
+        try { writer?.close() } catch (_: Exception) {}
+        session = null; writer = null; ring = null
+        worker.execute { sess?.delete() }      // after any queued part job, so nothing is re-created
         setBusy(false)
         setAppearance(COLOR_IDLE)
         logEvent("recording cancelled")
@@ -742,7 +756,18 @@ class WhisperAccessibilityService : AccessibilityService() {
             )
         } catch (_: SecurityException) { toast("Audio permission denied"); return }
 
-        pcmStream = ByteArrayOutputStream()
+        if (store.freeBytes() < MIN_FREE_BYTES) {
+            audioRecord?.release(); audioRecord = null
+            toast("Phone storage almost full — can't record safely"); return
+        }
+        val sess = store.newSession()
+        session = sess
+        ring = PcmRing(SAMPLE_RATE * 2 * PREVIEW_WINDOW_SEC)
+        val apiKeyNow = prefs().getString(Groq.KEY_API, "") ?: ""
+        writer = ChunkWriter(sess, SAMPLE_RATE) { idx ->
+            // A 5-min part is complete: transcribe it now, while you keep talking.
+            worker.execute { if (sess.exists()) transcribePart(sess, idx, apiKeyNow) }
+        }
         audioRecord!!.startRecording()
         // Open the TLS connection to Groq while the user speaks, so the upload
         // after "stop" skips the handshake. Runs off the hot path.
@@ -755,21 +780,30 @@ class WhisperAccessibilityService : AccessibilityService() {
 
         recordStartMs = System.currentTimeMillis()
         val rec = audioRecord!!
-        val out = pcmStream!!
+        val out = writer!!
+        val preview = ring!!
         recThread = thread {
             val buf = ByteArray(bufSize)
             // Keep reading until the recorder is stopped and drained, so the last words aren't lost.
             while (true) {
                 val n = try { rec.read(buf, 0, buf.size) } catch (_: Exception) { -1 }
                 if (n > 0) {
-                    out.write(buf, 0, n)
+                    try { out.write(buf, n) } catch (e: Exception) {
+                        Log.e(TAG, "write failed", e)
+                        handler.post { if (state == State.RECORDING) { showFeedback("Storage error — transcribing what was saved", 4000); stopAndTranscribe() } }
+                    }
+                    preview.write(buf, n)
                     if (state == State.RECORDING) level(buf, n)
                 }
                 if (state == State.RECORDING) {
-                    if (System.currentTimeMillis() - recordStartMs > MAX_RECORDING_MS) {
+                    val now = System.currentTimeMillis()
+                    val tooLong = now - recordStartMs > MAX_RECORDING_MS
+                    // Check free space about once a minute.
+                    val lowDisk = (now / 1000) % 60 == 0L && store.freeBytes() < MIN_FREE_BYTES / 2
+                    if (tooLong || lowDisk) {
                         handler.post {
                             if (state == State.RECORDING) {
-                                showFeedback("Reached 60 min — transcribing everything", 4000)
+                                showFeedback(if (tooLong) "Reached 4 hours — transcribing everything" else "Storage almost full — transcribing everything", 5000)
                                 stopAndTranscribe()
                             }
                         }
@@ -802,12 +836,12 @@ class WhisperAccessibilityService : AccessibilityService() {
 
         stopRecorder()
 
-        val pcm = pcmStream?.toByteArray() ?: ByteArray(0)
-        pcmStream = null
-
-        if (pcm.isEmpty()) { reset("No audio captured"); return }
-
-        transcribeApi(pcm)
+        val sess = session ?: run { reset("No audio captured"); return }
+        val parts = try { writer?.close() ?: 0 } catch (e: Exception) { Log.e(TAG, "close", e); sess.partCount() }
+        sess.isRecording = false
+        session = null; writer = null; ring = null
+        if (parts == 0) { sess.delete(); reset("No audio captured"); return }
+        worker.execute { finalizeSession(sess, inject = true) }
     }
 
     /** Last dictation, shown in the app's Diagnostics to debug accuracy issues. */
@@ -821,60 +855,105 @@ class WhisperAccessibilityService : AccessibilityService() {
     }
 
     /**
-     * Speech-to-text for any length: trims silence (avoids Whisper hallucinating at the end),
-     * splits recordings longer than 5 min at quiet moments, transcribes the parts in order
-     * (each part gets the previous part's tail as context) and joins them.
+     * Transcribes one saved part (blocking, on the worker thread) and stores its text on disk.
+     * Retries with backoff for network errors, rate limits and server errors; honours
+     * Retry-After. Returns false only if it finally failed (audio stays saved for later).
      */
-    private fun transcribeApi(pcm: ByteArray) {
+    private fun transcribePart(sess: DictationStore.Session, i: Int, apiKeyArg: String? = null): Boolean {
+        if (sess.partTxt(i).exists()) return true
         val p = prefs()
-        val apiKey = p.getString(Groq.KEY_API, "") ?: ""
-        if (apiKey.isBlank()) { reset("Set Groq API key in VitalySpeak app"); return }
+        val apiKey = apiKeyArg?.ifBlank { null } ?: p.getString(Groq.KEY_API, "") ?: ""
+        if (apiKey.isBlank()) return false
         val model = p.getString(Groq.KEY_STT_MODEL, Groq.DEFAULT_STT_MODEL) ?: Groq.DEFAULT_STT_MODEL
-        val vocab = p.getString(Groq.KEY_VOCAB, Groq.DEFAULT_VOCAB) ?: ""
-
+        val pcm = try { sess.partPcm(i).readBytes() } catch (e: Exception) { Log.e(TAG, "read part", e); return false }
+        if (Dictation.isSilent(pcm, SAMPLE_RATE)) { safeWrite(sess, i, ""); return true }
         val audio = Dictation.trimSilence(pcm, SAMPLE_RATE)
-        val parts = Dictation.splitPcm(audio, SAMPLE_RATE)
-        val texts = arrayOfNulls<String>(parts.size)
-        if (parts.size > 1) showFeedback("Transcribing ${parts.size} parts…", 4000)
-
-        fun fail(msg: String) {
-            logEvent("TRANSCRIBE FAILED: $msg")
-            handler.post { toast("Error: $msg"); finishIdle() }
-        }
-
-        fun next(i: Int, attempt: Int) {
-            if (i == parts.size) {
-                val raw = Dictation.stripVocabEcho(
-                    texts.filterNotNull().joinToString(" ").trim(),
-                    listOf(Groq.WHISPER_HINT, vocab)
-                )
-                lastRaw = raw
-                logEvent("transcribed ${audio.size / 2 / SAMPLE_RATE}s in ${parts.size} part(s), ${raw.length} chars")
-                handleTranscriptionResult(raw)
-                return
+        val context = if (i == 0) Groq.WHISPER_HINT else sess.transcriptOf(i - 1)?.takeLast(200)?.ifBlank { null } ?: Groq.WHISPER_HINT
+        val wav = WavWriter.encode(audio)
+        val delays = longArrayOf(1, 3, 8, 15, 30, 60)
+        for (attempt in 0..delays.size) {
+            if (!sess.exists()) return false
+            val r = TranscriberClient.transcribeBlocking(wav, apiKey, model, context)
+            if (r.text != null) {
+                safeWrite(sess, i, r.text)
+                return true
             }
-            val r = parts[i]
-            val bytes = audio.copyOfRange(r.first, r.last + 1)
-            // Context for Whisper: short bilingual hint, or the end of the previous part.
-            val context = if (i == 0) Groq.WHISPER_HINT else texts[i - 1].orEmpty().takeLast(200)
-            TranscriberClient.transcribe(WavWriter.encode(bytes), apiKey, model, context) { res ->
-                if (res.text != null) {
-                    texts[i] = res.text
-                    next(i + 1, 0)
-                } else if (attempt == 0) {
-                    logEvent("transcribe retry part ${i + 1}: ${res.error}")
-                    next(i, 1)
-                } else {
-                    fail(res.error ?: "empty transcript")
-                }
-            }
+            val retryable = r.httpCode == 0 || r.httpCode == 408 || r.httpCode == 429 || r.httpCode >= 500
+            logEvent("part ${i + 1}: ${r.error} (attempt ${attempt + 1})")
+            if (!retryable || attempt == delays.size) return false
+            val wait = minOf(90L, r.retryAfterSec ?: delays[attempt])
+            try { Thread.sleep(wait * 1000) } catch (_: InterruptedException) { return false }
         }
-        next(0, 0)
+        return false
     }
 
-    private fun handleTranscriptionResult(text: String?) {
+    private fun safeWrite(sess: DictationStore.Session, i: Int, text: String) {
+        try { if (sess.exists()) sess.writeTranscript(i, text) } catch (e: Exception) { Log.e(TAG, "save transcript", e) }
+    }
+
+    /**
+     * Runs on the worker after recording stops: makes sure every part has a transcript,
+     * joins them in order, cleans up, delivers, and only then deletes the saved audio.
+     * If anything is missing, the session stays on disk for a retry — never a partial paste.
+     */
+    private fun finalizeSession(sess: DictationStore.Session, inject: Boolean) {
+        val missing = sess.missingParts()
+        if (inject && missing.size > 1) showFeedback("Finishing ${missing.size} of ${sess.partCount()} parts…", 3000)
+        for (i in sess.missingParts()) transcribePart(sess, i)
+        val joined = sess.joinedTranscript()
+        if (joined == null) {
+            val left = sess.missingParts().size
+            logEvent("KEPT dictation ${sess.id}: $left of ${sess.partCount()} part(s) not transcribed yet")
+            handler.post {
+                if (inject) {
+                    showFeedback("Couldn't reach Groq for $left part(s). Your recording is saved — open VitalySpeak to retry.", 6000)
+                    finishIdle()
+                } else toast("Still couldn't transcribe $left part(s) — kept for another retry")
+            }
+            return
+        }
+        val vocab = prefs().getString(Groq.KEY_VOCAB, Groq.DEFAULT_VOCAB) ?: ""
+        val raw = Dictation.stripVocabEcho(joined, listOf(Groq.WHISPER_HINT, vocab))
+        lastRaw = raw
+        logEvent("transcribed ${sess.audioSeconds(SAMPLE_RATE)}s in ${sess.partCount()} part(s), ${raw.length} chars")
+        handleTranscriptionResult(raw, inject) { finalText ->
+            try { sess.finalTxt.writeText(finalText) } catch (_: Exception) {}
+            prefs().edit().putString(KEY_LAST_DICTATION, finalText).apply()
+            // Verified complete and delivered: now the audio can go.
+            worker.execute { sess.delete() }
+        }
+    }
+
+    // --- Recovery API for the settings screen ---
+
+    /** Saved dictations that weren't delivered (not the one being recorded right now). */
+    fun unfinishedSessions(): List<DictationStore.Session> =
+        store.sessions().filter { it.id != session?.id }
+
+    /** Retry a saved dictation; the result goes to the clipboard (no text field to type into). */
+    fun retrySession(id: String) {
+        val s = unfinishedSessions().firstOrNull { it.id == id } ?: return
+        worker.execute { finalizeSession(s, inject = false) }
+    }
+
+    fun deleteSession(id: String) {
+        val s = unfinishedSessions().firstOrNull { it.id == id } ?: return
+        worker.execute { s.delete() }
+    }
+
+    private fun deliver(text: String, inject: Boolean, feedback: String? = null) {
+        if (inject) {
+            if (feedback != null) injectText(text, feedback = feedback, feedbackDurationMs = 4000) else injectText(text)
+        } else {
+            val clip = ClipData.newPlainText("VitalySpeak", text)
+            (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(clip)
+            toast("Recovered dictation copied to clipboard (${text.length} chars)")
+        }
+    }
+
+    private fun handleTranscriptionResult(text: String?, inject: Boolean = true, onDelivered: (String) -> Unit = {}) {
         if (text.isNullOrBlank()) {
-            handler.post { toast("No speech detected"); finishIdle() }
+            handler.post { toast("No speech detected"); onDelivered(""); if (inject) finishIdle() }
             return
         }
 
@@ -883,7 +962,7 @@ class WhisperAccessibilityService : AccessibilityService() {
         val apiKey = p.getString(Groq.KEY_API, "") ?: ""
         if (!usePostProcessing || apiKey.isBlank()) {
             lastClean = ""
-            handler.post { injectText(text); finishIdle() }
+            handler.post { deliver(text, inject); onDelivered(text); if (inject) finishIdle() }
             return
         }
 
@@ -900,9 +979,9 @@ class WhisperAccessibilityService : AccessibilityService() {
             val cleaned = out.joinToString(" ").trim()
             lastClean = cleaned
             handler.post {
-                if (fellBack == 0) injectText(cleaned)
-                else injectText(cleaned, feedback = "Cleanup skipped for $fellBack part(s) — raw text kept there", feedbackDurationMs = 4000)
-                finishIdle()
+                deliver(cleaned, inject, if (fellBack == 0) null else "Cleanup skipped for $fellBack part(s) — raw text kept there")
+                onDelivered(cleaned)
+                if (inject) finishIdle()
             }
         }
 

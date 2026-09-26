@@ -41,6 +41,15 @@ object Dictation {
         return pcm.copyOfRange(start * 2, end * 2)
     }
 
+    /** True if no 20 ms window rises above [threshold] — nothing worth sending to Whisper. */
+    fun isSilent(pcm: ByteArray, sampleRate: Int = 16000, threshold: Double = 350.0): Boolean {
+        val n = pcm.size / 2
+        val win = sampleRate / 50
+        var w = 0
+        while (w + win <= n) { if (meanAbs(pcm, w, w + win) > threshold) return false; w += win }
+        return true
+    }
+
     /**
      * Splits long audio into chunks of at most [maxChunkSec], cutting at the quietest 100 ms
      * within the last [searchSec] before each boundary so words aren't cut in half.

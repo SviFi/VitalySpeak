@@ -43,6 +43,8 @@ class MainActivity : AppCompatActivity() {
     private var report: ModelChecker.Report? = null
     private var update: UpdateChecker.Release? = null
     private var checking = false
+    private lateinit var recoveryRow: LinearLayout
+    private lateinit var recoverySub: TextView
     /** Last model switch made in this session, for the one-tap undo row. */
     private data class ModelSwitch(val stt: Boolean, val from: String, val to: String)
     private var lastSwitch: ModelSwitch? = null
@@ -120,6 +122,20 @@ class MainActivity : AppCompatActivity() {
             WhisperAccessibilityService.KEY_REACTION, 70, 0, 100) { v -> if (v < 34) "Calm" else if (v < 67) "Lively" else "Wild" })
         root.addView(sliderRow("Dot size", "Size of the floating mic dot",
             WhisperAccessibilityService.KEY_DOT_SIZE, 100, 60, 160) { v -> "$v%" })
+
+        // Saved dictations that weren't delivered (network failure, app killed…).
+        recoveryRow = settingsRow("Unfinished dictations", "") { showRecovery() }
+        recoverySub = recoveryRow.findViewWithTag("subtitle")
+        root.addView(recoveryRow)
+
+        root.addView(settingsRow("Last dictation", "Tap to copy the last text again") {
+            val t = prefs().getString(WhisperAccessibilityService.KEY_LAST_DICTATION, "") ?: ""
+            if (t.isBlank()) toast("Nothing yet") else {
+                (getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager)
+                    .setPrimaryClip(android.content.ClipData.newPlainText("VitalySpeak", t))
+                toast("Copied (${t.length} chars)")
+            }
+        })
 
         root.addView(settingsRow("Diagnostics", "Last dictation (raw vs cleaned), errors, mic dot decisions") {
             val svc = WhisperAccessibilityService.instance
@@ -475,6 +491,45 @@ class MainActivity : AppCompatActivity() {
         )
 
         renderAlerts()
+        refreshRecovery()
+    }
+
+    private fun refreshRecovery() {
+        val list = WhisperAccessibilityService.instance?.unfinishedSessions().orEmpty()
+        recoveryRow.visibility = if (list.isEmpty()) View.GONE else View.VISIBLE
+        recoverySub.text = "${list.size} saved recording(s) not delivered yet — tap to retry"
+    }
+
+    private fun showRecovery() {
+        val svc = WhisperAccessibilityService.instance ?: return toast("Enable the accessibility service first")
+        val list = svc.unfinishedSessions()
+        if (list.isEmpty()) { refreshRecovery(); return }
+        val labels = list.map { s ->
+            val date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+                .format(Date(s.id.substringBefore('_').toLongOrNull() ?: 0))
+            val sec = s.audioSeconds()
+            val done = s.partCount() - s.missingParts().size
+            "$date · ${sec / 60}:${"%02d".format(sec % 60)} · $done/${s.partCount()} parts transcribed"
+        }.toTypedArray()
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Unfinished dictations")
+            .setItems(labels) { _, which ->
+                val s = list[which]
+                android.app.AlertDialog.Builder(this)
+                    .setTitle(labels[which])
+                    .setMessage("Retry transcribes what's missing, then copies the full text to the clipboard. The audio is deleted only after that succeeds.")
+                    .setPositiveButton("Retry") { _, _ -> svc.retrySession(s.id); toast("Retrying in background…") }
+                    .setNegativeButton("Delete") { _, _ ->
+                        android.app.AlertDialog.Builder(this)
+                            .setMessage("Delete this recording permanently?")
+                            .setPositiveButton("Delete") { _, _ -> svc.deleteSession(s.id); recoveryRow.postDelayed({ refreshRecovery() }, 300) }
+                            .setNegativeButton("Keep", null).show()
+                    }
+                    .setNeutralButton("Close", null)
+                    .show()
+            }
+            .setNegativeButton("Close", null)
+            .show()
     }
 
     // --- Dialogs ---

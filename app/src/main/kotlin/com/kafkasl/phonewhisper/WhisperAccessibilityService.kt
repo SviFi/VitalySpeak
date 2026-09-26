@@ -198,7 +198,9 @@ class WhisperAccessibilityService : AccessibilityService() {
         val size = params.height
         if (params.y + size > kb.top - margin) {
             params.y = maxOf(margin, kb.top - size - margin)
-            try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(view, params) } catch (_: Exception) {}
+            if (view.isAttachedToWindow) {
+                try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(view, params) } catch (_: Exception) {}
+            }
             feedbackLayoutParams?.let { fp ->
                 positionFeedback(fp, params)
                 feedbackView?.let { fv -> try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(fv, fp) } catch (_: Exception) {} }
@@ -206,24 +208,29 @@ class WhisperAccessibilityService : AccessibilityService() {
         }
     }
 
+    /**
+     * Shows/hides the dot by attaching/detaching its window. No fade: on some phones
+     * (seen on Samsung) a fade-in on a previously hidden overlay window never runs, leaving
+     * the dot "shown" but fully transparent. Detached = can't be seen or tapped, guaranteed.
+     */
     private fun setOverlayShown(show: Boolean) {
-        if (show == overlayShown) return
         val view = overlayView ?: return
         val params = layoutParams ?: return
+        val wm = getSystemService(WINDOW_SERVICE) as WindowManager
+        val attached = view.isAttachedToWindow
         overlayShown = show
-        // Hidden = invisible AND not touchable, so it never blocks taps underneath.
-        params.flags = if (show) params.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()
-                       else params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-        try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(view, params) } catch (_: Exception) {}
         view.animate().cancel()
-        if (show) {
-            view.visibility = View.VISIBLE
-            view.alpha = 0f
-            view.animate().alpha(1f).setDuration(120).start()
-        } else {
-            view.animate().alpha(0f).setDuration(120).withEndAction {
-                if (!overlayShown) view.visibility = View.INVISIBLE
-            }.start()
+        view.alpha = 1f
+        view.visibility = View.VISIBLE
+        try {
+            if (show && !attached) {
+                params.flags = params.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()
+                wm.addView(view, params)
+            } else if (!show && attached) {
+                wm.removeViewImmediate(view)
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Overlay ${if (show) "attach" else "detach"} failed", e)
         }
     }
     override fun onInterrupt() {}
@@ -344,7 +351,7 @@ class WhisperAccessibilityService : AccessibilityService() {
     private fun removeOverlay() {
         val wm = getSystemService(WINDOW_SERVICE) as WindowManager
         overlayView?.let {
-            wm.removeView(it)
+            if (it.isAttachedToWindow) try { wm.removeView(it) } catch (_: Exception) {}
             overlayView = null
         }
         feedbackView?.let {

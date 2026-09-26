@@ -14,7 +14,8 @@ object Groq {
     const val BASE_URL = "https://api.groq.com/openai/v1"
 
     const val DEFAULT_STT_MODEL = "whisper-large-v3"
-    const val DEFAULT_LLM_MODEL = "llama-3.3-70b-versatile"
+    // llama-3.3-70b-versatile became Enterprise-only on Groq (Sep 2026), so it is not the default.
+    const val DEFAULT_LLM_MODEL = "openai/gpt-oss-120b"
 
     /**
      * Whisper "prompt": biases spelling and tells the model that mixed Russian/English

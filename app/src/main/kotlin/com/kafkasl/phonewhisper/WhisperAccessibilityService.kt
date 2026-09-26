@@ -394,7 +394,7 @@ class WhisperAccessibilityService : AccessibilityService() {
                     if (result.text != null && result.text.isNotBlank()) {
                         injectText(result.text)
                     } else {
-                        injectText(text, feedback = "Cleanup failed — raw copied to clipboard", feedbackDurationMs = 3000)
+                        injectText(text, feedback = "Cleanup failed (${result.error ?: "empty reply"}) — raw text used", feedbackDurationMs = 4000)
                     }
                     state = State.IDLE
                     setBusy(false)

@@ -75,6 +75,19 @@ class CheckersTest {
         assertEquals(setOf("llama-3.1-8b-instant", "llama-3.3-70b-versatile", "whisper-large-v3", "whisper-large-v3-turbo"), ids)
     }
 
+    @Test fun `parses real groq docs rows with links and skips enterprise`() {
+        val md = """
+## [Production Models](#production-models)
+| MODEL ID | SPEED (T/SEC) | PRICE |
+| [![Meta](https://console.groq.com/_next/image?url=%2FMeta_logo.png&w=48&q=75)Llama 3.3 70B](/docs/model/llama-3.3-70b-versatile)Enterprisellama-3.3-70b-versatile | 280 | ContactSales |
+| [![OpenAI](https://console.groq.com/_next/static/media/openailogo.523c87a0.svg)GPT OSS 120B](/docs/model/openai/gpt-oss-120b)openai/gpt-oss-120b | 500 | x |
+| [![OpenAI](https://console.groq.com/_next/static/media/openailogo.523c87a0.svg)Whisper](/docs/model/whisper-large-v3)whisper-large-v3 | \\- | x |
+## [Preview Models](#preview-models)
+| [![Alibaba Cloud](https://console.groq.com/_next/image?url=%2Fqwen_logo.png&w=48&q=75)Qwen/Qwen3.8-27B](/docs/model/qwen/qwen3.8-27b)qwen/qwen3.8-27b | 450 | x |
+""".trimIndent()
+        assertEquals(setOf("openai/gpt-oss-120b", "whisper-large-v3"), ModelChecker.parseProductionIds(md))
+    }
+
     @Test fun `stability falls back to name heuristic`() {
         assertTrue(ModelChecker.isStable("whisper-large-v4", emptySet()))
         assertFalse(ModelChecker.isStable("llama-5-preview", emptySet()))

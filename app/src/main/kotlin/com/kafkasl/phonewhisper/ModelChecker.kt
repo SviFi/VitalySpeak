@@ -37,9 +37,9 @@ object ModelChecker {
      * just because they were released after the default. They stay selectable in the picker.
      *  - whisper-large-v3-turbo: faster but less accurate, notably for Russian
      *  - gpt-oss-20b: smaller than the default cleanup model
-     *  - gpt-oss-120b: reasoning model, adds latency to every cleanup
+     *  - allam-2-7b, llama-3.1-8b-instant: small models
      */
-    val ALREADY_EVALUATED = setOf("whisper-large-v3-turbo", "openai/gpt-oss-20b", "openai/gpt-oss-120b")
+    val ALREADY_EVALUATED = setOf("whisper-large-v3-turbo", "openai/gpt-oss-20b", "allam-2-7b", "llama-3.1-8b-instant")
 
     data class ModelInfo(val id: String, val created: Long, val ownedBy: String)
 
@@ -79,17 +79,26 @@ object ModelChecker {
     private val NON_CHAT = listOf("whisper", "tts", "orpheus", "guard", "playai", "distil", "embed")
     fun isChat(id: String) = NON_CHAT.none { id.contains(it, ignoreCase = true) }
 
-    /** Model ids listed under "## … Production Models" in Groq's models.md. */
+    /**
+     * Model ids listed under "## … Production Models" in Groq's models.md.
+     * Rows look like: | [![logo](…)Name](/docs/model/openai/gpt-oss-120b)openai/gpt-oss-120b | …
+     * so the id is taken from the /docs/model/ link, with `backticked` ids as a fallback.
+     */
     fun parseProductionIds(markdown: String): Set<String> {
         val ids = mutableSetOf<String>()
         var inProduction = false
-        val idCell = Regex("^\\|\\s*`([^`]+)`")
+        val link = Regex("\\(/docs/model/([^)\\s]+)\\)")
+        val tick = Regex("^\\|\\s*`([^`]+)`")
         for (line in markdown.lineSequence()) {
             if (line.startsWith("## ")) {
                 inProduction = line.contains("Production Models", ignoreCase = true)
                 continue
             }
-            if (inProduction) idCell.find(line.trim())?.let { ids += it.groupValues[1].trim() }
+            if (!inProduction || !line.trim().startsWith("|")) continue
+            val firstCell = line.trim().removePrefix("|").substringBefore(" |")
+            // Enterprise-only models aren't usable with a normal key; don't call them stable picks.
+            if (firstCell.contains("Enterprise")) continue
+            (link.find(firstCell) ?: tick.find(line.trim()))?.let { ids += it.groupValues[1].trim() }
         }
         return ids
     }

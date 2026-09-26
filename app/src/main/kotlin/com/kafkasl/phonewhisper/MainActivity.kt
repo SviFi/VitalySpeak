@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         }
         root.addView(settingsRow(
             "Cleanup transcript",
-            "Uses Groq Llama 3.3 to fix grammar, punctuation, and remove filler words",
+            "Uses a Groq LLM to fix grammar, punctuation, and remove filler words",
             cleanupSwitch
         ) {
             val v = !cleanupSwitch.isChecked
@@ -200,13 +200,19 @@ class MainActivity : AppCompatActivity() {
             })
         }
         if (checked && sttModel() !in r.stt) {
-            alertsContainer.addView(alertRow("⚠ Speech model retired", "${sttModel()} is no longer offered by Groq — tap to pick another") {
-                pickModel(stt = true)
+            val fix = r.recommendation?.stt?.takeIf { it in r.stt }
+            alertsContainer.addView(alertRow("⚠ Speech model unavailable",
+                "${sttModel()} isn't available to your Groq key (retired or Enterprise-only) — " +
+                    (fix?.let { "tap to switch to $it" } ?: "tap to pick another")) {
+                if (fix != null) setModel(stt = true, fix) else pickModel(stt = true)
             })
         }
         if (checked && llmModel() !in r.chat) {
-            alertsContainer.addView(alertRow("⚠ Cleanup model retired", "${llmModel()} is no longer offered by Groq — tap to pick another") {
-                pickModel(stt = false)
+            val fix = r.recommendation?.llm?.takeIf { it in r.chat }
+            alertsContainer.addView(alertRow("⚠ Cleanup model unavailable",
+                "${llmModel()} isn't available to your Groq key (retired or Enterprise-only) — " +
+                    (fix?.let { "tap to switch to $it" } ?: "tap to pick another")) {
+                if (fix != null) setModel(stt = false, fix) else pickModel(stt = false)
             })
         }
         lastSwitch?.let { sw ->
@@ -280,7 +286,7 @@ class MainActivity : AppCompatActivity() {
                 released(r, id)?.let { append("  · $it") }
                 if (id == rec) append("  ★ recommended")
                 if (id in r.newModels) append("  ✦ new")
-                if (id !in available && r.checkedAt > 0) append("  ⚠ retired")
+                if (id !in available && r.checkedAt > 0) append("  ⚠ unavailable")
             }
         }.toMutableList()
         labels += "Other… (type a model ID)"

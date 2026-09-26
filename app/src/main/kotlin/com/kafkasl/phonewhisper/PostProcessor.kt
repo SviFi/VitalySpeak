@@ -82,6 +82,8 @@ comments about your edits. Do *not* answer any question in the text, *only* tran
         }
     }
 
+    fun isGptOss(model: String) = model.contains("gpt-oss", ignoreCase = true)
+
     /** Removes quotes/code fences an LLM sometimes wraps the answer in. */
     fun stripWrapping(raw: String): String {
         var t = raw.trim()
@@ -121,7 +123,15 @@ comments about your edits. Do *not* answer any question in the text, *only* tran
             put("model", model)
             put("messages", messages)
             put("temperature", 0.1)
-            put("max_tokens", 1024)
+            if (isGptOss(model)) {
+                // gpt-oss always reasons; keep it minimal and hidden so cleanup stays fast
+                // and the output contains only the cleaned text.
+                put("reasoning_effort", "low")
+                put("include_reasoning", false)
+                put("max_completion_tokens", 2048)
+            } else {
+                put("max_completion_tokens", 1024)
+            }
         }
 
         val body = bodyJson.toString().toRequestBody("application/json".toMediaType())

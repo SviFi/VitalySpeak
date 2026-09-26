@@ -29,6 +29,13 @@ Nothing below runs while you dictate. It all happens when you open the app.
 - **New models:** at most once a day (or via *Check for new models & updates*), the app
   reads Groq's `/models` list. It flags new models, warns you if your current model was
   retired, and lets you switch with one tap. You can also type any model ID.
+- **Newer stable models:** stability comes from Groq's own docs (Production vs Preview).
+  A newer version of the model you use (e.g. `whisper-large-v3` → `v4`) shows
+  "⬆ Newer version… tap to switch". A newer stable model from a different line is shown
+  too, flagged as "different model line". Tapping opens *Switch / Don't suggest / Compare
+  all*, and after a switch a "↩ tap to undo" row appears. Preview and beta models are never
+  pushed. `ALREADY_EVALUATED` in `ModelChecker.kt` lists existing models that were judged
+  not better (e.g. `whisper-large-v3-turbo` for Russian).
 - **Recommended models:** edit [`recommended.json`](recommended.json) in this repo. Every
   installed copy shows "★ Recommended… tap to switch" within a day, with no rebuild.
 - **App updates:** every push to `main` is built by GitHub Actions and published as release

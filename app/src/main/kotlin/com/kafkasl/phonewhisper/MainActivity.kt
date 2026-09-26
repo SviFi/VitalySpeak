@@ -116,6 +116,11 @@ class MainActivity : AppCompatActivity() {
             previewSwitch.isChecked = v
         })
 
+        root.addView(sliderRow("Voice reaction", "How wildly the dot reacts to your voice",
+            WhisperAccessibilityService.KEY_REACTION, 70, 0, 100) { v -> if (v < 34) "Calm" else if (v < 67) "Lively" else "Wild" })
+        root.addView(sliderRow("Dot size", "Size of the floating mic dot",
+            WhisperAccessibilityService.KEY_DOT_SIZE, 100, 60, 160) { v -> "$v%" })
+
         root.addView(settingsRow("Diagnostics", "Mic dot decisions and any transcription/cleanup errors — tap to view") {
             val log = WhisperAccessibilityService.instance?.visibilityLog?.joinToString("\n")
                 ?.ifBlank { null } ?: "No events yet. Open another app, tap a text field, then come back."
@@ -535,6 +540,47 @@ class MainActivity : AppCompatActivity() {
     }
 
     // --- UI helpers ---
+
+    /** Title + value label + slider; saves on release and tells the service to apply it. */
+    private fun sliderRow(title: String, subtitle: String, key: String, def: Int, min: Int, max: Int,
+                          label: (Int) -> String): LinearLayout {
+        val row = vertical(0).apply { setPadding(dp(24), dp(16), dp(24), dp(8)) }
+        val head = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        val titleView = TextView(this).apply {
+            text = title
+            textSize = 18f
+            setTextColor(attrColor(android.R.attr.textColorPrimary))
+            layoutParams = LinearLayout.LayoutParams(0, LP_WRAP, 1f)
+        }
+        val current = prefs().getInt(key, def).coerceIn(min, max)
+        val valueView = TextView(this).apply {
+            text = label(current)
+            textSize = 14f
+            setTextColor(attrColor(com.google.android.material.R.attr.colorPrimary))
+        }
+        head.addView(titleView); head.addView(valueView)
+        row.addView(head)
+        row.addView(TextView(this).apply {
+            text = subtitle
+            textSize = 14f
+            setTextColor(attrColor(android.R.attr.textColorSecondary))
+            setPadding(0, dp(2), 0, 0)
+        })
+        row.addView(SeekBar(this).apply {
+            this.max = max - min
+            progress = current - min
+            setPadding(dp(4), dp(12), dp(4), dp(4))
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(sb: SeekBar, p: Int, fromUser: Boolean) { valueView.text = label(p + min) }
+                override fun onStartTrackingTouch(sb: SeekBar) {}
+                override fun onStopTrackingTouch(sb: SeekBar) {
+                    prefs().edit().putInt(key, sb.progress + min).apply()
+                    WhisperAccessibilityService.instance?.applyAppearanceSettings()
+                }
+            })
+        })
+        return row
+    }
 
     private fun alertRow(title: String, subtitle: String, onClick: () -> Unit): LinearLayout =
         settingsRow(title, subtitle, null, onClick).apply {

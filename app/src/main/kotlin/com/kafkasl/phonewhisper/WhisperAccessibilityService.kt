@@ -57,6 +57,8 @@ class WhisperAccessibilityService : AccessibilityService() {
         private const val PREVIEW_INTERVAL_MS = 2000L
         private const val PREVIEW_WINDOW_SEC = 12
         const val KEY_LIVE_PREVIEW = "live_preview"
+        const val KEY_REACTION = "voice_reaction"   // 0..100, default 70
+        const val KEY_DOT_SIZE = "dot_size"         // percent 60..160, default 100
     }
 
     private enum class State { IDLE, RECORDING, TRANSCRIBING }
@@ -80,6 +82,32 @@ class WhisperAccessibilityService : AccessibilityService() {
     private var feedbackLayoutParams: WindowManager.LayoutParams? = null
     private var previewView: TextView? = null
     private var waveView: WaveRingView? = null
+    /** Dot position kept across overlay rebuilds (size change). Center-based. */
+    private var savedPos: Pair<Int, Int>? = null
+
+    private fun reaction() = prefs().getInt(KEY_REACTION, 70).coerceIn(0, 100) / 100f
+
+    /** Settings changed: reaction applies live; size needs the overlay rebuilt. */
+    fun applyAppearanceSettings() {
+        handler.post {
+            waveView?.reaction = reaction()
+            if (state != State.IDLE) return@post
+            layoutParams?.let { lp -> savedPos = lp.x + lp.width / 2 to lp.y + lp.height / 2 }
+            removeOverlay()
+            showOverlay()
+            // showOverlay placed it by top-left; recentre on the old centre.
+            layoutParams?.let { lp ->
+                savedPos?.let { (cx, cy) ->
+                    lp.x = (cx - lp.width / 2).coerceIn(0, maxOf(0, screenW - lp.width))
+                    lp.y = (cy - lp.height / 2).coerceIn(0, maxOf(0, screenH - lp.height))
+                    overlayView?.let { v -> try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(v, lp) } catch (_: Exception) {} }
+                }
+            }
+            savedPos = null
+            overlayShown = true
+            scheduleVisibilityCheck(0)
+        }
+    }
     private var previewLayoutParams: WindowManager.LayoutParams? = null
     @Volatile private var recordingSession = 0
     @Volatile private var previewInFlight = false
@@ -263,10 +291,12 @@ class WhisperAccessibilityService : AccessibilityService() {
 
     private fun showOverlay() {
         val wm = getSystemService(WINDOW_SERVICE) as WindowManager
-        val buttonSize = (BTN_DP * dp).toInt()
-        val spinnerSize = (RING_DP * dp).toInt()
-        val ringSize = (WINDOW_DP * dp).toInt()
-        val pad = (PAD_DP * dp).toInt()
+        val sizeScale = prefs().getInt(KEY_DOT_SIZE, 100).coerceIn(60, 160) / 100f
+        val buttonSize = (BTN_DP * sizeScale * dp).toInt()
+        val spinnerSize = (RING_DP * sizeScale * dp).toInt()
+        // Window leaves room around the dot for the shape-shifting blob.
+        val ringSize = (buttonSize * 2.0f).toInt()
+        val pad = (PAD_DP * sizeScale * dp).toInt()
         val margin = (MARGIN_DP * dp).toInt()
 
         val ring = ProgressBar(this).apply {
@@ -275,7 +305,7 @@ class WhisperAccessibilityService : AccessibilityService() {
             visibility = View.GONE
         }
 
-        val wave = WaveRingView(this, buttonSize / 2f).apply { visibility = View.INVISIBLE }
+        val wave = WaveRingView(this, buttonSize / 2f, reaction()).apply { visibility = View.INVISIBLE }
         waveView = wave
 
         val img = ImageView(this).apply {
@@ -298,8 +328,8 @@ class WhisperAccessibilityService : AccessibilityService() {
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
-            x = screenW - ringSize - margin
-            y = screenH / 2 - ringSize / 2
+            x = savedPos?.first?.coerceIn(0, maxOf(0, screenW - ringSize)) ?: (screenW - ringSize - margin)
+            y = savedPos?.second?.coerceIn(0, maxOf(0, screenH - ringSize)) ?: (screenH / 2 - ringSize / 2)
         }
 
         var startX = 0; var startY = 0
@@ -429,7 +459,10 @@ class WhisperAccessibilityService : AccessibilityService() {
     }
 
     private fun setAppearance(color: Int) {
-        handler.post { button?.background = circle(color) }
+        handler.post {
+            // While recording the WaveRingView blob *is* the dot (red fill + orange border).
+            button?.background = if (color == COLOR_RECORDING) null else circle(color)
+        }
     }
 
     private fun setBusy(visible: Boolean) {
@@ -579,16 +612,13 @@ class WhisperAccessibilityService : AccessibilityService() {
             i += 2
         }
         val rms = kotlin.math.sqrt(sum / samples)
-        // Loudness 0..1 (speech is roughly 500–4000 RMS on phone mics).
-        val loud = minOf(1.0, maxOf(0.0, (rms - 250.0) / 2200.0)).toFloat()
+        // Higher "Voice reaction" = quieter speech already drives the blob to full size.
+        val k = reaction()
+        val loud = minOf(1.0, maxOf(0.0, (rms - 150.0) / (3200.0 - 2400.0 * k))).toFloat()
         // Zero-crossing rate as a cheap "pitch/brightness" estimate, 0..1 over ~300–3000 Hz.
         val zcrHz = crossings * SAMPLE_RATE / (2.0 * samples)
         val pitch = minOf(1.0, maxOf(0.0, (zcrHz - 300.0) / 2700.0)).toFloat()
         waveView?.update(loud, pitch)
-        val scale = 1f + loud * 0.28f
-        handler.post {
-            if (state == State.RECORDING) button?.animate()?.scaleX(scale)?.scaleY(scale)?.setDuration(70)?.start()
-        }
     }
 
     private fun stopPulse() {

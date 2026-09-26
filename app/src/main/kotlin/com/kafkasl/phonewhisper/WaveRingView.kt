@@ -11,31 +11,40 @@ import kotlin.math.min
 import kotlin.math.sin
 
 /**
- * Animated "snake" ring drawn around the mic dot while recording.
- * The ring is a circle whose radius ripples as a travelling sine wave:
- *  - loudness sets how strongly it ripples,
- *  - pitch (brightness of the voice) sets the ripple height on top of that,
- * so higher-pitched speech gives taller waves. Two layered waves rotate in opposite
- * directions for a fluid look. Idle = nothing drawn.
+ * Shape-shifting "blob" that replaces the round dot while recording.
+ *
+ *  - Front blob: red fill + orange border. Its outline is a travelling wave, so the whole
+ *    shape (not just a ring) morphs with your voice.
+ *  - Back blob: filled yellow, different wave count, counter-rotating — peeks out around
+ *    the red one as a second shape.
+ *
+ * Loudness makes the shape grow and ripple; pitch (voice brightness) makes ripples taller.
+ * [reaction] 0..1 comes from the "Voice reaction" slider: 0 = calm, 1 = wild.
  */
-class WaveRingView(context: Context, private val baseRadiusPx: Float) : View(context) {
+class WaveRingView(
+    context: Context,
+    private val baseRadiusPx: Float,
+    var reaction: Float = 0.6f
+) : View(context) {
 
     private val density = context.resources.displayMetrics.density
-    private val maxAmpPx = 11f * density
 
-    private val front = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val frontFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = 0xF2EF4444.toInt()          // recording red
+    }
+    private val frontStroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeWidth = 3f * density
-        color = 0xFFFF7A1A.toInt()          // orange
+        color = 0xFFFF7A1A.toInt()          // orange border
         strokeJoin = Paint.Join.ROUND
     }
-    private val back = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        strokeWidth = 2f * density
-        color = 0x99FFB36B.toInt()          // softer orange behind
-        strokeJoin = Paint.Join.ROUND
+    private val backFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = 0xC8FFC928.toInt()          // warm yellow, slightly translucent
     }
-    private val path = Path()
+    private val frontPath = Path()
+    private val backPath = Path()
 
     private var active = false
     private var targetLevel = 0f
@@ -60,36 +69,44 @@ class WaveRingView(context: Context, private val baseRadiusPx: Float) : View(con
 
     override fun onDraw(canvas: Canvas) {
         if (!active) return
-        // Smooth towards the latest audio values so the ring breathes instead of jittering.
-        level += (targetLevel - level) * 0.25f
+        val r = reaction.coerceIn(0f, 1f)
+        // Faster attack at high reaction so it feels snappier/wilder.
+        level += (targetLevel - level) * (0.22f + 0.2f * r)
         pitch += (targetPitch - pitch) * 0.15f
-        phase += 0.10f + level * 0.25f
+        phase += 0.08f + level * (0.2f + 0.35f * r)
 
         val cx = width / 2f
         val cy = height / 2f
-        val room = min(cx, cy) - front.strokeWidth
-        // The dot itself grows up to 28% with loudness; keep the ring just outside it.
-        val base = baseRadiusPx * (1f + 0.28f * level) + 3f * density
-        val amp = maxOf(0f, min(maxAmpPx, room - base)) * level * (0.35f + 0.65f * pitch)
+        val room = min(cx, cy) - frontStroke.strokeWidth
 
-        drawWave(canvas, cx, cy, base, amp * 0.7f, waves = 5, phase = -phase * 0.8f, paint = back)
-        drawWave(canvas, cx, cy, base, amp, waves = 7, phase = phase, paint = front)
+        val growth = 0.08f + 0.32f * r              // how much the blob swells with loudness
+        val maxAmp = baseRadiusPx * (0.12f + 0.48f * r)
+        val base = baseRadiusPx * (1f + growth * level)
+        val amp = level * (0.3f + 0.7f * pitch) * maxAmp
+        // Never draw outside the overlay window.
+        val scale = if (base + amp * 1.15f > room) room / (base + amp * 1.15f) else 1f
+
+        buildBlob(backPath, cx, cy, (base + amp * 0.35f) * scale, amp * 1.15f * scale, waves = 5, phase = -phase * 0.9f)
+        buildBlob(frontPath, cx, cy, base * scale, amp * scale, waves = 7, phase = phase)
+
+        canvas.drawPath(backPath, backFill)
+        canvas.drawPath(frontPath, frontFill)
+        canvas.drawPath(frontPath, frontStroke)
 
         if (active) postInvalidateOnAnimation()
     }
 
-    private fun drawWave(c: Canvas, cx: Float, cy: Float, r: Float, amp: Float, waves: Int, phase: Float, paint: Paint) {
+    private fun buildBlob(path: Path, cx: Float, cy: Float, r: Float, amp: Float, waves: Int, phase: Float) {
         path.reset()
-        val steps = 120
+        val steps = 144
         for (i in 0..steps) {
             val t = (i.toFloat() / steps) * 2f * PI.toFloat()
-            // Two harmonics make it look organic rather than like a gear.
-            val rr = r + amp * (0.75f * sin(waves * t + phase) + 0.25f * sin((waves + 3) * t - phase * 1.7f))
+            // Two harmonics make it organic rather than gear-like.
+            val rr = r + amp * (0.72f * sin(waves * t + phase) + 0.28f * sin((waves + 3) * t - phase * 1.7f))
             val x = cx + rr * cos(t)
             val y = cy + rr * sin(t)
             if (i == 0) path.moveTo(x, y) else path.lineTo(x, y)
         }
         path.close()
-        c.drawPath(path, paint)
     }
 }

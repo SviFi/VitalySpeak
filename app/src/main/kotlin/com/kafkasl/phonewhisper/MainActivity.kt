@@ -87,6 +87,21 @@ class MainActivity : AppCompatActivity() {
         keyRowSub = keyRow.findViewWithTag("subtitle")
         root.addView(keyRow)
 
+        val typingSwitch = MaterialSwitch(this).apply {
+            isChecked = prefs().getBoolean(WhisperAccessibilityService.KEY_ONLY_WHILE_TYPING, true)
+            isClickable = false
+        }
+        root.addView(settingsRow(
+            "Show mic only while typing",
+            "The dot appears when the keyboard is open, like Wispr Flow",
+            typingSwitch
+        ) {
+            val v = !typingSwitch.isChecked
+            prefs().edit().putBoolean(WhisperAccessibilityService.KEY_ONLY_WHILE_TYPING, v).apply()
+            typingSwitch.isChecked = v
+            WhisperAccessibilityService.instance?.refreshOverlayVisibility()
+        })
+
         // --- Models ---
         root.addView(sectionHeader("Models"))
 
@@ -417,7 +432,7 @@ class MainActivity : AppCompatActivity() {
         promptPresets().forEach { refreshPromptRow(it) }
 
         val ready = audio && acc && key.isNotBlank()
-        statusSubtitle.text = if (ready) "Ready — tap the floating dot to dictate" else "Setup required"
+        statusSubtitle.text = if (ready) "Ready — open the keyboard in any app, then tap the mic dot" else "Setup required"
         statusSubtitle.setTextColor(
             if (ready) attrColor(com.google.android.material.R.attr.colorPrimary)
             else attrColor(android.R.attr.textColorSecondary)

@@ -20,6 +20,8 @@ import android.view.View
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
+import android.graphics.Rect
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -34,6 +36,7 @@ class WhisperAccessibilityService : AccessibilityService() {
     companion object {
         var instance: WhisperAccessibilityService? = null
         private const val TAG = "VitalySpeak"
+        const val KEY_ONLY_WHILE_TYPING = "overlay_only_while_typing"
         private const val SAMPLE_RATE = 16000
         private const val BTN_DP = 44
         private const val PAD_DP = 10
@@ -52,6 +55,11 @@ class WhisperAccessibilityService : AccessibilityService() {
     private enum class State { IDLE, RECORDING, TRANSCRIBING }
 
     private var state = State.IDLE
+        set(value) {
+            field = value
+            // After dictation ends, hide the dot again if the keyboard went away meanwhile.
+            if (value == State.IDLE) scheduleVisibilityCheck(400)
+        }
     private var overlayView: FrameLayout? = null
     private var button: ImageView? = null
     private var spinner: ProgressBar? = null
@@ -74,9 +82,93 @@ class WhisperAccessibilityService : AccessibilityService() {
     override fun onServiceConnected() {
         instance = this
         showOverlay()
+        scheduleVisibilityCheck(0)
     }
 
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {}
+    // --- Show the dot only while typing (keyboard up / text field focused) ---
+
+    private var overlayShown = true
+    private val visibilityCheck = Runnable { updateOverlayVisibility() }
+
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        when (event?.eventType) {
+            AccessibilityEvent.TYPE_WINDOWS_CHANGED,
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
+            AccessibilityEvent.TYPE_VIEW_FOCUSED -> scheduleVisibilityCheck(150)
+        }
+    }
+
+    /** Debounced so switching between fields doesn't make the dot flicker. */
+    private fun scheduleVisibilityCheck(delayMs: Long) {
+        handler.removeCallbacks(visibilityCheck)
+        handler.postDelayed(visibilityCheck, delayMs)
+    }
+
+    /** Called from settings when "Only while typing" is toggled. */
+    fun refreshOverlayVisibility() = scheduleVisibilityCheck(0)
+
+    private fun onlyWhileTyping() = prefs().getBoolean(KEY_ONLY_WHILE_TYPING, true)
+
+    /** Screen bounds of the on-screen keyboard, or null if no keyboard is showing. */
+    private fun keyboardBounds(): Rect? = try {
+        windows.firstOrNull { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }
+            ?.let { w -> Rect().also { w.getBoundsInScreen(it) } }
+    } catch (_: Exception) { null }
+
+    private fun editableFocused(): Boolean = try {
+        rootInActiveWindow?.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)?.isEditable == true
+    } catch (_: Exception) { false }
+
+    private fun updateOverlayVisibility() {
+        if (overlayView == null) return
+        // Never hide mid-dictation; re-evaluated when the state returns to IDLE.
+        if (state != State.IDLE) { setOverlayShown(true); return }
+        if (!onlyWhileTyping()) { setOverlayShown(true); return }
+
+        val kb = keyboardBounds()
+        // Keyboard visible is the main signal (works in browsers and custom editors too);
+        // a focused editable field is the fallback for devices that don't report IME windows.
+        val typing = kb != null || (windows.isNullOrEmpty() && editableFocused())
+        if (typing && kb != null) keepAboveKeyboard(kb)
+        setOverlayShown(typing)
+    }
+
+    /** If the keyboard covers the dot, lift it to just above the keyboard. */
+    private fun keepAboveKeyboard(kb: Rect) {
+        val params = layoutParams ?: return
+        val view = overlayView ?: return
+        val margin = (MARGIN_DP * dp).toInt()
+        val size = params.height
+        if (params.y + size > kb.top - margin) {
+            params.y = maxOf(margin, kb.top - size - margin)
+            try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(view, params) } catch (_: Exception) {}
+            feedbackLayoutParams?.let { fp ->
+                positionFeedback(fp, params)
+                feedbackView?.let { fv -> try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(fv, fp) } catch (_: Exception) {} }
+            }
+        }
+    }
+
+    private fun setOverlayShown(show: Boolean) {
+        if (show == overlayShown) return
+        val view = overlayView ?: return
+        val params = layoutParams ?: return
+        overlayShown = show
+        // Hidden = invisible AND not touchable, so it never blocks taps underneath.
+        params.flags = if (show) params.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()
+                       else params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        try { (getSystemService(WINDOW_SERVICE) as WindowManager).updateViewLayout(view, params) } catch (_: Exception) {}
+        view.animate().cancel()
+        if (show) {
+            view.visibility = View.VISIBLE
+            view.alpha = 0f
+            view.animate().alpha(1f).setDuration(120).start()
+        } else {
+            view.animate().alpha(0f).setDuration(120).withEndAction {
+                if (!overlayShown) view.visibility = View.INVISIBLE
+            }.start()
+        }
+    }
     override fun onInterrupt() {}
 
     override fun onDestroy() {

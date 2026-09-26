@@ -74,9 +74,9 @@ object ModelChecker {
         now - p.getLong(KEY_LAST_CHECK, 0) > CHECK_INTERVAL_MS
 
     fun cached(p: SharedPreferences): Report = Report(
-        stt = p.getString(KEY_STT_LIST, null).toList().ifEmpty { listOf(Groq.DEFAULT_STT_MODEL, "whisper-large-v3-turbo") },
-        chat = p.getString(KEY_CHAT_LIST, null).toList().ifEmpty { listOf(Groq.DEFAULT_LLM_MODEL) },
-        newModels = p.getString(KEY_NEW, null).toList(),
+        stt = p.getString(KEY_STT_LIST, null).parseList().ifEmpty { listOf(Groq.DEFAULT_STT_MODEL, "whisper-large-v3-turbo") },
+        chat = p.getString(KEY_CHAT_LIST, null).parseList().ifEmpty { listOf(Groq.DEFAULT_LLM_MODEL) },
+        newModels = p.getString(KEY_NEW, null).parseList(),
         recommendation = p.getString(KEY_REC_STT, null)?.let {
             Recommendation(it.ifBlank { null }, p.getString(KEY_REC_LLM, "")!!.ifBlank { null },
                 p.getString(KEY_REC_NOTE, "")!!.ifBlank { null })
@@ -115,7 +115,7 @@ object ModelChecker {
 
         val known = p.getStringSet(KEY_KNOWN, emptySet()) ?: emptySet()
         val fresh = newSince(known, stt + chat)
-        val stillNew = (p.getString(KEY_NEW, null).toList() + fresh).distinct().filter { it in ids }
+        val stillNew = (p.getString(KEY_NEW, null).parseList() + fresh).distinct().filter { it in ids }
 
         val rec = try {
             Groq.client.newCall(Request.Builder().url(RECOMMENDED_URL).build()).execute().use { r ->
@@ -141,7 +141,7 @@ object ModelChecker {
         return Report(stt, chat, stillNew, rec ?: cached(p).recommendation, now)
     }
 
-    private fun String?.toList(): List<String> = try {
+    private fun String?.parseList(): List<String> = try {
         if (this == null) emptyList() else JSONArray(this).let { a -> (0 until a.length()).map { a.getString(it) } }
     } catch (_: Exception) { emptyList() }
 }

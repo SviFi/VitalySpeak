@@ -98,11 +98,13 @@ class ChunkWriter(
     private var winSum = 0L
     private var winCount = 0
     private var carry: Byte? = null           // odd byte from a previous write
+    private var closed = false
 
     val partsClosed get() = index
 
     @Synchronized
     fun write(buf: ByteArray, n: Int) {
+        if (closed) return                     // late buffer after stop: never start a new part
         if (out == null) out = FileOutputStream(session.partPcm(index))
         var i = 0
         var data = buf
@@ -143,6 +145,8 @@ class ChunkWriter(
     /** Closes the last part. Returns total number of parts. */
     @Synchronized
     fun close(): Int {
+        if (closed) return index
+        closed = true
         if (out != null) {
             if (session.partPcm(index).length() == 0L && index > 0) {
                 out?.close(); out = null; session.partPcm(index).delete()

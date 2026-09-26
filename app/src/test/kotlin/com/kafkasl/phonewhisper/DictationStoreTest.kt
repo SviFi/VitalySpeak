@@ -73,6 +73,16 @@ class DictationStoreTest {
         assertEquals(listOf(s2.id), st.sessions().map { it.id })
     }
 
+    @Test fun `writes after close are ignored`() {
+        val s = store().newSession()
+        val w = ChunkWriter(s, sampleRate = 1000, maxChunkSec = 10) {}
+        val a = tone(1000, 3000); w.write(a, a.size)
+        assertEquals(1, w.close())
+        w.write(a, a.size)
+        assertEquals(1, s.partCount())
+        assertEquals(1, w.close())
+    }
+
     @Test fun `ring keeps only the latest audio`() {
         val r = PcmRing(10)
         r.write(byteArrayOf(1, 2, 3, 4, 5, 6), 6)

@@ -12,11 +12,14 @@ import kotlin.math.abs
  *   sessions/<timestamp>/part-000.pcm   raw 16 kHz mono PCM
  *   sessions/<timestamp>/part-000.txt   its transcript, written once Whisper returns
  *   sessions/<timestamp>/recording      present while still recording
- *   sessions/<timestamp>/final.txt      the final text, once complete
+ *   sessions/<timestamp>/raw.txt        full transcript, written once EVERY part is transcribed
+ *   sessions/<timestamp>/clean.txt      cleaned text, written only if cleanup fully succeeded
+ *   sessions/<timestamp>/duration       seconds of audio (kept after the audio is deleted)
  *
- * A session is deleted only after every part has a transcript and the final text was
- * delivered. Anything else (network down, app killed, phone restarted) leaves it on disk,
- * so it can be retried later — nothing you said is thrown away.
+ * Sessions double as the transcription history. Audio (part-*.pcm) is deleted only after
+ * raw.txt exists — i.e. every part is verifiably transcribed — and only if the user doesn't
+ * keep audio. Anything unfinished (network down, rate limit, app killed, phone restarted)
+ * stays on disk and can be retried later: nothing you said is thrown away.
  */
 class DictationStore(private val root: File) {
 
@@ -26,7 +29,42 @@ class DictationStore(private val root: File) {
         fun partPcm(i: Int) = File(dir, "part-%03d.pcm".format(i))
         fun partTxt(i: Int) = File(dir, "part-%03d.txt".format(i))
         private val recordingMarker get() = File(dir, "recording")
-        val finalTxt get() = File(dir, "final.txt")
+        val rawTxt get() = File(dir, "raw.txt")
+        val cleanTxt get() = File(dir, "clean.txt")
+        private val durationFile get() = File(dir, "duration")
+
+        enum class Status { RECORDING, NEEDS_TRANSCRIPTION, RAW_ONLY, DONE }
+
+        val status: Status get() = when {
+            isRecording -> Status.RECORDING
+            !rawTxt.exists() -> Status.NEEDS_TRANSCRIPTION
+            !cleanTxt.exists() -> Status.RAW_ONLY
+            else -> Status.DONE
+        }
+
+        val startedAt: Long get() = id.substringBefore('_').toLongOrNull() ?: dir.lastModified()
+
+        fun raw(): String? = rawTxt.takeIf { it.exists() }?.readText()
+        fun clean(): String? = cleanTxt.takeIf { it.exists() }?.readText()
+        fun saveRaw(text: String) { atomicWrite(rawTxt, text); saveDuration() }
+        fun saveClean(text: String) = atomicWrite(cleanTxt, text)
+
+        fun hasAudio() = partCount() > 0
+
+        /** Deletes audio parts (transcripts stay). Only call once raw.txt exists. */
+        fun deleteAudio() {
+            check(rawTxt.exists()) { "refusing to delete audio before transcript is complete" }
+            dir.listFiles { f -> f.name.endsWith(".pcm") }?.forEach { it.delete() }
+        }
+
+        fun saveDuration() { if (!durationFile.exists()) durationFile.writeText(audioSeconds().toString()) }
+        fun durationSec(): Long = durationFile.takeIf { it.exists() }?.readText()?.trim()?.toLongOrNull() ?: audioSeconds()
+
+        private fun atomicWrite(f: File, text: String) {
+            val tmp = File(dir, f.name + ".tmp")
+            tmp.writeText(text)
+            if (!tmp.renameTo(f)) { f.writeText(text); tmp.delete() }
+        }
 
         fun partCount(): Int = dir.listFiles { f -> f.name.startsWith("part-") && f.name.endsWith(".pcm") }?.size ?: 0
 

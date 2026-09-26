@@ -83,6 +83,24 @@ class DictationStoreTest {
         assertEquals(1, w.close())
     }
 
+    @Test fun `history status and audio deletion only after full transcript`() {
+        val st = store()
+        val s = st.newSession()
+        val w = ChunkWriter(s, sampleRate = 1000, maxChunkSec = 1, graceSec = 0) {}
+        val a = tone(1_500, 3000); w.write(a, a.size); w.close()
+        s.isRecording = false
+        assertEquals(DictationStore.Session.Status.NEEDS_TRANSCRIPTION, s.status)
+        assertThrows(IllegalStateException::class.java) { s.deleteAudio() }
+        s.writeTranscript(0, "a"); s.writeTranscript(1, "b")
+        s.saveRaw(s.joinedTranscript()!!)
+        assertEquals(DictationStore.Session.Status.RAW_ONLY, s.status)
+        s.deleteAudio()
+        assertFalse(s.hasAudio())
+        assertEquals("a b", s.raw())
+        s.saveClean("A b.")
+        assertEquals(DictationStore.Session.Status.DONE, s.status)
+    }
+
     @Test fun `ring keeps only the latest audio`() {
         val r = PcmRing(10)
         r.write(byteArrayOf(1, 2, 3, 4, 5, 6), 6)

@@ -23,6 +23,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
 import android.graphics.Rect
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -58,6 +59,9 @@ class WhisperAccessibilityService : AccessibilityService() {
         /** Don't start / keep recording with less free storage than this (≈ 25 min of audio). */
         private const val MIN_FREE_BYTES = 50L * 1024 * 1024
         const val KEY_LAST_DICTATION = "last_dictation"
+        const val KEY_KEEP_AUDIO = "keep_audio"
+        const val KEY_WAVE_SPEED = "wave_speed"     // percent of base speed, 100..500 (default 200)
+        const val KEY_WAVE_COUNT = "wave_count"     // percent of base wave count, 100..300 (default 200)
         private const val PREVIEW_INTERVAL_MS = 2000L
         private const val PREVIEW_WINDOW_SEC = 12
         const val KEY_LIVE_PREVIEW = "live_preview"
@@ -71,6 +75,7 @@ class WhisperAccessibilityService : AccessibilityService() {
         set(value) {
             field = value
             // Stop square while recording makes it obvious a second tap is needed.
+            if (value != State.RECORDING) exitPocketMode()
             handler.post {
                 button?.setImageResource(if (value == State.RECORDING) R.drawable.ic_stop else R.drawable.ic_mic)
                 if (value == State.RECORDING) waveView?.start() else waveView?.stop()
@@ -86,7 +91,8 @@ class WhisperAccessibilityService : AccessibilityService() {
     private var feedbackLayoutParams: WindowManager.LayoutParams? = null
     private var previewView: TextView? = null
     private var waveView: WaveRingView? = null
-    private var cancelView: TextView? = null
+    private var cancelView: LinearLayout? = null
+    private var pocketView: FrameLayout? = null
     private var cancelParams: WindowManager.LayoutParams? = null
     private var recThread: Thread? = null
     @Volatile private var recordStartMs = 0L
@@ -94,11 +100,15 @@ class WhisperAccessibilityService : AccessibilityService() {
     private var savedPos: Pair<Int, Int>? = null
 
     private fun reaction() = prefs().getInt(KEY_REACTION, 70).coerceIn(0, 100) / 100f
+    private fun waveSpeed() = prefs().getInt(KEY_WAVE_SPEED, 200).coerceIn(100, 500) / 100f
+    private fun waveCount() = prefs().getInt(KEY_WAVE_COUNT, 200).coerceIn(100, 300) / 100f
 
     /** Settings changed: reaction applies live; size needs the overlay rebuilt. */
     fun applyAppearanceSettings() {
         handler.post {
             waveView?.reaction = reaction()
+            waveView?.speed = waveSpeed()
+            waveView?.waveMult = waveCount()
             if (state != State.IDLE) return@post
             layoutParams?.let { lp -> savedPos = lp.x + lp.width / 2 to lp.y + lp.height / 2 }
             removeOverlay()
@@ -155,6 +165,8 @@ class WhisperAccessibilityService : AccessibilityService() {
         } catch (e: Exception) { Log.w(TAG, "Could not update serviceInfo", e) }
         showOverlay()
         scheduleVisibilityCheck(0)
+        GroqUsage.init(prefs())
+        GroqUsage.onWarning = { msg -> logEvent(msg); showFeedback(msg, 5000) }
         // Anything on disk now is from before a crash/restart: keep it, offer retry in the app.
         worker.execute {
             store.sessions().forEach { it.isRecording = false }
@@ -324,7 +336,10 @@ class WhisperAccessibilityService : AccessibilityService() {
             visibility = View.GONE
         }
 
-        val wave = WaveRingView(this, buttonSize / 2f, reaction()).apply { visibility = View.INVISIBLE }
+        val wave = WaveRingView(this, buttonSize / 2f, reaction()).apply {
+            visibility = View.INVISIBLE
+            speed = waveSpeed(); waveMult = waveCount()
+        }
         waveView = wave
 
         val img = ImageView(this).apply {
@@ -579,6 +594,7 @@ class WhisperAccessibilityService : AccessibilityService() {
                 val slice = rb.snapshot()
                 val start = if (total > slice.size) 1 else 0     // ring is full → earlier audio exists
                 previewInFlight = true
+                GroqUsage.addAudio(PREVIEW_MODEL, slice.size / 2.0 / SAMPLE_RATE)
                 TranscriberClient.transcribe(WavWriter.encode(slice), apiKey, PREVIEW_MODEL, Groq.WHISPER_HINT) { r ->
                     previewInFlight = false
                     if (r.text == null && r.error?.contains("rate", ignoreCase = true) == true) {
@@ -596,20 +612,28 @@ class WhisperAccessibilityService : AccessibilityService() {
     // --- Cancel (discard without sending anything) ---
 
     /**
-     * Small "✕ Cancel" pill beside the dot while recording. Separate from the big stop button
-     * and placed to the side, so it's discoverable but hard to hit by accident.
+     * Two small pills beside the dot while recording: "✕ Cancel" and "☾ Screen off".
+     * Separate from the big stop button and placed to the side, so they're discoverable
+     * but hard to hit by accident.
      */
     private fun showCancel() {
         handler.post {
             val dot = layoutParams ?: return@post
             val wm = getSystemService(WINDOW_SERVICE) as WindowManager
-            val view = cancelView ?: TextView(this).apply {
-                text = "✕  Cancel"
+            fun pillButton(label: String, onClick: () -> Unit) = TextView(this).apply {
+                text = label
                 textSize = 13f
                 setTextColor(0xFFFFFFFF.toInt())
                 setPadding((14 * dp).toInt(), (8 * dp).toInt(), (14 * dp).toInt(), (8 * dp).toInt())
                 background = pill(0xE63A3A3C.toInt())
-                setOnClickListener { cancelRecording() }
+                setOnClickListener { onClick() }
+            }
+            val view = cancelView ?: LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                addView(pillButton("✕  Cancel") { cancelRecording() })
+                addView(pillButton("☾  Screen off") { enterPocketMode() },
+                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                        .apply { topMargin = (8 * dp).toInt() })
             }.also { cancelView = it }
             val lp = cancelParams ?: WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -622,6 +646,75 @@ class WhisperAccessibilityService : AccessibilityService() {
             try {
                 if (view.isAttachedToWindow) wm.updateViewLayout(view, lp) else wm.addView(view, lp)
             } catch (e: Exception) { Log.w(TAG, "cancel pill", e) }
+        }
+    }
+
+    // --- Screen-off ("pocket") mode ---
+
+    /**
+     * Blacks out the whole screen at minimum brightness while recording continues.
+     * Why not really turn the screen off: Android may silence the microphone for apps that
+     * aren't visible once the screen is off. A black, zero-brightness overlay keeps the
+     * display technically on (so the mic keeps working and the screen won't auto-lock) while
+     * drawing almost no power on OLED screens. It also swallows touches, so pocket taps do
+     * nothing. Double-tap anywhere to come back exactly where you were.
+     */
+    private fun enterPocketMode() {
+        handler.post {
+            if (state != State.RECORDING || pocketView != null) return@post
+            val wm = getSystemService(WINDOW_SERVICE) as WindowManager
+            val label = TextView(this).apply {
+                textSize = 13f
+                setTextColor(0xFF3A3A3C.toInt())
+                text = "● Recording — double-tap to wake"
+            }
+            val root = FrameLayout(this).apply {
+                setBackgroundColor(0xFF000000.toInt())
+                addView(label, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT))
+            }
+            val detector = android.view.GestureDetector(this, object : android.view.GestureDetector.SimpleOnGestureListener() {
+                override fun onDown(e: MotionEvent) = true
+                override fun onDoubleTap(e: MotionEvent): Boolean { exitPocketMode(); return true }
+            })
+            root.setOnTouchListener { _, ev -> detector.onTouchEvent(ev); true }
+            val lp = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                PixelFormat.OPAQUE
+            ).apply {
+                screenBrightness = 0.0f            // lowest backlight
+                gravity = Gravity.TOP or Gravity.START
+            }
+            try { wm.addView(root, lp) } catch (e: Exception) { Log.w(TAG, "pocket", e); return@post }
+            pocketView = root
+            logEvent("screen-off mode on")
+            // Move the dim label every 20 s (no burn-in) and show elapsed time.
+            val mover = object : Runnable {
+                override fun run() {
+                    if (pocketView !== root) return
+                    label.text = "● Recording ${elapsed()} — double-tap to wake"
+                    val w = maxOf(1, root.width - label.width)
+                    val h = maxOf(1, root.height - label.height)
+                    label.x = (Math.random() * w).toFloat()
+                    label.y = (Math.random() * h).toFloat()
+                    handler.postDelayed(this, 20_000)
+                }
+            }
+            handler.postDelayed(mover, 300)
+        }
+    }
+
+    private fun exitPocketMode() {
+        handler.post {
+            val v = pocketView ?: return@post
+            pocketView = null
+            try { (getSystemService(WINDOW_SERVICE) as WindowManager).removeViewImmediate(v) } catch (_: Exception) {}
+            logEvent("screen-off mode off")
         }
     }
 
@@ -870,6 +963,7 @@ class WhisperAccessibilityService : AccessibilityService() {
         val audio = Dictation.trimSilence(pcm, SAMPLE_RATE)
         val context = if (i == 0) Groq.WHISPER_HINT else sess.transcriptOf(i - 1)?.takeLast(200)?.ifBlank { null } ?: Groq.WHISPER_HINT
         val wav = WavWriter.encode(audio)
+        GroqUsage.addAudio(model, audio.size / 2.0 / SAMPLE_RATE)
         val delays = longArrayOf(1, 3, 8, 15, 30, 60)
         for (attempt in 0..delays.size) {
             if (!sess.exists()) return false
@@ -916,44 +1010,67 @@ class WhisperAccessibilityService : AccessibilityService() {
         val raw = Dictation.stripVocabEcho(joined, listOf(Groq.WHISPER_HINT, vocab))
         lastRaw = raw
         logEvent("transcribed ${sess.audioSeconds(SAMPLE_RATE)}s in ${sess.partCount()} part(s), ${raw.length} chars")
-        handleTranscriptionResult(raw, inject) { finalText ->
-            try { sess.finalTxt.writeText(finalText) } catch (_: Exception) {}
+        try { sess.saveRaw(raw) } catch (e: Exception) { Log.e(TAG, "save raw", e) }
+        // Every part is verifiably transcribed and saved: the audio may go (unless kept).
+        if (!prefs().getBoolean(KEY_KEEP_AUDIO, false) && sess.rawTxt.exists()) {
+            try { sess.deleteAudio() } catch (e: Exception) { Log.e(TAG, "delete audio", e) }
+        }
+        historyChanged()
+        handleTranscriptionResult(raw, inject) { finalText, cleanOk ->
+            if (cleanOk) try { sess.saveClean(finalText) } catch (_: Exception) {}
             prefs().edit().putString(KEY_LAST_DICTATION, finalText).apply()
-            // Verified complete and delivered: now the audio can go.
-            worker.execute { sess.delete() }
+            historyChanged()
         }
     }
 
-    // --- Recovery API for the settings screen ---
+    // --- History API for the app ---
 
-    /** Saved dictations that weren't delivered (not the one being recorded right now). */
+    /** Set by the app's screens to refresh when an entry changes. */
+    @Volatile var onHistoryChanged: (() -> Unit)? = null
+    private fun historyChanged() { handler.post { onHistoryChanged?.invoke() } }
+
+    /** All dictations except the one being recorded right now, newest first. */
+    fun history(): List<DictationStore.Session> =
+        store.sessions().filter { it.id != session?.id }.sortedByDescending { it.startedAt }
+
     fun unfinishedSessions(): List<DictationStore.Session> =
-        store.sessions().filter { it.id != session?.id }
+        history().filter { it.status == DictationStore.Session.Status.NEEDS_TRANSCRIPTION }
 
-    /** Retry a saved dictation; the result goes to the clipboard (no text field to type into). */
-    fun retrySession(id: String) {
-        val s = unfinishedSessions().firstOrNull { it.id == id } ?: return
+    private fun find(id: String) = history().firstOrNull { it.id == id }
+
+    /** Transcribes whatever parts are still missing, then cleans up. Result lands in History. */
+    fun retryTranscription(id: String) {
+        val s = find(id) ?: return
         worker.execute { finalizeSession(s, inject = false) }
     }
 
+    /** Re-runs cleanup on the saved raw transcript. */
+    fun retryCleanup(id: String) {
+        val s = find(id) ?: return
+        val raw = s.raw() ?: return retryTranscription(id)
+        handleTranscriptionResult(raw, inject = false) { text, ok ->
+            if (ok) try { s.saveClean(text) } catch (_: Exception) {}
+            else handler.post { toast("Cleanup failed again — raw text is still saved") }
+            historyChanged()
+        }
+    }
+
     fun deleteSession(id: String) {
-        val s = unfinishedSessions().firstOrNull { it.id == id } ?: return
-        worker.execute { s.delete() }
+        val s = find(id) ?: return
+        worker.execute { s.delete(); historyChanged() }
     }
 
     private fun deliver(text: String, inject: Boolean, feedback: String? = null) {
         if (inject) {
             if (feedback != null) injectText(text, feedback = feedback, feedbackDurationMs = 4000) else injectText(text)
         } else {
-            val clip = ClipData.newPlainText("VitalySpeak", text)
-            (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(clip)
-            toast("Recovered dictation copied to clipboard (${text.length} chars)")
+            toast("Saved to History (${text.length} chars)")
         }
     }
 
-    private fun handleTranscriptionResult(text: String?, inject: Boolean = true, onDelivered: (String) -> Unit = {}) {
+    private fun handleTranscriptionResult(text: String?, inject: Boolean = true, onDelivered: (String, Boolean) -> Unit = { _, _ -> }) {
         if (text.isNullOrBlank()) {
-            handler.post { toast("No speech detected"); onDelivered(""); if (inject) finishIdle() }
+            handler.post { toast("No speech detected"); onDelivered("", false); if (inject) finishIdle() }
             return
         }
 
@@ -962,7 +1079,7 @@ class WhisperAccessibilityService : AccessibilityService() {
         val apiKey = p.getString(Groq.KEY_API, "") ?: ""
         if (!usePostProcessing || apiKey.isBlank()) {
             lastClean = ""
-            handler.post { deliver(text, inject); onDelivered(text); if (inject) finishIdle() }
+            handler.post { deliver(text, inject); onDelivered(text, false); if (inject) finishIdle() }
             return
         }
 
@@ -980,7 +1097,7 @@ class WhisperAccessibilityService : AccessibilityService() {
             lastClean = cleaned
             handler.post {
                 deliver(cleaned, inject, if (fellBack == 0) null else "Cleanup skipped for $fellBack part(s) — raw text kept there")
-                onDelivered(cleaned)
+                onDelivered(cleaned, fellBack == 0)
                 if (inject) finishIdle()
             }
         }
@@ -993,6 +1110,13 @@ class WhisperAccessibilityService : AccessibilityService() {
                 val ok = !cleaned.isNullOrBlank() && !Dictation.cleanupLostContent(piece, cleaned)
                 when {
                     ok -> { out[i] = cleaned; next(i + 1, 0) }
+                    // Rate limited (e.g. tokens-per-minute on long texts): wait as Groq asks.
+                    res.httpCode == 429 && attempt < 5 -> {
+                        val wait = minOf(60L, res.retryAfterSec ?: (5L shl attempt))
+                        logEvent("cleanup rate-limited, waiting ${wait}s (part ${i + 1}/${pieces.size})")
+                        if (inject && attempt == 0) showFeedback("Groq busy — finishing cleanup in ${wait}s…", 3000)
+                        handler.postDelayed({ next(i, attempt + 1) }, wait * 1000)
+                    }
                     attempt == 0 -> {
                         logEvent("cleanup retry: ${res.error ?: if (cleaned.isNullOrBlank()) "empty reply" else "reply lost content"}")
                         next(i, 1)

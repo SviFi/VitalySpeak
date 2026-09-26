@@ -31,6 +31,11 @@ class WaveRingView(
     var reaction: Float = 0.6f
 ) : View(context) {
 
+    /** Rotation speed multiplier (1 = the calm base speed; settings allow 1–5×, default 2×). */
+    var speed: Float = 2f
+    /** Wave-count multiplier on the base 9/7/5 waves (settings allow 1–3×, default 2×). */
+    var waveMult: Float = 2f
+
     private val density = context.resources.displayMetrics.density
 
     private val frontFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -77,7 +82,7 @@ class WaveRingView(
         val k = if (targetLevel > level) 0.16f + 0.08f * r else 0.05f
         level += (targetLevel - level) * k
         pitch += (targetPitch - pitch) * 0.03f      // pitch only drifts: no jitter
-        phase += 0.07f                              // constant rotation (2× the earlier calm speed)
+        phase += 0.07f * speed                      // constant rotation; speed from settings
 
         val cx = width / 2f
         val cy = height / 2f
@@ -93,9 +98,11 @@ class WaveRingView(
         val scale = if (outer > room) room / outer else 1f
 
         // More, shorter waves (9/7/5 around the circle) for a finer, livelier outline.
-        buildBlob(darkPath, cx, cy, (base + amp * 0.7f) * scale, amp * 1.2f * scale, waves = 5, phase = phase * 0.6f + 1.3f)
-        buildBlob(backPath, cx, cy, (base + amp * 0.35f) * scale, amp * 1.1f * scale, waves = 7, phase = -phase * 0.8f)
-        buildBlob(frontPath, cx, cy, base * scale, amp * scale, waves = 9, phase = phase)
+        // Whole wave counts keep each outline closed; more waves = finer ripples.
+        val w = waveMult.coerceIn(1f, 3f)
+        buildBlob(darkPath, cx, cy, (base + amp * 0.7f) * scale, amp * 1.2f * scale, waves = Math.round(5 * w), phase = phase * 0.6f + 1.3f)
+        buildBlob(backPath, cx, cy, (base + amp * 0.35f) * scale, amp * 1.1f * scale, waves = Math.round(7 * w), phase = -phase * 0.8f)
+        buildBlob(frontPath, cx, cy, base * scale, amp * scale, waves = Math.round(9 * w), phase = phase)
 
         canvas.drawPath(darkPath, darkFill)
         canvas.drawPath(backPath, backFill)
@@ -106,7 +113,7 @@ class WaveRingView(
 
     private fun buildBlob(path: Path, cx: Float, cy: Float, r: Float, amp: Float, waves: Int, phase: Float) {
         path.reset()
-        val steps = 144
+        val steps = maxOf(144, waves * 12)   // enough points for smooth curves at high wave counts
         for (i in 0..steps) {
             val t = (i.toFloat() / steps) * 2f * PI.toFloat()
             // A soft second harmonic keeps it organic without looking busy.

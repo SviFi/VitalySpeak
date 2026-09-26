@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     private var checking = false
     private lateinit var recoveryRow: LinearLayout
     private lateinit var recoverySub: TextView
+    private lateinit var usageContainer: LinearLayout
     /** Last model switch made in this session, for the one-tap undo row. */
     private data class ModelSwitch(val stt: Boolean, val from: String, val to: String)
     private var lastSwitch: ModelSwitch? = null
@@ -123,19 +124,35 @@ class MainActivity : AppCompatActivity() {
         root.addView(sliderRow("Dot size", "Size of the floating mic dot",
             WhisperAccessibilityService.KEY_DOT_SIZE, 100, 60, 160) { v -> "$v%" })
 
-        // Saved dictations that weren't delivered (network failure, app killed…).
-        recoveryRow = settingsRow("Unfinished dictations", "") { showRecovery() }
+        root.addView(sliderRow("Wave speed", "How fast the recording shape moves",
+            WhisperAccessibilityService.KEY_WAVE_SPEED, 200, 100, 500) { v -> "%.1f×".format(v / 100f) })
+        root.addView(sliderRow("Wave count", "How many ripples around the shape",
+            WhisperAccessibilityService.KEY_WAVE_COUNT, 200, 100, 300) { v -> "%.1f×".format(v / 100f) })
+
+        // --- History ---
+        root.addView(sectionHeader("History"))
+        recoveryRow = settingsRow("Transcription history", "") {
+            startActivity(Intent(this, HistoryActivity::class.java))
+        }
         recoverySub = recoveryRow.findViewWithTag("subtitle")
         root.addView(recoveryRow)
 
-        root.addView(settingsRow("Last dictation", "Tap to copy the last text again") {
-            val t = prefs().getString(WhisperAccessibilityService.KEY_LAST_DICTATION, "") ?: ""
-            if (t.isBlank()) toast("Nothing yet") else {
-                (getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager)
-                    .setPrimaryClip(android.content.ClipData.newPlainText("VitalySpeak", t))
-                toast("Copied (${t.length} chars)")
-            }
+        val keepAudioSwitch = MaterialSwitch(this).apply {
+            isChecked = prefs().getBoolean(WhisperAccessibilityService.KEY_KEEP_AUDIO, false)
+            isClickable = false
+        }
+        root.addView(settingsRow("Keep audio",
+            "Off: audio is deleted once every part is transcribed. On: keep recordings (~115 MB per hour)",
+            keepAudioSwitch) {
+            val v = !keepAudioSwitch.isChecked
+            prefs().edit().putBoolean(WhisperAccessibilityService.KEY_KEEP_AUDIO, v).apply()
+            keepAudioSwitch.isChecked = v
         })
+
+        // --- Groq usage ---
+        root.addView(sectionHeader("Groq usage"))
+        usageContainer = vertical(0)
+        root.addView(usageContainer)
 
         root.addView(settingsRow("Diagnostics", "Last dictation (raw vs cleaned), errors, mic dot decisions") {
             val svc = WhisperAccessibilityService.instance
@@ -495,41 +512,80 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshRecovery() {
-        val list = WhisperAccessibilityService.instance?.unfinishedSessions().orEmpty()
-        recoveryRow.visibility = if (list.isEmpty()) View.GONE else View.VISIBLE
-        recoverySub.text = "${list.size} saved recording(s) not delivered yet — tap to retry"
+        val list = WhisperAccessibilityService.instance?.history().orEmpty()
+        val pending = list.count { it.status == DictationStore.Session.Status.NEEDS_TRANSCRIPTION }
+        val rawOnly = list.count { it.status == DictationStore.Session.Status.RAW_ONLY }
+        recoverySub.text = when {
+            WhisperAccessibilityService.instance == null -> "Enable the accessibility service first"
+            pending > 0 -> "⚠ $pending recording(s) not transcribed yet — tap to retry · ${list.size} total"
+            list.isEmpty() -> "No dictations yet"
+            else -> "${list.size} dictation(s)" + if (rawOnly > 0) " · $rawOnly without cleanup" else ""
+        }
+        recoverySub.setTextColor(if (pending > 0) 0xFFC62828.toInt() else attrColor(android.R.attr.textColorSecondary))
+        renderUsage()
     }
 
-    private fun showRecovery() {
-        val svc = WhisperAccessibilityService.instance ?: return toast("Enable the accessibility service first")
-        val list = svc.unfinishedSessions()
-        if (list.isEmpty()) { refreshRecovery(); return }
-        val labels = list.map { s ->
-            val date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
-                .format(Date(s.id.substringBefore('_').toLongOrNull() ?: 0))
-            val sec = s.audioSeconds()
-            val done = s.partCount() - s.missingParts().size
-            "$date · ${sec / 60}:${"%02d".format(sec % 60)} · $done/${s.partCount()} parts transcribed"
-        }.toTypedArray()
-        android.app.AlertDialog.Builder(this)
-            .setTitle("Unfinished dictations")
-            .setItems(labels) { _, which ->
-                val s = list[which]
-                android.app.AlertDialog.Builder(this)
-                    .setTitle(labels[which])
-                    .setMessage("Retry transcribes what's missing, then copies the full text to the clipboard. The audio is deleted only after that succeeds.")
-                    .setPositiveButton("Retry") { _, _ -> svc.retrySession(s.id); toast("Retrying in background…") }
-                    .setNegativeButton("Delete") { _, _ ->
-                        android.app.AlertDialog.Builder(this)
-                            .setMessage("Delete this recording permanently?")
-                            .setPositiveButton("Delete") { _, _ -> svc.deleteSession(s.id); recoveryRow.postDelayed({ refreshRecovery() }, 300) }
-                            .setNegativeButton("Keep", null).show()
-                    }
-                    .setNeutralButton("Close", null)
-                    .show()
+    /**
+     * Groq limits as far as the API reveals them: per-model daily requests and per-minute
+     * tokens from response headers, plus audio seconds we count ourselves (Groq doesn't report
+     * those, nor your plan name or credits).
+     */
+    private fun renderUsage() {
+        usageContainer.removeAllViews()
+        GroqUsage.init(prefs())
+        val limits = GroqUsage.all()
+        val audio = GroqUsage.audioToday()
+        if (limits.isEmpty() && audio.length() == 0) {
+            usageContainer.addView(settingsRow("No data yet", "Shown after your first dictation. Plan details: console.groq.com") {
+                openUrl("https://console.groq.com/settings/limits")
+            })
+            return
+        }
+        for (m in limits) {
+            val f = m.requestsUsedFraction
+            if (f != null) usageContainer.addView(usageBar(
+                m.model, "Requests today: ${m.limitRequests!! - m.remainingRequests!!} of ${m.limitRequests} used" +
+                    (m.resetRequests?.let { " · resets in $it" } ?: ""), f))
+            if (m.limitTokens != null && m.remainingTokens != null && m.limitTokens > 0) {
+                usageContainer.addView(usageBar("${m.model} tokens/min",
+                    "Tokens this minute: ${m.limitTokens - m.remainingTokens} of ${m.limitTokens}",
+                    (m.limitTokens - m.remainingTokens).toDouble() / m.limitTokens))
             }
-            .setNegativeButton("Close", null)
-            .show()
+        }
+        for (model in audio.keys()) {
+            val sec = audio.optDouble(model, 0.0)
+            usageContainer.addView(usageBar("$model audio",
+                "Audio today (counted on this phone): ${(sec / 60).toInt()} min of ${GroqUsage.FREE_AUDIO_SEC_PER_DAY / 3600} h free-tier limit",
+                sec / GroqUsage.FREE_AUDIO_SEC_PER_DAY))
+        }
+        usageContainer.addView(settingsRow("Plan & billing", "Groq doesn't expose plan name or credits via API — tap to open the console") {
+            openUrl("https://console.groq.com/settings/limits")
+        })
+    }
+
+    private fun usageBar(title: String, subtitle: String, fraction: Double): View {
+        val f = fraction.coerceIn(0.0, 1.0)
+        val warn = f >= GroqUsage.WARN_AT
+        return vertical(0).apply {
+            setPadding(dp(24), dp(10), dp(24), dp(10))
+            addView(TextView(context).apply {
+                text = title + "  " + "${(f * 100).toInt()}%"
+                textSize = 15f
+                setTextColor(if (warn) 0xFFC62828.toInt() else attrColor(android.R.attr.textColorPrimary))
+            })
+            addView(com.google.android.material.progressindicator.LinearProgressIndicator(context).apply {
+                max = 1000
+                progress = (f * 1000).toInt()
+                trackCornerRadius = dp(3)
+                setIndicatorColor(if (warn) 0xFFC62828.toInt() else attrColor(com.google.android.material.R.attr.colorPrimary))
+                layoutParams = LinearLayout.LayoutParams(LP_MATCH, LP_WRAP).apply { topMargin = dp(6); bottomMargin = dp(4) }
+            })
+            addView(TextView(context).apply {
+                text = subtitle
+                textSize = 13f
+                setTextColor(attrColor(android.R.attr.textColorSecondary))
+            })
+        }
     }
 
     // --- Dialogs ---

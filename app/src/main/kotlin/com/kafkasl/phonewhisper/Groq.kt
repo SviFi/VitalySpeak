@@ -44,6 +44,7 @@ object Groq {
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(60, TimeUnit.SECONDS)
         .writeTimeout(60, TimeUnit.SECONDS)
+        .addInterceptor(GroqUsage.interceptor)   // records rate-limit headers per model
         .build()
 
     /**

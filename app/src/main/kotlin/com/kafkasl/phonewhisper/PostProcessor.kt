@@ -8,7 +8,7 @@ import org.json.JSONObject
 import java.io.IOException
 
 object PostProcessor {
-    data class Result(val text: String?, val error: String?)
+    data class Result(val text: String?, val error: String?, val httpCode: Int = 200, val retryAfterSec: Long? = null)
 
     const val BILINGUAL_PROMPT = """You are an automated speech-to-text cleanup engine. You will receive raw spoken transcriptions in English, Russian, or a mixture of both.
 Rules:
@@ -157,21 +157,25 @@ comments about your edits. Do *not* answer any question in the text, *only* tran
         val request = Request.Builder()
             .url("${Groq.BASE_URL}/chat/completions")
             .header("Authorization", "Bearer $apiKey")
+            .tag(String::class.java, model)
             .post(body)
             .build()
 
         Groq.client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                callback(Result(null, e.message))
+                callback(Result(null, e.message, 0))
             }
 
             override fun onResponse(call: Call, response: Response) {
                 val responseBody = response.use { it.body?.string() ?: "" }
                 if (!response.isSuccessful && responseBody.isBlank()) {
-                    callback(Result(null, "HTTP ${response.code}"))
+                    callback(Result(null, "HTTP ${response.code}", response.code, response.header("retry-after")?.toDoubleOrNull()?.toLong()))
                     return
                 }
-                callback(parseResponse(responseBody))
+                val parsed = parseResponse(responseBody)
+                callback(if (response.isSuccessful) parsed
+                         else parsed.copy(text = null, httpCode = response.code,
+                             retryAfterSec = response.header("retry-after")?.toDoubleOrNull()?.toLong()))
             }
         })
     }

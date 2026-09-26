@@ -35,6 +35,7 @@ object TranscriberClient {
         val request = Request.Builder()
             .url("${Groq.BASE_URL}/audio/transcriptions")
             .header("Authorization", "Bearer $apiKey")
+            .tag(String::class.java, model)
             .post(builder.build())
             .build()
         return try {
@@ -69,6 +70,7 @@ object TranscriberClient {
         val request = Request.Builder()
             .url("${Groq.BASE_URL}/audio/transcriptions")
             .header("Authorization", "Bearer $apiKey")
+            .tag(String::class.java, model)
             .post(builder.build())
             .build()
 

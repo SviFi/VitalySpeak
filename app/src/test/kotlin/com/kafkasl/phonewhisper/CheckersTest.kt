@@ -54,4 +54,60 @@ class CheckersTest {
         assertEquals("https://x/VitalySpeak-7.apk", r.apkUrl)
         assertNull(UpdateChecker.parseRelease("""{"tag_name":"build-7","assets":[]}"""))
     }
+
+    private val docsMd = """
+# Supported Models
+## [Production Models](#production-models)
+| MODEL ID | SPEED |
+|---|---|
+| `llama-3.1-8b-instant` | 560 |
+| `llama-3.3-70b-versatile` | 280 |
+| `whisper-large-v3` | - |
+| `whisper-large-v3-turbo` | - |
+## [Preview Models](#preview-models)
+| `qwen/qwen3-32b` | 400 |
+## [Deprecated Models](#deprecated-models)
+| `old-model` | - |
+""".trimIndent()
+
+    @Test fun `parses production ids from groq docs`() {
+        val ids = ModelChecker.parseProductionIds(docsMd)
+        assertEquals(setOf("llama-3.1-8b-instant", "llama-3.3-70b-versatile", "whisper-large-v3", "whisper-large-v3-turbo"), ids)
+    }
+
+    @Test fun `stability falls back to name heuristic`() {
+        assertTrue(ModelChecker.isStable("whisper-large-v4", emptySet()))
+        assertFalse(ModelChecker.isStable("llama-5-preview", emptySet()))
+        assertFalse(ModelChecker.isStable("qwen/qwen3-32b", setOf("whisper-large-v3")))
+    }
+
+    private fun report(created: Map<String, Long>, stable: Set<String> = emptySet(), ignored: Set<String> = emptySet()) =
+        ModelChecker.Report(created.keys.toList(), created.keys.toList(), emptyList(), null, 1L, created, stable, ignored)
+
+    @Test fun `same family newer version is an upgrade`() {
+        val r = report(mapOf("whisper-large-v3" to 100L, "whisper-large-v4" to 200L, "whisper-large-v5-preview" to 300L))
+        val up = ModelChecker.findUpgrade("whisper-large-v3", r.stt, r)!!
+        assertEquals("whisper-large-v4", up.to)
+        assertTrue(up.sameFamily)
+    }
+
+    @Test fun `preview and ignored models are never suggested`() {
+        val r = report(mapOf("whisper-large-v3" to 100L, "whisper-large-v3-turbo" to 200L, "whisper-x-beta" to 300L),
+            ignored = setOf("whisper-large-v3-turbo"))
+        assertNull(ModelChecker.findUpgrade("whisper-large-v3", r.stt, r))
+    }
+
+    @Test fun `newer stable model in another family is offered but flagged`() {
+        val r = report(mapOf("llama-3.3-70b-versatile" to 100L, "llama-3.1-8b-instant" to 50L, "kimi-k3" to 300L, "glm-5" to 200L),
+            stable = setOf("llama-3.3-70b-versatile", "llama-3.1-8b-instant", "kimi-k3", "glm-5"))
+        val up = ModelChecker.findUpgrade("llama-3.3-70b-versatile", r.chat, r)!!
+        assertEquals("kimi-k3", up.to)
+        assertFalse(up.sameFamily)
+        assertEquals(listOf("glm-5"), up.others)
+    }
+
+    @Test fun `current model is newest - no upgrade`() {
+        val r = report(mapOf("llama-3.3-70b-versatile" to 100L, "llama-3.1-8b-instant" to 50L))
+        assertNull(ModelChecker.findUpgrade("llama-3.3-70b-versatile", r.chat, r))
+    }
 }

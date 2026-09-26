@@ -43,6 +43,9 @@ class MainActivity : AppCompatActivity() {
     private var report: ModelChecker.Report? = null
     private var update: UpdateChecker.Release? = null
     private var checking = false
+    /** Last model switch made in this session, for the one-tap undo row. */
+    private data class ModelSwitch(val stt: Boolean, val from: String, val to: String)
+    private var lastSwitch: ModelSwitch? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -206,14 +209,31 @@ class MainActivity : AppCompatActivity() {
                 pickModel(stt = false)
             })
         }
+        lastSwitch?.let { sw ->
+            alertsContainer.addView(alertRow(
+                "↩ Switched ${if (sw.stt) "speech" else "cleanup"} model",
+                "Now ${sw.to} (was ${sw.from}) — tap to undo"
+            ) {
+                lastSwitch = null
+                prefs().edit().putString(if (sw.stt) Groq.KEY_STT_MODEL else Groq.KEY_LLM_MODEL, sw.from).apply()
+                toast("Back to ${sw.from}")
+                refresh()
+            })
+        }
+
+        val sttUp = if (checked) ModelChecker.findUpgrade(sttModel(), r.stt, r) else null
+        val llmUp = if (checked) ModelChecker.findUpgrade(llmModel(), r.chat, r) else null
+        sttUp?.let { alertsContainer.addView(upgradeRow(stt = true, it, r)) }
+        llmUp?.let { alertsContainer.addView(upgradeRow(stt = false, it, r)) }
+
         r.recommendation?.let { rec ->
             val note = rec.note?.let { " · $it" } ?: ""
-            rec.stt?.takeIf { it != sttModel() && it in r.stt }?.let { m ->
+            rec.stt?.takeIf { it != sttModel() && it in r.stt && it != sttUp?.to }?.let { m ->
                 alertsContainer.addView(alertRow("★ Recommended speech model", "$m$note — tap to switch") {
                     setModel(stt = true, m)
                 })
             }
-            rec.llm?.takeIf { it != llmModel() && it in r.chat }?.let { m ->
+            rec.llm?.takeIf { it != llmModel() && it in r.chat && it != llmUp?.to }?.let { m ->
                 alertsContainer.addView(alertRow("★ Recommended cleanup model", "$m$note — tap to switch") {
                     setModel(stt = false, m)
                 })
@@ -239,6 +259,9 @@ class MainActivity : AppCompatActivity() {
     private fun llmModel() = prefs().getString(Groq.KEY_LLM_MODEL, Groq.DEFAULT_LLM_MODEL) ?: Groq.DEFAULT_LLM_MODEL
 
     private fun setModel(stt: Boolean, id: String) {
+        val from = if (stt) sttModel() else llmModel()
+        if (from == id) return
+        lastSwitch = ModelSwitch(stt, from, id)
         prefs().edit().putString(if (stt) Groq.KEY_STT_MODEL else Groq.KEY_LLM_MODEL, id).apply()
         toast("Switched to $id")
         refresh()
@@ -253,6 +276,8 @@ class MainActivity : AppCompatActivity() {
         val labels = ids.map { id ->
             buildString {
                 append(id)
+                append(if (r.isStable(id)) "  · stable" else "  · preview")
+                released(r, id)?.let { append("  · $it") }
                 if (id == rec) append("  ★ recommended")
                 if (id in r.newModels) append("  ✦ new")
                 if (id !in available && r.checkedAt > 0) append("  ⚠ retired")
@@ -284,6 +309,43 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun released(r: ModelChecker.Report, id: String): String? =
+        r.created[id]?.takeIf { it > 0 }?.let {
+            java.text.SimpleDateFormat("MMM yyyy", java.util.Locale.ENGLISH).format(Date(it * 1000))
+        }
+
+    private fun upgradeRow(stt: Boolean, up: ModelChecker.Upgrade, r: ModelChecker.Report): View {
+        val kind = if (stt) "speech" else "cleanup"
+        val title = if (up.sameFamily) "⬆ Newer version of your $kind model" else "⬆ Newer stable $kind model"
+        val date = released(r, up.to)?.let { " · released $it" } ?: ""
+        val more = if (up.others.isNotEmpty()) " · +${up.others.size} more" else ""
+        return alertRow(title, "${up.from} → ${up.to}$date$more — tap to switch") { confirmUpgrade(stt, up, r) }
+    }
+
+    private fun confirmUpgrade(stt: Boolean, up: ModelChecker.Upgrade, r: ModelChecker.Report) {
+        val stableNote = if (r.stable.isNotEmpty()) "Stable (listed under Groq Production models)." else "Stable (no preview/beta in its name)."
+        val msg = buildString {
+            append("Current: ${up.from}${released(r, up.from)?.let { " — $it" } ?: ""}\n")
+            append("New: ${up.to}${released(r, up.to)?.let { " — $it" } ?: ""}\n\n")
+            append(stableNote).append("\n")
+            append(if (up.sameFamily) "Same model line, newer version."
+                   else "Different model line. Newer isn't always better for your use, so try a few dictations.")
+            append("\n\nYou can undo with one tap afterwards.")
+        }
+        val b = android.app.AlertDialog.Builder(this)
+            .setTitle("Switch to ${up.to}?")
+            .setMessage(msg)
+            .setPositiveButton("Switch") { _, _ -> setModel(stt, up.to) }
+            .setNeutralButton("Don't suggest") { _, _ ->
+                ModelChecker.ignore(prefs(), up.to)
+                report = ModelChecker.cached(prefs())
+                refresh()
+            }
+        if (up.others.isNotEmpty()) b.setNegativeButton("Compare all") { _, _ -> pickModel(stt) }
+        else b.setNegativeButton("Not now", null)
+        b.show()
     }
 
     // --- Prompt rows ---

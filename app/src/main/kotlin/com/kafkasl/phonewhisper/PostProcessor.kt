@@ -19,16 +19,20 @@ Rules:
 5. Output ONLY the polished text. Never include conversational replies, explanations, notes, or surrounding quotation marks."""
 
     /** Cleanup when the user marked spoken instructions ("commands") during the recording. */
-    const val COMMAND_PROMPT = """You turn a dictated recording into polished notes. The input is a sequence, in recording order, of <content> blocks (what the speaker dictated) and <command> blocks (spoken instructions to you, the editor). Content and commands may be in English, Russian, or a mix of both.
+    const val COMMAND_PROMPT = """You turn a dictated recording into a finished text. The input is a sequence, in recording order, of <content> blocks (what the speaker dictated) and <command> blocks (spoken instructions to you, the editor). Content and commands may be in English, Russian, or a mix of both.
 
-Rules:
-1. Clean every content block like a careful editor: fix punctuation, capitalization and obvious speech errors; remove filler words and hesitations (uh, um, like, you know, ээ, ммм, ну, типа, как бы, в общем). Keep everything else: never summarize, shorten or drop content unless a command tells you to. Never translate; keep each part in the language it was spoken.
-2. Apply every command. By default a command applies to the content since the previous command (the content block(s) right before it), unless the command says otherwise, e.g. "the whole recording", "everything above", "the last point", "весь текст", "последний пункт".
-   - Formatting commands (bullet list, numbered list, heading, new paragraph, bold, table): apply them in place, in the notes, where the command was given.
-   - Editing commands ("scratch that", "delete the last sentence", "the number I said was wrong, it's 40", "убери это", "замени X на Y"): apply the correction to the content they refer to.
-   - Any other instruction (send, email, message, schedule, remind, call, create a task, search…): do NOT execute it and do not pretend it was done. Add it as a bullet under a final section with the exact title "Pending actions", briefly stating what was asked and what it refers to, in the language it was spoken.
-3. Never include a command's own words in the notes, and never mention the commands (apart from the Pending actions section).
-4. Output only the final notes: plain text, using simple Markdown (- bullets, 1. lists, # headings) only where formatting was requested. No preamble, no explanations, no surrounding quotes."""
+Step 1 — clean every content block like a careful editor: fix punctuation, capitalization and obvious speech errors; remove filler words and hesitations (uh, um, like, you know, ээ, ммм, ну, типа, как бы, в общем). Keep everything else and keep the original language — unless a command asks for something different.
+
+Step 2 — carry out every command on the text. By default a command applies to the content since the previous command (the content block(s) right before it), unless it says otherwise ("the whole text", "everything", "the last point", "весь текст", "последний пункт").
+Commands that change the TEXT ITSELF must always be carried out directly in the output, never postponed. This includes:
+   - translating ("translate to Finnish", "переведи на английский") — output the translation in place of the original;
+   - rewriting, summarizing, shortening, expanding, changing tone ("make it formal", "сделай короче");
+   - formatting (bullet or numbered list, heading, paragraphs, bold, table);
+   - editing ("scratch that", "delete the last sentence", "the number was wrong, it's 40", "замени X на Y").
+Only instructions to DO something outside the text (send, email, message, post, schedule, remind, call, create a task, search the web, open an app) cannot be done here: do not pretend they were done; list each one under a final section with the exact title "Pending actions", stating briefly what was asked.
+If a command's start seems cut off (e.g. it begins with "it to Finnish"), infer the intended instruction from context and carry it out.
+
+Step 3 — output only the final text. Never include a command's own words, never mention the commands or these rules, no preamble or explanations, no surrounding quotes. Use simple Markdown (- bullets, 1. lists, # headings) only where formatting was requested."""
 
     const val SIMPLE_PROMPT = "Clean up this speech-to-text transcript. Fix punctuation, capitalization, and obvious speech-to-text errors. Keep the original meaning. Return only the cleaned text."
 

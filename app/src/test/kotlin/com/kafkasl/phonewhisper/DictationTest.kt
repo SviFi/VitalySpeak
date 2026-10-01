@@ -120,4 +120,29 @@ class DictationTest {
         val startSec = r.first / 2.0 / sr
         assertTrue("start $startSec", startSec in 2.5..2.7)
     }
+
+    @Test fun `command mark is snapped to the whole sentence despite timing drift`() {
+        // Real case: user tapped Command, said "Can you translate it to Finnish?", but Whisper's
+        // timings put "Can you translate" before the mark.
+        val units = listOf(
+            w(0.0, 0.3, "Okay,"), w(0.3, 0.5, "now"), w(0.5, 0.7, "I'm"), w(0.7, 1.0, "typing"),
+            w(1.0, 1.2, "some"), w(1.2, 1.6, "text."),
+            w(1.7, 1.9, "Can"), w(1.9, 2.0, "you"), w(2.0, 2.4, "translate"),
+            w(2.6, 2.7, "it"), w(2.7, 2.8, "to"), w(2.8, 3.3, "Finnish?")
+        )
+        val b = Dictation.splitByCommands(units, listOf(2.5 to 3.4))
+        assertEquals(listOf(
+            Dictation.Block(false, "Okay, now I'm typing some text."),
+            Dictation.Block(true, "Can you translate it to Finnish?")
+        ), b)
+    }
+
+    @Test fun `snapping does not grab a long preceding sentence`() {
+        // Sentence started 5 s before the mark: too far back, keep the mark as is.
+        val units = (0 until 20).map { w(it * 0.3, it * 0.3 + 0.25, "w$it") } +
+            listOf(w(6.0, 6.3, "make"), w(6.3, 6.6, "bullets."))
+        val b = Dictation.splitByCommands(units, listOf(5.95 to 6.7))
+        assertEquals(Dictation.Block(true, "make bullets."), b.last())
+        assertFalse(b.first().isCommand)
+    }
 }

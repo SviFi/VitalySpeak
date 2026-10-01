@@ -155,13 +155,40 @@ object Dictation {
 
     data class Block(val isCommand: Boolean, val text: String)
 
+    private fun endsSentence(t: String) = t.trimEnd().let { it.endsWith(".") || it.endsWith("?") || it.endsWith("!") || it.endsWith("…") }
+
     /**
      * Splits timed words/segments into ordered content and command blocks using the command
-     * intervals the user marked while recording. A unit belongs to a command if its midpoint
-     * falls inside [start - lead, end + tail] (small allowance for tap/speech timing).
+     * intervals the user marked while recording.
+     *
+     * Whisper's word timings drift (often 0.3–1 s) and people start talking as they tap, so a
+     * mark rarely lines up with the first/last word exactly. Each command is therefore snapped
+     * to natural boundaries: its start moves back to the start of the sentence it's in (if that
+     * sentence began within [snapBack] s), its end forward to the end of that sentence (within
+     * [snapForward] s). A pause of ≥ [pause] s also counts as a boundary.
      */
     fun splitByCommands(units: List<Timed>, commands: List<Pair<Double, Double>>,
-                        lead: Double = 0.25, tail: Double = 0.35): List<Block> {
+                        lead: Double = 0.25, tail: Double = 0.35,
+                        snapBack: Double = 2.5, snapForward: Double = 1.5, pause: Double = 0.6): List<Block> {
+        val u = units.sortedBy { it.start }
+        val isCmd = BooleanArray(u.size)
+        for ((s, e) in commands) {
+            val inside = u.indices.filter { val m = (u[it].start + u[it].end) / 2; m >= s - lead && m <= e + tail }
+            if (inside.isEmpty()) continue
+            var first = inside.first()
+            var last = inside.last()
+            // Snap start back to a sentence start / pause.
+            var j = first
+            while (j > 0 && !endsSentence(u[j - 1].text) && u[j].start - u[j - 1].end < pause && u[j - 1].start >= s - snapBack) j--
+            val boundaryBefore = j == 0 || endsSentence(u[j - 1].text) || u[j].start - u[j - 1].end >= pause
+            if (boundaryBefore) first = j
+            // Snap end forward to a sentence end / pause.
+            var k = last
+            while (k < u.size - 1 && !endsSentence(u[k].text) && u[k + 1].start - u[k].end < pause && u[k + 1].end <= e + snapForward) k++
+            val boundaryAfter = k == u.size - 1 || endsSentence(u[k].text) || u[k + 1].start - u[k].end >= pause
+            if (boundaryAfter) last = k
+            for (x in first..last) isCmd[x] = true
+        }
         val out = mutableListOf<Block>()
         val cur = StringBuilder()
         var curCmd: Boolean? = null
@@ -170,23 +197,14 @@ object Dictation {
             if (t.isNotEmpty() && curCmd != null) out += Block(curCmd!!, t)
             cur.clear()
         }
-        for (u in units.sortedBy { it.start }) {
-            val mid = (u.start + u.end) / 2
-            val isCmd = commands.any { (s, e) -> mid >= s - lead && mid <= e + tail }
-            if (curCmd != null && isCmd != curCmd) flush()
-            curCmd = isCmd
+        for (i in u.indices) {
+            if (curCmd != null && isCmd[i] != curCmd) flush()
+            curCmd = isCmd[i]
             if (cur.isNotEmpty()) cur.append(' ')
-            cur.append(u.text.trim())
+            cur.append(u[i].text.trim())
         }
         flush()
-        // Merge neighbours of the same kind (can happen when a block was empty after trimming).
-        val merged = mutableListOf<Block>()
-        for (b in out) {
-            val last = merged.lastOrNull()
-            if (last != null && last.isCommand == b.isCommand) merged[merged.size - 1] = Block(b.isCommand, last.text + " " + b.text)
-            else merged += b
-        }
-        return merged
+        return out
     }
 
     /** Tagged input for the command-aware cleanup model. */

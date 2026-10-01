@@ -61,6 +61,13 @@
     <string name="key_missing">Anahtarınızı eklemek için dokunun. console.groq.com adresinden ücretsiz olarak oluşturabilirsiniz.</string>
     <string name="key_help">VitalySpeak, kayıtlarınızı kendi anahtarınızla Groq\'a gönderir. Anahtar yalnızca bu telefonda saklanır.</string>
     <string name="get_key">Anahtar al</string>
+    <string name="key_steps_title">Ücretsiz Groq anahtarınızı alın</string>
+    <string name="key_steps">Yaklaşık bir dakika sürer:\n\n1. Groq\'a giriş yapın (en hızlısı \"Continue with Google\").\n2. \"Create API Key\" öğesine dokunun, herhangi bir ad yazın, örneğin VitalySpeak, ve onaylayın.\n3. \"Copy\" öğesine dokunun ve buraya geri dönün.\n\nVitalySpeak kopyalanan anahtarı kendisi bulur ve kullanılıp kullanılmayacağını sorar.</string>
+    <string name="key_steps_open">Groq\'u aç</string>
+    <string name="key_found_title">Kopyaladığınız anahtar kullanılsın mı?</string>
+    <string name="key_found_text">VitalySpeak panoda bir Groq anahtarı buldu: %1$s</string>
+    <string name="key_ok">Anahtar kaydedildi ve çalışıyor</string>
+    <string name="key_bad">Groq bu anahtarı kabul etmedi: %1$s\n\nAnahtarı Groq konsolundan yeniden kopyalayın veya yeni bir tane oluşturun.</string>
     <string name="key_first">Önce Groq API anahtarınızı ekleyin</string>
     <string name="setup_battery">Pil: kısıtlanmamış</string>
     <string name="battery_ok">Android, VitalySpeak\'i uyku moduna almayacak</string>

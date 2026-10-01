@@ -59,6 +59,13 @@
     <string name="key_missing">輕觸即可新增金鑰。你可以在 console.groq.com 免費建立。</string>
     <string name="key_help">VitalySpeak 會使用你自己的金鑰將錄音傳送給 Groq。金鑰只會儲存在這支手機上。</string>
     <string name="get_key">取得金鑰</string>
+    <string name="key_steps_title">取得免費的 Groq 金鑰</string>
+    <string name="key_steps">大約只要一分鐘：\n\n1. 登入 Groq（「Continue with Google」 最快）。\n2. 輕觸 「Create API Key」，輸入任意名稱（例如 VitalySpeak）並確認。\n3. 輕觸 「Copy」，然後回到這裡。\n\nVitalySpeak 會自動找到你複製的金鑰，並詢問是否要使用。</string>
+    <string name="key_steps_open">開啟 Groq</string>
+    <string name="key_found_title">要使用你複製的金鑰嗎？</string>
+    <string name="key_found_text">VitalySpeak 在剪貼簿中找到 Groq 金鑰：%1$s</string>
+    <string name="key_ok">金鑰已儲存且可正常使用</string>
+    <string name="key_bad">Groq 不接受這個金鑰：%1$s\n\n請從 Groq 主控台重新複製，或建立新的金鑰。</string>
     <string name="key_first">請先新增你的 Groq API 金鑰</string>
     <string name="setup_battery">電池：不受限制</string>
     <string name="battery_ok">Android 不會讓 VitalySpeak 進入休眠</string>

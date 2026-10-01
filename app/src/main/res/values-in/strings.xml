@@ -59,6 +59,13 @@
     <string name="key_missing">Ketuk untuk menambahkan kunci Anda. Anda bisa membuatnya gratis di console.groq.com.</string>
     <string name="key_help">VitalySpeak mengirim rekaman Anda ke Groq menggunakan kunci Anda sendiri. Kunci hanya disimpan di ponsel ini.</string>
     <string name="get_key">Dapatkan kunci</string>
+    <string name="key_steps_title">Dapatkan kunci Groq gratis Anda</string>
+    <string name="key_steps">Hanya butuh sekitar satu menit:\n\n1. Masuk ke Groq (\"Continue with Google\" adalah cara tercepat).\n2. Ketuk \"Create API Key\", ketik nama apa saja, misalnya VitalySpeak, lalu konfirmasi.\n3. Ketuk \"Copy\" dan kembali ke sini.\n\nVitalySpeak akan menemukan kunci yang disalin secara otomatis dan menanyakan apakah ingin menggunakannya.</string>
+    <string name="key_steps_open">Buka Groq</string>
+    <string name="key_found_title">Gunakan kunci yang Anda salin?</string>
+    <string name="key_found_text">VitalySpeak menemukan kunci Groq di papan klip: %1$s</string>
+    <string name="key_ok">Kunci tersimpan dan berfungsi</string>
+    <string name="key_bad">Groq tidak menerima kunci ini: %1$s\n\nSalin lagi dari konsol Groq, atau buat kunci baru.</string>
     <string name="key_first">Tambahkan kunci API Groq Anda terlebih dahulu</string>
     <string name="setup_battery">Baterai: tidak dibatasi</string>
     <string name="battery_ok">Android tidak akan menidurkan VitalySpeak</string>

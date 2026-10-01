@@ -472,14 +472,58 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun editKey() {
-        val (box, input) = Ui.input(this, apiKey(), "gsk_…")
+        val (box, input) = Ui.input(this, apiKey().ifEmpty { copiedKey().orEmpty() }, "gsk_…")
         Ui.dialog(this).setTitle(R.string.setup_key).setMessage(R.string.key_help).setView(box)
-            .setPositiveButton(R.string.save) { _, _ ->
-                p.edit().putString(Prefs.API_KEY, input.text.toString().trim()).apply()
-                refresh(); runChecks(manual = false)
-            }
-            .setNeutralButton(R.string.get_key) { _, _ -> open(Groq.KEYS_URL) }
+            .setPositiveButton(R.string.save) { _, _ -> saveKey(input.text.toString()) }
+            .setNeutralButton(R.string.get_key) { _, _ -> showKeySteps() }
             .setNegativeButton(android.R.string.cancel, null).show()
+    }
+
+    /** Three plain steps, then Groq's key page; the copied key is picked up on return. */
+    private fun showKeySteps() {
+        Ui.dialog(this).setTitle(R.string.key_steps_title).setMessage(R.string.key_steps)
+            .setPositiveButton(R.string.key_steps_open) { _, _ -> watchClipboard = true; open(Groq.KEYS_URL) }
+            .setNegativeButton(android.R.string.cancel, null).show()
+    }
+
+    private var watchClipboard = false
+    private var offeredKey: String? = null
+
+    /** A Groq key on the clipboard (they start with "gsk_"), if there is one. */
+    private fun copiedKey(): String? = try {
+        val clip = (getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager).primaryClip
+        val text = clip?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.coerceToText(this)?.toString().orEmpty()
+        Regex("gsk_[A-Za-z0-9]{20,}").find(text)?.value
+    } catch (_: Exception) { null }
+
+    /** Back from Groq's page with a key copied: offer to use it (clipboard is readable once focused). */
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (!hasFocus || (!watchClipboard && apiKey().isNotEmpty())) return
+        val k = copiedKey() ?: return
+        if (k == apiKey() || k == offeredKey) return
+        offeredKey = k
+        watchClipboard = false
+        Ui.dialog(this).setTitle(R.string.key_found_title)
+            .setMessage(s(R.string.key_found_text, "${k.take(8)}…${k.takeLast(4)}"))
+            .setPositiveButton(R.string.use) { _, _ -> saveKey(k) }
+            .setNegativeButton(R.string.not_now, null).show()
+    }
+
+    /** Saves the key, then checks it with Groq and says whether it works. */
+    private fun saveKey(raw: String) {
+        val k = raw.trim()
+        p.edit().putString(Prefs.API_KEY, k).apply()
+        refresh()
+        if (k.isEmpty()) return
+        Thread {
+            val problem = Groq.checkKey(k)
+            runOnUiThread {
+                if (problem == null) { toast(s(R.string.key_ok)); runChecks(manual = false) }
+                else Ui.dialog(this).setTitle(R.string.setup_key).setMessage(s(R.string.key_bad, problem))
+                    .setPositiveButton(android.R.string.ok, null).show()
+            }
+        }.start()
     }
 
     private fun editVocabulary() {

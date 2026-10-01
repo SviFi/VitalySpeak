@@ -59,6 +59,13 @@
     <string name="key_missing">탭하여 키를 추가하세요. console.groq.com에서 무료로 만들 수 있어요.</string>
     <string name="key_help">VitalySpeak은 내 키를 사용해 녹음을 Groq로 보내요. 키는 이 휴대전화에만 저장돼요.</string>
     <string name="get_key">키 받기</string>
+    <string name="key_steps_title">무료 Groq 키 받기</string>
+    <string name="key_steps">1분 정도면 돼요:\n\n1. Groq에 로그인하세요(\"Continue with Google\"가 가장 빨라요).\n2. \"Create API Key\"를 탭하고 아무 이름이나 입력한 다음(예: VitalySpeak) 확인하세요.\n3. \"Copy\"를 탭하고 여기로 돌아오세요.\n\nVitalySpeak이 복사된 키를 알아서 찾아 사용할지 물어봐요.</string>
+    <string name="key_steps_open">Groq 열기</string>
+    <string name="key_found_title">복사한 키를 사용할까요?</string>
+    <string name="key_found_text">VitalySpeak이 클립보드에서 Groq 키를 찾았어요: %1$s</string>
+    <string name="key_ok">키가 저장되었고 정상 작동해요</string>
+    <string name="key_bad">Groq에서 이 키를 받아들이지 않았어요: %1$s\n\nGroq 콘솔에서 다시 복사하거나 새 키를 만드세요.</string>
     <string name="key_first">먼저 Groq API 키를 추가하세요</string>
     <string name="setup_battery">배터리: 제한 없음</string>
     <string name="battery_ok">Android가 VitalySpeak을 절전 상태로 만들지 않아요</string>

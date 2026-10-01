@@ -61,6 +61,13 @@
     <string name="key_missing">Lisää avaimesi napauttamalla. Voit luoda sellaisen ilmaiseksi osoitteessa console.groq.com.</string>
     <string name="key_help">VitalySpeak lähettää tallenteesi Groqille omalla avaimellasi. Avain tallennetaan vain tähän puhelimeen.</string>
     <string name="get_key">Hanki avain</string>
+    <string name="key_steps_title">Hanki ilmainen Groq-avain</string>
+    <string name="key_steps">Tämä vie noin minuutin:\n\n1. Kirjaudu Groqiin (\"Continue with Google\" on nopein tapa).\n2. Napauta \"Create API Key\", kirjoita mikä tahansa nimi, esimerkiksi VitalySpeak, ja vahvista.\n3. Napauta \"Copy\" ja palaa tänne.\n\nVitalySpeak löytää kopioidun avaimen itse ja kysyy, käytetäänkö sitä.</string>
+    <string name="key_steps_open">Avaa Groq</string>
+    <string name="key_found_title">Käytetäänkö kopioimaasi avainta?</string>
+    <string name="key_found_text">VitalySpeak löysi Groq-avaimen leikepöydältä: %1$s</string>
+    <string name="key_ok">Avain tallennettu ja toimii</string>
+    <string name="key_bad">Groq ei hyväksynyt tätä avainta: %1$s\n\nKopioi se uudelleen Groq-konsolista tai luo uusi.</string>
     <string name="key_first">Lisää ensin Groq-API-avaimesi</string>
     <string name="setup_battery">Akku: ei rajoituksia</string>
     <string name="battery_ok">Android ei laita VitalySpeakia lepotilaan</string>

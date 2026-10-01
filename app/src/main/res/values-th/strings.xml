@@ -59,6 +59,13 @@
     <string name="key_missing">แตะเพื่อเพิ่มคีย์ของคุณ สร้างคีย์ได้ฟรีที่ console.groq.com</string>
     <string name="key_help">VitalySpeak ส่งเสียงที่บันทึกไปยัง Groq โดยใช้คีย์ของคุณเอง คีย์จะเก็บไว้ในโทรศัพท์เครื่องนี้เท่านั้น</string>
     <string name="get_key">รับคีย์</string>
+    <string name="key_steps_title">รับคีย์ Groq ฟรีของคุณ</string>
+    <string name="key_steps">ใช้เวลาประมาณหนึ่งนาที:\n\n1. ลงชื่อเข้าใช้ Groq (\"Continue with Google\" เร็วที่สุด)\n2. แตะ \"Create API Key\" พิมพ์ชื่ออะไรก็ได้ เช่น VitalySpeak แล้วยืนยัน\n3. แตะ \"Copy\" แล้วกลับมาที่นี่\n\nVitalySpeak จะค้นหาคีย์ที่คัดลอกไว้เองและถามว่าจะใช้คีย์นั้นหรือไม่</string>
+    <string name="key_steps_open">เปิด Groq</string>
+    <string name="key_found_title">ใช้คีย์ที่คุณคัดลอกไว้ไหม</string>
+    <string name="key_found_text">VitalySpeak พบคีย์ Groq ในคลิปบอร์ด: %1$s</string>
+    <string name="key_ok">บันทึกคีย์แล้วและใช้งานได้</string>
+    <string name="key_bad">Groq ไม่ยอมรับคีย์นี้: %1$s\n\nคัดลอกคีย์อีกครั้งจากคอนโซล Groq หรือสร้างคีย์ใหม่</string>
     <string name="key_first">เพิ่มคีย์ API ของ Groq ก่อน</string>
     <string name="setup_battery">แบตเตอรี่: ไม่จำกัด</string>
     <string name="battery_ok">Android จะไม่ทำให้ VitalySpeak เข้าสู่โหมดพัก</string>

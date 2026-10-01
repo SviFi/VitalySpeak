@@ -61,6 +61,13 @@
     <string name="key_missing">Tik om je sleutel toe te voegen. Je kunt er gratis een maken op console.groq.com.</string>
     <string name="key_help">VitalySpeak stuurt je opnamen naar Groq met je eigen sleutel. De sleutel wordt alleen op deze telefoon opgeslagen.</string>
     <string name="get_key">Sleutel aanvragen</string>
+    <string name="key_steps_title">Haal je gratis Groq-sleutel</string>
+    <string name="key_steps">Dit duurt ongeveer een minuut:\n\n1. Log in bij Groq (\"Continue with Google\" is het snelst).\n2. Tik op \"Create API Key\", typ een willekeurige naam, bijvoorbeeld VitalySpeak, en bevestig.\n3. Tik op \"Copy\" en kom hier terug.\n\nVitalySpeak vindt de gekopieerde sleutel zelf en vraagt of je hem wilt gebruiken.</string>
+    <string name="key_steps_open">Groq openen</string>
+    <string name="key_found_title">De gekopieerde sleutel gebruiken?</string>
+    <string name="key_found_text">VitalySpeak heeft een Groq-sleutel op het klembord gevonden: %1$s</string>
+    <string name="key_ok">Sleutel opgeslagen en werkt</string>
+    <string name="key_bad">Groq heeft deze sleutel niet geaccepteerd: %1$s\n\nKopieer hem opnieuw uit de Groq-console of maak een nieuwe aan.</string>
     <string name="key_first">Voeg eerst je Groq API-sleutel toe</string>
     <string name="setup_battery">Batterij: onbeperkt</string>
     <string name="battery_ok">Android zet VitalySpeak niet in slaapstand</string>

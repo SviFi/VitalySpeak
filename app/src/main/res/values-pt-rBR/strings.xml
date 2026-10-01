@@ -63,6 +63,13 @@
     <string name="key_missing">Toque para adicionar sua chave. Você pode criar uma de graça em console.groq.com.</string>
     <string name="key_help">O VitalySpeak envia suas gravações ao Groq usando sua própria chave. A chave fica armazenada apenas neste celular.</string>
     <string name="get_key">Obter uma chave</string>
+    <string name="key_steps_title">Obtenha sua chave gratuita do Groq</string>
+    <string name="key_steps">Leva cerca de um minuto:\n\n1. Entre no Groq (\"Continue with Google\" é o mais rápido).\n2. Toque em \"Create API Key\", digite qualquer nome, por exemplo VitalySpeak, e confirme.\n3. Toque em \"Copy\" e volte aqui.\n\nO VitalySpeak encontra a chave copiada sozinho e pergunta se você quer usá-la.</string>
+    <string name="key_steps_open">Abrir o Groq</string>
+    <string name="key_found_title">Usar a chave que você copiou?</string>
+    <string name="key_found_text">O VitalySpeak encontrou uma chave do Groq na área de transferência: %1$s</string>
+    <string name="key_ok">Chave salva e funcionando</string>
+    <string name="key_bad">O Groq não aceitou esta chave: %1$s\n\nCopie-a novamente no console do Groq ou crie uma nova.</string>
     <string name="key_first">Adicione primeiro sua chave de API do Groq</string>
     <string name="setup_battery">Bateria: sem restrições</string>
     <string name="battery_ok">O Android não vai colocar o VitalySpeak em suspensão</string>

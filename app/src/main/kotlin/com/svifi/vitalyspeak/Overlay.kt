@@ -112,10 +112,17 @@ class Overlay(private val ctx: Context, private val callbacks: Callbacks) {
 
     private fun overlayParams(w: Int, h: Int, touchable: Boolean) = WindowManager.LayoutParams(
         w, h, WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
+        // Whole-screen coordinates (no shifting by status bar, cutout or screen edge), so every
+        // overlay window and getLocationOnScreen() share one coordinate system.
         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
             (if (touchable) 0 else WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE),
         PixelFormat.TRANSLUCENT
-    ).apply { gravity = Gravity.TOP or Gravity.START }
+    ).apply {
+        gravity = Gravity.TOP or Gravity.START
+        layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+    }
 
     // ---------- build / tear down ----------
 
@@ -304,14 +311,49 @@ class Overlay(private val ctx: Context, private val callbacks: Callbacks) {
         }
     }
 
+    /**
+     * Puts the Command / Cancel / Screen-off column next to the dot without ever covering it:
+     * measured from where the dot really is on screen, on the side with more room (the left when
+     * the dot is on the right half), clear of the dot's enlarged tap zone. If neither side has
+     * room for the column (narrow screens, long translations), it goes above or below the dot.
+     */
     private fun placeControls(c: WindowManager.LayoutParams) {
-        val dot = dotLp ?: return
+        val box = controls ?: return
         val sc = screen()
-        val gap = px(4f)
-        val onRight = dot.x + dot.width / 2 > sc.width() / 2
-        c.gravity = Gravity.CENTER_VERTICAL or (if (onRight) Gravity.END else Gravity.START)
-        c.x = if (onRight) sc.width() - dot.x + gap else dot.x + dot.width + gap
-        c.y = dot.y + dot.height / 2 - sc.height() / 2
+        val size = icon?.width?.takeIf { it > 0 } ?: dotPx
+        val at = IntArray(2)
+        val ic = icon
+        if (ic != null && ic.isAttachedToWindow && ic.width > 0) ic.getLocationOnScreen(at)
+        else dotLp?.let { at[0] = it.x + (it.width - size) / 2; at[1] = it.y + (it.height - size) / 2 } ?: return
+        box.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        val w = box.measuredWidth
+        val h = box.measuredHeight
+        val margin = px(8f)
+        val gap = (size * 0.2f).toInt() + px(6f)       // outside the 1.35× tap radius while busy
+        val left = at[0]; val top = at[1]; val right = left + size; val bottom = top + size
+        val roomLeft = left - gap - margin
+        val roomRight = sc.width() - right - gap - margin
+        val leftFirst = left + size / 2 > sc.width() / 2
+        c.gravity = Gravity.TOP or Gravity.START
+        val x = when {
+            leftFirst && w <= roomLeft -> left - gap - w
+            !leftFirst && w <= roomRight -> right + gap
+            w <= roomLeft -> left - gap - w
+            w <= roomRight -> right + gap
+            else -> null
+        }
+        (box as? LinearLayout)?.gravity = when {
+            x == null -> Gravity.CENTER_HORIZONTAL
+            x < left -> Gravity.END                      // column left of the dot: hug the dot
+            else -> Gravity.START
+        }
+        if (x != null) {
+            c.x = x
+            c.y = (top + size / 2 - h / 2).coerceIn(margin, maxOf(margin, sc.height() - h - margin))
+        } else {
+            c.x = (left + size / 2 - w / 2).coerceIn(margin, maxOf(margin, sc.width() - w - margin))
+            c.y = if (top - gap - h >= margin) top - gap - h else minOf(bottom + gap, sc.height() - h - margin)
+        }
     }
 
     private fun moveSatellites() {
@@ -368,6 +410,8 @@ class Overlay(private val ctx: Context, private val callbacks: Callbacks) {
         controlsLp?.let { placeControls(it) }
         attach(controls!!, controlsLp!!)
         relayout(controls, controlsLp)
+        // Again once the dot's window has its recording size and the column its final text.
+        main.postDelayed({ controlsLp?.let { placeControls(it); relayout(controls, it) } }, 120)
     }
 
     fun hideControls() = main.post { controls?.let { detach(it) } }
@@ -382,6 +426,7 @@ class Overlay(private val ctx: Context, private val callbacks: Callbacks) {
         val p = prefs()
         shape?.setColors(if (on) COLOR_COMMAND else Appearance.front(p), Appearance.middle(p), Appearance.back(p))
         if (on) preview(callbacks.elapsedLabel() + " · " + ctx.getString(R.string.cmd_hint))
+        controlsLp?.let { placeControls(it); relayout(controls, it) }    // the label's width changed
     }
 
     // ---------- screen-off ("pocket") mode ----------
@@ -549,6 +594,7 @@ class Overlay(private val ctx: Context, private val callbacks: Callbacks) {
                         else -> {   // dropped after a drag: snap to the nearest side
                             val sc = screen()
                             lp.x = if (lp.x + lp.width / 2 > sc.width() / 2) sc.width() - lp.width - px(8f) else px(8f)
+                            lp.y = lp.y.coerceIn(0, maxOf(0, sc.height() - lp.height))
                             relayout(root, lp)
                             moveSatellites()
                         }

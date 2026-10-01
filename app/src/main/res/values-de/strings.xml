@@ -61,6 +61,13 @@
     <string name="key_missing">Tippe, um deinen Schlüssel hinzuzufügen. Du kannst unter console.groq.com kostenlos einen erstellen.</string>
     <string name="key_help">VitalySpeak sendet deine Aufnahmen mit deinem eigenen Schlüssel an Groq. Der Schlüssel wird nur auf diesem Handy gespeichert.</string>
     <string name="get_key">Schlüssel holen</string>
+    <string name="key_steps_title">Hol dir deinen kostenlosen Groq-Schlüssel</string>
+    <string name="key_steps">Das dauert etwa eine Minute:\n\n1. Melde dich bei Groq an (\"Continue with Google\" geht am schnellsten).\n2. Tippe auf \"Create API Key\", gib einen beliebigen Namen ein, zum Beispiel VitalySpeak, und bestätige.\n3. Tippe auf \"Copy\" und komm hierher zurück.\n\nVitalySpeak findet den kopierten Schlüssel selbst und fragt, ob er verwendet werden soll.</string>
+    <string name="key_steps_open">Groq öffnen</string>
+    <string name="key_found_title">Kopierten Schlüssel verwenden?</string>
+    <string name="key_found_text">VitalySpeak hat einen Groq-Schlüssel in der Zwischenablage gefunden: %1$s</string>
+    <string name="key_ok">Schlüssel gespeichert und funktioniert</string>
+    <string name="key_bad">Groq hat diesen Schlüssel nicht akzeptiert: %1$s\n\nKopiere ihn erneut aus der Groq-Konsole oder erstelle einen neuen.</string>
     <string name="key_first">Füge zuerst deinen Groq-API-Schlüssel hinzu</string>
     <string name="setup_battery">Akku: nicht eingeschränkt</string>
     <string name="battery_ok">Android versetzt VitalySpeak nicht in den Ruhezustand</string>

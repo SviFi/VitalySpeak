@@ -69,6 +69,13 @@
     <string name="key_missing">انقر لإضافة مفتاحك. يمكنك إنشاء مفتاح مجانًا على console.groq.com.</string>
     <string name="key_help">يرسل VitalySpeak تسجيلاتك إلى Groq باستخدام مفتاحك الخاص. يُخزَّن المفتاح على هذا الهاتف فقط.</string>
     <string name="get_key">احصل على مفتاح</string>
+    <string name="key_steps_title">احصل على مفتاح Groq المجاني</string>
+    <string name="key_steps">يستغرق الأمر دقيقة تقريبًا:\n\n1. سجّل الدخول إلى Groq (الخيار \"Continue with Google\" هو الأسرع).\n2. اضغط على \"Create API Key\"، واكتب أي اسم، مثل VitalySpeak، ثم أكّد.\n3. اضغط على \"Copy\" وعُد إلى هنا.\n\nيعثر VitalySpeak على المفتاح المنسوخ تلقائيًا ويسألك عمّا إذا كنت تريد استخدامه.</string>
+    <string name="key_steps_open">افتح Groq</string>
+    <string name="key_found_title">هل تريد استخدام المفتاح الذي نسخته؟</string>
+    <string name="key_found_text">عثر VitalySpeak على مفتاح Groq في الحافظة: %1$s</string>
+    <string name="key_ok">تم حفظ المفتاح وهو يعمل</string>
+    <string name="key_bad">لم يقبل Groq هذا المفتاح: %1$s\n\nانسخه مرة أخرى من وحدة تحكم Groq، أو أنشئ مفتاحًا جديدًا.</string>
     <string name="key_first">أضف مفتاح Groq API أولًا</string>
     <string name="setup_battery">البطارية: غير مقيّدة</string>
     <string name="battery_ok">لن يضع Android تطبيق VitalySpeak في وضع السكون</string>

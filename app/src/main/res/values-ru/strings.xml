@@ -65,6 +65,13 @@
     <string name="key_missing">Нажми, чтобы добавить ключ. Создать его можно бесплатно на console.groq.com.</string>
     <string name="key_help">VitalySpeak отправляет твои записи в Groq с твоим собственным ключом. Ключ хранится только на этом телефоне.</string>
     <string name="get_key">Получить ключ</string>
+    <string name="key_steps_title">Получи бесплатный ключ Groq</string>
+    <string name="key_steps">Это займёт около минуты:\n\n1. Войди в Groq (быстрее всего через «Continue with Google»).\n2. Нажми «Create API Key», введи любое имя, например VitalySpeak, и подтверди.\n3. Нажми «Copy» и вернись сюда.\n\nVitalySpeak сам найдёт скопированный ключ и спросит, использовать ли его.</string>
+    <string name="key_steps_open">Открыть Groq</string>
+    <string name="key_found_title">Использовать скопированный ключ?</string>
+    <string name="key_found_text">VitalySpeak нашёл ключ Groq в буфере обмена: %1$s</string>
+    <string name="key_ok">Ключ сохранён и работает</string>
+    <string name="key_bad">Groq не принял этот ключ: %1$s\n\nСкопируй его заново в консоли Groq или создай новый.</string>
     <string name="key_first">Сначала добавь API-ключ Groq</string>
     <string name="setup_battery">Батарея: без ограничений</string>
     <string name="battery_ok">Android не будет усыплять VitalySpeak</string>

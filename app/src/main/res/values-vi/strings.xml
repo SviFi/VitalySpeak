@@ -59,6 +59,13 @@
     <string name="key_missing">Nhấn để thêm khóa của bạn. Bạn có thể tạo khóa miễn phí tại console.groq.com.</string>
     <string name="key_help">VitalySpeak gửi bản ghi âm của bạn đến Groq bằng khóa của chính bạn. Khóa chỉ được lưu trên điện thoại này.</string>
     <string name="get_key">Lấy khóa</string>
+    <string name="key_steps_title">Lấy khóa Groq miễn phí của bạn</string>
+    <string name="key_steps">Chỉ mất khoảng một phút:\n\n1. Đăng nhập vào Groq (\"Continue with Google\" là nhanh nhất).\n2. Nhấn \"Create API Key\", nhập tên bất kỳ, ví dụ VitalySpeak, rồi xác nhận.\n3. Nhấn \"Copy\" và quay lại đây.\n\nVitalySpeak sẽ tự tìm khóa đã sao chép và hỏi bạn có muốn dùng không.</string>
+    <string name="key_steps_open">Mở Groq</string>
+    <string name="key_found_title">Dùng khóa bạn đã sao chép?</string>
+    <string name="key_found_text">VitalySpeak tìm thấy một khóa Groq trong bộ nhớ tạm: %1$s</string>
+    <string name="key_ok">Đã lưu khóa và khóa hoạt động</string>
+    <string name="key_bad">Groq không chấp nhận khóa này: %1$s\n\nHãy sao chép lại từ bảng điều khiển Groq hoặc tạo khóa mới.</string>
     <string name="key_first">Hãy thêm khóa API Groq trước</string>
     <string name="setup_battery">Pin: không hạn chế</string>
     <string name="battery_ok">Android sẽ không đưa VitalySpeak vào chế độ ngủ</string>

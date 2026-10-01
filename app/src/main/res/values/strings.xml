@@ -62,6 +62,13 @@
     <string name="key_missing">Tap to add your key. You can create one for free at console.groq.com.</string>
     <string name="key_help">VitalySpeak sends your recordings to Groq using your own key. The key is stored only on this phone.</string>
     <string name="get_key">Get a key</string>
+    <string name="key_steps_title">Get your free Groq key</string>
+    <string name="key_steps">It takes about a minute:\n\n1. Sign in to Groq (\"Continue with Google\" is the quickest).\n2. Tap \"Create API Key\", type any name, for example VitalySpeak, and confirm.\n3. Tap \"Copy\" and come back here.\n\nVitalySpeak finds the copied key by itself and asks whether to use it.</string>
+    <string name="key_steps_open">Open Groq</string>
+    <string name="key_found_title">Use the key you copied?</string>
+    <string name="key_found_text">VitalySpeak found a Groq key on the clipboard: %1$s</string>
+    <string name="key_ok">Key saved and working</string>
+    <string name="key_bad">Groq did not accept this key: %1$s\n\nCopy it again from the Groq console, or create a new one.</string>
     <string name="key_first">Add your Groq API key first</string>
     <string name="setup_battery">Battery: unrestricted</string>
     <string name="battery_ok">Android will not put VitalySpeak to sleep</string>

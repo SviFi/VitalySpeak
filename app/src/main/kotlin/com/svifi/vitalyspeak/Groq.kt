@@ -25,6 +25,15 @@ object Groq {
         .addInterceptor(GroqUsage.interceptor)
         .build()
 
+    /** Null if Groq accepts [apiKey]; otherwise a short reason (blocking: call off the main thread). */
+    fun checkKey(apiKey: String): String? = try {
+        val req = Request.Builder().url("$BASE_URL/models").header("Authorization", "Bearer $apiKey").build()
+        client.newCall(req).execute().use { r ->
+            if (r.isSuccessful) null
+            else SpeechApi.errorMessage(r.body?.string().orEmpty()) ?: "HTTP ${r.code}"
+        }
+    } catch (e: IOException) { e.message ?: "network error" }
+
     /** Opens DNS + TLS to Groq while the user is still talking; the reply is ignored. */
     fun warmUp(apiKey: String) {
         if (apiKey.isBlank()) return

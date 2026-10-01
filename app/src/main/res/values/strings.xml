@@ -1,5 +1,290 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VitalySpeak</string>
-    <string name="accessibility_description">VitalySpeak dictation: records audio when you tap the floating dot, transcribes it with Groq, and inserts the text into the focused field.</string>
+    <string name="app_name" translatable="false">VitalySpeak</string>
+    <string name="accessibility_description">VitalySpeak shows a floating microphone button while you type. Tap it to dictate; your speech is transcribed and the text is inserted into the field you are typing in. VitalySpeak uses this service only to show the button, to detect when a text field is in use, to insert your dictated text, and (optionally) to use the volume-down button as a command key while recording. It does not read, collect or share the content of your screen.</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="save">Save</string>
+    <string name="use">Use</string>
+    <string name="close">Close</string>
+    <string name="copy">Copy</string>
+    <string name="delete">Delete</string>
+    <string name="reset">Reset</string>
+    <string name="default_value">Default</string>
+    <string name="not_now">Not now</string>
+    <string name="open_settings">Open settings</string>
+    <string name="no_browser">No browser found</string>
+    <string name="status_ok">Done</string>
+    <string name="status_missing">Missing</string>
+    <string name="status_recommended">Recommended</string>
+
+    <!-- Home: status -->
+    <string name="status">Status</string>
+    <string name="status_ready">Ready. Open the keyboard in any app and tap the microphone button.</string>
+    <string name="status_incomplete">Setup incomplete: %1$s. See below.</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">History</string>
+    <string name="sec_setup">Setup</string>
+    <string name="sec_languages">Languages</string>
+    <string name="sec_dictation">Dictation</string>
+    <string name="sec_cleanup">AI cleanup</string>
+    <string name="sec_models">Models</string>
+    <string name="sec_appearance">Appearance</string>
+    <string name="sec_usage">Groq usage (estimates)</string>
+    <string name="sec_about">About</string>
+
+    <!-- History row -->
+    <string name="history_row">All dictations</string>
+    <string name="history_needs_service">Turn on the accessibility service to see your history.</string>
+    <string name="history_empty">No dictations yet.</string>
+    <plurals name="history_count">
+        <item quantity="one">%d dictation</item>
+        <item quantity="other">%d dictations</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="one">%1$d recording not transcribed yet. Tap to retry (%2$d in total).</item>
+        <item quantity="other">%1$d recordings not transcribed yet. Tap to retry (%2$d in total).</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">Microphone</string>
+    <string name="mic_ok">Allowed</string>
+    <string name="mic_missing">Tap to allow microphone access</string>
+    <string name="setup_access">Accessibility service</string>
+    <string name="access_ok">On and running</string>
+    <string name="access_stuck">Switched on but not running. Tap, then turn it off and on again.</string>
+    <string name="access_off">Off. Tap to turn it on.</string>
+    <string name="access_help">Android will open VitalySpeak\'s accessibility page.\n\n1. Turn on \"VitalySpeak\".\n2. Confirm with \"Allow\".\n3. Go back. You will see a green tick here.\n\nIf you see the general Accessibility list instead, open \"Installed apps\" (or \"Downloaded apps\"), then VitalySpeak.\n\nIf the switch is greyed out (\"Restricted setting\"): open Settings, Apps, VitalySpeak, tap the ⋮ menu and choose \"Allow restricted settings\". Then try again.</string>
+    <string name="access_help_running">The service is on and running. Opening its settings page.</string>
+    <string name="setup_key">Groq API key</string>
+    <string name="key_missing">Tap to add your key. You can create one for free at console.groq.com.</string>
+    <string name="key_help">VitalySpeak sends your recordings to Groq using your own key. The key is stored only on this phone.</string>
+    <string name="get_key">Get a key</string>
+    <string name="key_first">Add your Groq API key first</string>
+    <string name="setup_battery">Battery: unrestricted</string>
+    <string name="battery_ok">Android will not put VitalySpeak to sleep</string>
+    <string name="battery_missing">Recommended: stops Android from pausing VitalySpeak in the background</string>
+    <string name="battery_ok_help">Already unrestricted. On Samsung phones also check Settings, Battery, Background usage limits: VitalySpeak must not be in \"Sleeping apps\" or \"Deep sleeping apps\".</string>
+    <string name="setup_alerts">Setup alerts</string>
+    <string name="alerts_ok">You will be told if Android switches VitalySpeak off</string>
+    <string name="alerts_missing">Recommended: get a notification if Android switches VitalySpeak off</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">Languages you speak</string>
+    <string name="app_language">App language</string>
+    <string name="app_language_system">Same as the phone</string>
+    <string name="app_language_service">The floating button switches language the next time the service starts.</string>
+    <string name="languages_intro">Choose the languages you dictate in. Put the one you use most first; add any others you mix in. This does not change the app\'s own language.</string>
+    <string name="languages_yours">Your languages</string>
+    <string name="languages_primary">Primary</string>
+    <string name="languages_primary_sub">Used when the speech is unclear</string>
+    <string name="languages_make_primary">Tap to make primary</string>
+    <string name="languages_remove">Remove %1$s</string>
+    <string name="languages_add">Add language</string>
+    <string name="languages_search">Search languages</string>
+    <string name="languages_why_title">Why this matters</string>
+    <string name="languages_why">The speech recogniser knows about 100 languages. Left to guess, it sometimes picks the wrong one: a strong accent or a short phrase can come out as a different language, or translated.\n\n• With one language selected, recognition is told exactly what to expect. That is the most accurate and the fastest option.\n• With several, VitalySpeak checks which language was recognised. If it isn\'t one of yours, that part is transcribed again in your primary language.\n• Your languages are also passed to the AI cleanup, so it keeps every language exactly as you spoke it, even when you switch mid-sentence, and never translates.\n\nSo add only the languages you really use.</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">Show the button only while typing</string>
+    <string name="only_while_typing_sub">The button appears when a text field is active. Long-press it to open this screen.</string>
+    <string name="live_preview">Live preview</string>
+    <string name="live_preview_sub">Shows your words next to the button as you speak (uses extra short requests to Groq)</string>
+    <string name="vocabulary">Vocabulary</string>
+    <string name="vocabulary_none">None</string>
+    <string name="vocabulary_hint">Names, products, terms…</string>
+    <string name="vocabulary_help">Names and terms you use, separated by commas. The AI cleanup uses them to fix spelling, only where you actually said them.</string>
+    <string name="command_keys">Volume-down for commands</string>
+    <string name="command_keys_sub">While recording, volume-down or the headset button starts and ends a ⌘ command: an instruction for the AI instead of text</string>
+    <string name="keep_audio">Keep audio</string>
+    <string name="keep_audio_sub">Off: recordings are deleted once transcribed. On: they are kept on this phone (about 115 MB per hour).</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">AI cleanup</string>
+    <string name="cleanup_sub">Removes filler words, fixes punctuation and recognition errors</string>
+    <string name="style_standard">Natural</string>
+    <string name="style_standard_sub">Your own words, cleaned up</string>
+    <string name="style_formal">Polished</string>
+    <string name="style_formal_sub">Complete sentences, professional tone</string>
+    <string name="style_notes">Notes</string>
+    <string name="style_notes_sub">Short heading and bullet points</string>
+    <string name="style_custom">Custom</string>
+    <string name="style_custom_sub">Your own instructions</string>
+    <string name="custom_instructions">Custom instructions</string>
+    <string name="custom_instructions_empty">Tap to write your instructions</string>
+    <string name="custom_hint">For example: Write in short paragraphs. Use British spelling.</string>
+    <string name="custom_help">Added to the basic cleanup rules (keep your languages, remove fillers, never add content).</string>
+
+    <!-- Models -->
+    <string name="model_stt">Speech recognition</string>
+    <string name="model_llm">Cleanup model</string>
+    <string name="model_stable">stable</string>
+    <string name="model_preview">preview</string>
+    <string name="model_other">Other… (enter a model ID)</string>
+    <string name="model_id">Model ID</string>
+    <string name="check_updates">Check for new models and updates</string>
+    <string name="checking">Checking…</string>
+    <string name="never_checked">Never checked</string>
+    <string name="last_checked">Last checked %1$s</string>
+    <string name="check_failed">Check failed: %1$s</string>
+    <string name="all_up_to_date">Everything is up to date</string>
+    <string name="alert_update">App update available</string>
+    <string name="alert_update_sub">%1$s. Tap to download.</string>
+    <string name="alert_stt_gone">Speech model unavailable</string>
+    <string name="alert_llm_gone">Cleanup model unavailable</string>
+    <string name="alert_gone_fix">%1$s is no longer available to your key. Tap to switch to %2$s.</string>
+    <string name="alert_gone_pick">%1$s is no longer available to your key. Tap to choose another.</string>
+    <string name="alert_switched">Model switched</string>
+    <string name="alert_switched_sub">Now %1$s (was %2$s). Tap to undo.</string>
+    <string name="alert_upgrade">Newer model available</string>
+    <string name="alert_recommended">Recommended model</string>
+    <plurals name="alert_new_models">
+        <item quantity="one">%d new Groq model</item>
+        <item quantity="other">%d new Groq models</item>
+    </plurals>
+    <string name="upgrade_title">Switch to %1$s?</string>
+    <string name="upgrade_text">Current: %1$s (%2$s)\nNew: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">Same model family, newer version.</string>
+    <string name="upgrade_other_line">A different model family. Newer is not always better, so try a few dictations. You can undo with one tap.</string>
+    <string name="switch_model">Switch</string>
+    <string name="dont_suggest">Don\'t suggest</string>
+
+    <!-- Appearance -->
+    <string name="look">Look and animation</string>
+    <string name="look_sub">Button size, voice reaction, waves, colours</string>
+    <string name="look_dot">Button</string>
+    <string name="dot_size">Size</string>
+    <string name="dot_size_sub">You can also pinch the button with two fingers</string>
+    <string name="look_animation">Recording animation</string>
+    <string name="reaction">Voice reaction</string>
+    <string name="reaction_sub">How strongly the shape follows your voice</string>
+    <string name="reaction_calm">Calm</string>
+    <string name="reaction_lively">Lively</string>
+    <string name="reaction_wild">Wild</string>
+    <string name="wave_speed">Wave speed</string>
+    <string name="wave_speed_sub">How fast the shape moves</string>
+    <string name="wave_count">Waves</string>
+    <string name="wave_count_sub">How many ripples run around the shape</string>
+    <string name="look_colours">Colours</string>
+    <string name="colour_front">Front layer</string>
+    <string name="colour_front_sub">Top layer while recording</string>
+    <string name="colour_middle">Middle layer</string>
+    <string name="colour_middle_sub">Second layer</string>
+    <string name="colour_back">Back layer</string>
+    <string name="colour_back_sub">Third layer</string>
+    <string name="colour_ring">Accent ring</string>
+    <string name="colour_ring_sub">Around the button and the preview bubble</string>
+    <string name="not_a_colour">Not a valid colour</string>
+    <string name="reset_defaults">Reset to defaults</string>
+    <string name="reset_confirm">Reset size, animation and colours?</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">Requests today: %1$d of %2$d</string>
+    <string name="usage_tokens">Tokens this minute: %1$d of %2$d</string>
+    <string name="usage_audio">Audio today (counted on this phone): %1$d min of the %2$d h free daily limit</string>
+    <string name="usage_console">Plan and billing</string>
+    <string name="usage_console_sub">Open the Groq console</string>
+    <string name="usage_none">Shown after your first dictation. Tap to open the Groq console.</string>
+    <string name="usage_warn_requests">Groq: %1$d%% of today\'s requests for %2$s used</string>
+    <string name="usage_warn_audio">Groq: about %1$d%% of today\'s free audio for %2$s used</string>
+
+    <!-- Stats -->
+    <string name="stats_title">Your dictation</string>
+    <string name="stats_spoken">spoken</string>
+    <string name="stats_words">words</string>
+    <string name="stats_dictations">dictations</string>
+    <string name="stats_average">average</string>
+    <string name="stats_longest">longest</string>
+    <string name="stats_streak">day streak</string>
+    <string name="stats_wpm">You speak about %1$d words per minute, roughly %2$d× faster than typing on a phone.</string>
+    <string name="stats_chart">Last 14 days, minutes</string>
+
+    <!-- About -->
+    <string name="diagnostics">Diagnostics</string>
+    <string name="diagnostics_sub">Last dictation, errors and service events, for troubleshooting</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="terms">Terms of use</string>
+    <string name="licenses">Open-source licences</string>
+    <string name="licenses_text">VitalySpeak uses these open-source libraries, under the Apache License 2.0:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nFull licence text: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">Version</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">Search dictations</string>
+    <string name="history_no_match">Nothing matches \"%1$s\".</string>
+    <string name="state_done">Done</string>
+    <string name="state_raw">Not cleaned</string>
+    <string name="state_pending">Needs transcription · %1$d/%2$d</string>
+    <string name="state_recording">Recording</string>
+    <string name="audio_saved">audio saved</string>
+    <string name="not_transcribed">(not transcribed yet)</string>
+    <string name="cleaned">Cleaned text</string>
+    <string name="cleaned_missing">Cleanup missing. Tap \"Retry cleanup\".</string>
+    <string name="raw">Raw transcript</string>
+    <string name="raw_missing">%1$d of %2$d parts not transcribed yet. The audio is saved: tap \"Retry\".</string>
+    <string name="copy_cleaned">Copy cleaned text</string>
+    <string name="copy_raw">Copy raw transcript</string>
+    <string name="retry_transcription">Retry transcription</string>
+    <string name="retry_cleanup">Retry cleanup</string>
+    <string name="redo_cleanup">Clean up again</string>
+    <string name="working_background">Working in the background…</string>
+    <string name="delete_confirm">Delete this dictation?</string>
+    <string name="delete_confirm_audio">Delete this dictation and its saved audio?</string>
+    <string name="copied">Copied (%1$d characters)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">Before you turn on VitalySpeak</string>
+    <string name="disclosure_uses_title">Why VitalySpeak uses the Accessibility service</string>
+    <string name="disclosure_uses">VitalySpeak is a dictation tool. It uses the Android Accessibility API to:\n\n• show the floating microphone button over other apps;\n• notice when a text field is active, so the button appears only while you type;\n• insert your dictated text into that field;\n• optionally, let the volume-down or headset button mark a spoken command while recording.</string>
+    <string name="disclosure_never_title">What it never does</string>
+    <string name="disclosure_never">VitalySpeak does not read, store or send the content of your screen or of other apps. It does not log your keystrokes, does not perform actions on your behalf, and has no ads or analytics.</string>
+    <string name="disclosure_data_title">Your recordings</string>
+    <string name="disclosure_data">The microphone is used only after you tap the button. The recording is sent to Groq, Inc. with your own API key, to be transcribed and (if AI cleanup is on) cleaned up, and the text comes back to your phone. Nothing goes to the developer. Recordings are deleted from your phone after transcription unless you choose to keep them; your text history stays on your phone until you delete it.</string>
+    <string name="disclosure_policy_link">Read the privacy policy</string>
+    <string name="disclosure_agree">I agree, open settings</string>
+    <string name="disclosure_decline">Not now</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">VitalySpeak microphone. Tap to start or stop dictation, long-press to open the app.</string>
+    <string name="cmd_start">⌘ Command</string>
+    <string name="cmd_end">■ End command</string>
+    <string name="cmd_hint">⌘ Say what the AI should do</string>
+    <string name="btn_cancel">✕ Cancel</string>
+    <string name="btn_screen_off">☾ Screen off</string>
+    <string name="pocket_title">Recording continues</string>
+    <string name="pocket_countdown">Screen dims in %1$d…</string>
+    <string name="pocket_continues">Double-tap or press the power button to return</string>
+    <string name="pocket_recording">Recording · %1$s</string>
+    <string name="dot_size_toast">Button size %1$d%%</string>
+    <string name="listening">Listening…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">Allow microphone access in the VitalySpeak app</string>
+    <string name="err_mic_busy">The microphone is being used by another app</string>
+    <string name="err_no_key">Add your Groq API key in the VitalySpeak app</string>
+    <string name="err_storage_full">Phone storage is almost full, so recording is not safe</string>
+    <string name="err_storage_write">Storage error. Transcribing what was saved.</string>
+    <string name="err_no_audio">No audio was recorded</string>
+    <string name="err_transcribe_kept">Couldn\'t reach Groq for %1$d part(s). Your recording is saved: open VitalySpeak, History, to retry.</string>
+    <string name="err_retry_failed">%1$d part(s) still couldn\'t be transcribed. Kept for another try.</string>
+    <string name="stop_max_length">Reached 4 hours. Transcribing everything.</string>
+    <string name="stop_low_storage">Storage almost full. Transcribing everything.</string>
+    <string name="cancelled">Cancelled. Nothing was sent.</string>
+    <string name="finishing_parts">Finishing %1$d of %2$d parts…</string>
+    <string name="no_speech">No speech detected</string>
+    <string name="groq_busy">Groq is busy. Finishing in %1$d s…</string>
+    <string name="cleanup_partial">Cleanup skipped for %1$d part(s). The raw text is kept there.</string>
+    <string name="applying_commands">Applying your commands…</string>
+    <string name="commands_partial">Some commands couldn\'t be applied. They are listed at the end.</string>
+    <string name="not_applied">not applied</string>
+    <string name="saved_to_history">Saved to History</string>
+    <string name="copied_to_clipboard">No text field found. The text is on the clipboard.</string>
+    <string name="cleanup_failed_again">Cleanup failed again. The raw text is still saved.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">Setup alerts</string>
+    <string name="notif_off_title">VitalySpeak is switched off</string>
+    <string name="notif_off_text">Android turned off its accessibility service. Tap to turn it back on.</string>
 </resources>

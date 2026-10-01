@@ -1,8 +1,7 @@
-name: Build APK
+name: Build
 
 on:
   push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -19,16 +18,17 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # ubuntu-latest ships with the Android SDK (ANDROID_HOME is preset)
-      - name: Android SDK licenses
+      - name: Android SDK licences
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Unit tests
-        run: ./gradlew --no-daemon testDebugUnitTest -PversionCode=${{ github.run_number }}
+        run: |
+          ./gradlew --no-daemon testDirectDebugUnitTest -PversionCode=${{ github.run_number }} 2>&1 | tee test.log
+          test ${PIPESTATUS[0]} -eq 0 || { grep -E "^e: |error:|What went wrong" -A2 test.log | head -40 | sed 's/^/::error::/'; exit 1; }
 
-      - name: Report failing tests
+      - name: Show errors
         if: failure()
         run: |
           python3 - <<'PY'
@@ -39,24 +39,37 @@ jobs:
                       msg = (fl.get('message') or fl.text or '').replace('\n', ' ')[:300]
                       print(f"::error title={tc.get('classname')}::{tc.get('name')}: {msg}")
           PY
-          grep -rh "^e: " app/build 2>/dev/null | head -20 | sed 's/^/::error::/' || true
 
-      - name: Build release APK
+      # Play upload key (optional): base64 keystore + passwords in repository secrets.
+      - name: Upload key
+        env:
+          KEY_B64: ${{ secrets.UPLOAD_KEYSTORE_B64 }}
         run: |
-          ./gradlew --no-daemon assembleRelease -PversionCode=${{ github.run_number }}
+          if [ -n "$KEY_B64" ]; then echo "$KEY_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"; echo "UPLOAD_KEYSTORE=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"; fi
+
+      - name: Build APK (direct) and bundle (Google Play)
+        env:
+          UPLOAD_STORE_PASSWORD: ${{ secrets.UPLOAD_STORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+        run: |
+          ./gradlew --no-daemon assembleDirectRelease bundlePlayRelease -PversionCode=${{ github.run_number }} 2>&1 | tee build.log
+          test ${PIPESTATUS[0]} -eq 0 || { grep -E "^e: |error:" build.log | head -30 | sed 's/^/::error::/'; exit 1; }
           mkdir -p out
-          cp app/build/outputs/apk/release/app-release.apk out/VitalySpeak-${{ github.run_number }}.apk
+          cp app/build/outputs/apk/direct/release/app-direct-release.apk out/VitalySpeak-${{ github.run_number }}.apk
+          cp app/build/outputs/bundle/playRelease/app-play-release.aab out/VitalySpeak-${{ github.run_number }}-play.aab
 
       - uses: actions/upload-artifact@v4
         with:
           name: VitalySpeak-${{ github.run_number }}
-          path: out/*.apk
+          path: out/*
 
       - name: Publish release
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
           name: VitalySpeak build ${{ github.run_number }}
           body: ${{ github.event.head_commit.message }}
-          files: out/*.apk
+          files: out/*
           make_latest: true

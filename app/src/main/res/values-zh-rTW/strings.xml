@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">VitalySpeak 會在你輸入時顯示一個浮動麥克風按鈕。輕觸即可開始聽寫，你的語音會轉成文字並插入正在輸入的文字欄位。VitalySpeak 使用此服務僅用於顯示按鈕、偵測文字欄位是否正在使用、插入你聽寫的文字，以及（選用）在錄音時將調低音量鍵當作指令鍵。它不會讀取、收集或分享你的螢幕內容。</string>
+
+    <!-- Common -->
+    <string name="back">返回</string>
+    <string name="save">儲存</string>
+    <string name="use">使用</string>
+    <string name="close">關閉</string>
+    <string name="copy">複製</string>
+    <string name="delete">刪除</string>
+    <string name="reset">重設</string>
+    <string name="default_value">預設</string>
+    <string name="not_now">現在不要</string>
+    <string name="open_settings">開啟設定</string>
+    <string name="no_browser">找不到瀏覽器</string>
+    <string name="status_ok">完成</string>
+    <string name="status_missing">未設定</string>
+    <string name="status_recommended">建議</string>
+
+    <!-- Home: status -->
+    <string name="status">狀態</string>
+    <string name="status_ready">已準備就緒。在任何應用程式中開啟鍵盤，然後輕觸麥克風按鈕。</string>
+    <string name="status_incomplete">設定尚未完成：%1$s。請參閱下方。</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">記錄</string>
+    <string name="sec_setup">設定</string>
+    <string name="sec_languages">語言</string>
+    <string name="sec_dictation">聽寫</string>
+    <string name="sec_cleanup">AI 潤飾</string>
+    <string name="sec_models">模型</string>
+    <string name="sec_appearance">外觀</string>
+    <string name="sec_usage">Groq 用量（估計值）</string>
+    <string name="sec_about">關於</string>
+
+    <!-- History row -->
+    <string name="history_row">所有聽寫</string>
+    <string name="history_needs_service">開啟無障礙服務即可查看記錄。</string>
+    <string name="history_empty">尚無聽寫記錄。</string>
+    <plurals name="history_count">
+        <item quantity="other">%d 則聽寫</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="other">%1$d 段錄音尚未轉錄。輕觸即可重試（共 %2$d 段）。</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">麥克風</string>
+    <string name="mic_ok">已允許</string>
+    <string name="mic_missing">輕觸即可允許存取麥克風</string>
+    <string name="setup_access">無障礙服務</string>
+    <string name="access_ok">已開啟並執行中</string>
+    <string name="access_stuck">已開啟但未執行。請輕觸，然後將其關閉再重新開啟。</string>
+    <string name="access_off">已關閉。輕觸即可開啟。</string>
+    <string name="access_help">Android 將開啟 VitalySpeak 的無障礙頁面。\n\n1. 開啟「VitalySpeak」。\n2. 輕觸「允許」確認。\n3. 返回。這裡會顯示綠色勾號。\n\n如果看到的是無障礙總清單，請開啟「已安裝的應用程式」（或「已下載的應用程式」），然後選取 VitalySpeak。\n\n如果開關呈灰色（「受限制的設定」）：請開啟「設定」>「應用程式」> VitalySpeak，輕觸 ⋮ 選單並選擇「允許受限制的設定」，然後再試一次。</string>
+    <string name="access_help_running">服務已開啟並執行中。正在開啟其設定頁面。</string>
+    <string name="setup_key">Groq API 金鑰</string>
+    <string name="key_missing">輕觸即可新增金鑰。你可以在 console.groq.com 免費建立。</string>
+    <string name="key_help">VitalySpeak 會使用你自己的金鑰將錄音傳送給 Groq。金鑰只會儲存在這支手機上。</string>
+    <string name="get_key">取得金鑰</string>
+    <string name="key_first">請先新增你的 Groq API 金鑰</string>
+    <string name="setup_battery">電池：不受限制</string>
+    <string name="battery_ok">Android 不會讓 VitalySpeak 進入休眠</string>
+    <string name="battery_missing">建議：避免 Android 在背景暫停 VitalySpeak</string>
+    <string name="battery_ok_help">已設為不受限制。在 Samsung 手機上，也請檢查「設定」>「電池」>「背景使用限制」：VitalySpeak 不得列在「休眠應用程式」或「深度休眠應用程式」中。</string>
+    <string name="setup_alerts">設定提醒</string>
+    <string name="alerts_ok">如果 Android 關閉 VitalySpeak，你會收到通知</string>
+    <string name="alerts_missing">建議：在 Android 關閉 VitalySpeak 時接收通知</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">你說的語言</string>
+    <string name="app_language">應用程式語言</string>
+    <string name="app_language_system">與手機相同</string>
+    <string name="app_language_service">浮動按鈕會在下次服務啟動時切換語言。</string>
+    <string name="languages_intro">選擇你聽寫時使用的語言。將最常用的語言放在第一位，並新增你會混用的其他語言。這不會變更應用程式本身的語言。</string>
+    <string name="languages_yours">你的語言</string>
+    <string name="languages_primary">主要</string>
+    <string name="languages_primary_sub">在語音不清楚時使用</string>
+    <string name="languages_make_primary">輕觸即可設為主要語言</string>
+    <string name="languages_remove">移除%1$s</string>
+    <string name="languages_add">新增語言</string>
+    <string name="languages_search">搜尋語言</string>
+    <string name="languages_why_title">為什麼這很重要</string>
+    <string name="languages_why">語音辨識器支援約 100 種語言。如果讓它自行猜測，有時會選錯：濃重的口音或簡短的詞句可能被辨識成另一種語言，或被翻譯。\n\n• 只選取一種語言時，辨識器會確切知道要辨識什麼。這是最準確也最快的方式。\n• 選取多種語言時，VitalySpeak 會檢查辨識出的語言。如果不是你的語言之一，該部分會以你的主要語言重新轉錄。\n• 你的語言也會傳給 AI 潤飾，因此即使你在句子中途切換語言，它也會完全保留你說的語言，絕不翻譯。\n\n所以請只新增你真正使用的語言。</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">只在輸入時顯示按鈕</string>
+    <string name="only_while_typing_sub">文字欄位處於使用中時會顯示按鈕。長按按鈕即可開啟此畫面。</string>
+    <string name="live_preview">即時預覽</string>
+    <string name="live_preview_sub">說話時在按鈕旁顯示你說的話（會額外向 Groq 傳送簡短要求）</string>
+    <string name="vocabulary">詞彙</string>
+    <string name="vocabulary_none">無</string>
+    <string name="vocabulary_hint">人名、產品、術語…</string>
+    <string name="vocabulary_help">你常用的人名和術語，以逗號分隔。AI 潤飾只會在你確實說出這些詞的地方用它們修正拼寫。</string>
+    <string name="command_keys">調低音量鍵用於指令</string>
+    <string name="command_keys_sub">錄音時，按調低音量鍵或耳機按鈕可開始和結束 ⌘ 指令：這是給 AI 的指示，而非文字</string>
+    <string name="keep_audio">保留音訊</string>
+    <string name="keep_audio_sub">關閉：轉錄後刪除錄音。開啟：錄音會保留在這支手機上（每小時約 115 MB）。</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">AI 潤飾</string>
+    <string name="cleanup_sub">移除贅字，修正標點符號和辨識錯誤</string>
+    <string name="style_standard">自然</string>
+    <string name="style_standard_sub">保留你的原話，稍加整理</string>
+    <string name="style_formal">正式</string>
+    <string name="style_formal_sub">完整句子，專業語氣</string>
+    <string name="style_notes">筆記</string>
+    <string name="style_notes_sub">簡短標題和項目符號</string>
+    <string name="style_custom">自訂</string>
+    <string name="style_custom_sub">你自己的指示</string>
+    <string name="custom_instructions">自訂指示</string>
+    <string name="custom_instructions_empty">輕觸即可撰寫指示</string>
+    <string name="custom_hint">例如：以簡短段落撰寫。使用英式拼寫。</string>
+    <string name="custom_help">會加入基本潤飾規則（保留你的語言、移除贅字、絕不新增內容）。</string>
+
+    <!-- Models -->
+    <string name="model_stt">語音辨識</string>
+    <string name="model_llm">潤飾模型</string>
+    <string name="model_stable">穩定版</string>
+    <string name="model_preview">預覽版</string>
+    <string name="model_other">其他…（輸入模型 ID）</string>
+    <string name="model_id">模型 ID</string>
+    <string name="check_updates">檢查新模型和更新</string>
+    <string name="checking">正在檢查…</string>
+    <string name="never_checked">從未檢查</string>
+    <string name="last_checked">上次檢查：%1$s</string>
+    <string name="check_failed">檢查失敗：%1$s</string>
+    <string name="all_up_to_date">一切都是最新版本</string>
+    <string name="alert_update">有可用的應用程式更新</string>
+    <string name="alert_update_sub">%1$s。輕觸即可下載。</string>
+    <string name="alert_stt_gone">語音模型無法使用</string>
+    <string name="alert_llm_gone">潤飾模型無法使用</string>
+    <string name="alert_gone_fix">你的金鑰已無法使用 %1$s。輕觸即可切換為 %2$s。</string>
+    <string name="alert_gone_pick">你的金鑰已無法使用 %1$s。輕觸即可選擇其他模型。</string>
+    <string name="alert_switched">已切換模型</string>
+    <string name="alert_switched_sub">目前為 %1$s（原為 %2$s）。輕觸即可復原。</string>
+    <string name="alert_upgrade">有更新的模型</string>
+    <string name="alert_recommended">建議的模型</string>
+    <plurals name="alert_new_models">
+        <item quantity="other">%d 個新的 Groq 模型</item>
+    </plurals>
+    <string name="upgrade_title">要切換為 %1$s 嗎？</string>
+    <string name="upgrade_text">目前：%1$s（%2$s）\n新的：%3$s（%4$s）</string>
+    <string name="upgrade_same_line">相同模型系列的較新版本。</string>
+    <string name="upgrade_other_line">不同的模型系列。較新不一定較好，請試著聽寫幾次。輕觸一下即可復原。</string>
+    <string name="switch_model">切換</string>
+    <string name="dont_suggest">不要再建議</string>
+
+    <!-- Appearance -->
+    <string name="look">外觀和動畫</string>
+    <string name="look_sub">按鈕大小、聲音反應、波紋、色彩</string>
+    <string name="look_dot">按鈕</string>
+    <string name="dot_size">大小</string>
+    <string name="dot_size_sub">你也可以用兩指撥動按鈕來縮放</string>
+    <string name="look_animation">錄音動畫</string>
+    <string name="reaction">聲音反應</string>
+    <string name="reaction_sub">形狀隨你的聲音變化的強烈程度</string>
+    <string name="reaction_calm">平靜</string>
+    <string name="reaction_lively">活潑</string>
+    <string name="reaction_wild">狂野</string>
+    <string name="wave_speed">波紋速度</string>
+    <string name="wave_speed_sub">形狀移動的快慢</string>
+    <string name="wave_count">波紋</string>
+    <string name="wave_count_sub">環繞形狀流動的波紋數量</string>
+    <string name="look_colours">色彩</string>
+    <string name="colour_front">前層</string>
+    <string name="colour_front_sub">錄音時的最上層</string>
+    <string name="colour_middle">中層</string>
+    <string name="colour_middle_sub">第二層</string>
+    <string name="colour_back">後層</string>
+    <string name="colour_back_sub">第三層</string>
+    <string name="colour_ring">強調環</string>
+    <string name="colour_ring_sub">環繞按鈕和預覽泡泡</string>
+    <string name="not_a_colour">無效的色彩</string>
+    <string name="reset_defaults">重設為預設值</string>
+    <string name="reset_confirm">要重設大小、動畫和色彩嗎？</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">今日要求：%1$d / %2$d</string>
+    <string name="usage_tokens">本分鐘權杖：%1$d / %2$d</string>
+    <string name="usage_audio">今日音訊（在這支手機上計算）：%1$d 分鐘，每日免費上限 %2$d 小時</string>
+    <string name="usage_console">方案與帳單</string>
+    <string name="usage_console_sub">開啟 Groq 主控台</string>
+    <string name="usage_none">完成第一次聽寫後顯示。輕觸即可開啟 Groq 主控台。</string>
+    <string name="usage_warn_requests">Groq：%2$s 的今日要求已使用 %1$d%%</string>
+    <string name="usage_warn_audio">Groq：%2$s 的今日免費音訊已使用約 %1$d%%</string>
+
+    <!-- Stats -->
+    <string name="stats_title">你的聽寫</string>
+    <string name="stats_spoken">說話時間</string>
+    <string name="stats_words">字詞</string>
+    <string name="stats_dictations">聽寫次數</string>
+    <string name="stats_average">平均</string>
+    <string name="stats_longest">最長</string>
+    <string name="stats_streak">連續天數</string>
+    <string name="stats_wpm">你每分鐘大約說 %1$d 個字詞，約為在手機上打字速度的 %2$d×。</string>
+    <string name="stats_chart">過去 14 天（分鐘）</string>
+
+    <!-- About -->
+    <string name="diagnostics">診斷</string>
+    <string name="diagnostics_sub">最近一次聽寫、錯誤和服務事件，供疑難排解使用</string>
+    <string name="privacy_policy">隱私權政策</string>
+    <string name="terms">使用條款</string>
+    <string name="licenses">開放原始碼授權</string>
+    <string name="licenses_text">VitalySpeak 使用下列開放原始碼程式庫，依據 Apache License 2.0 授權：\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\n授權全文：apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">版本</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">搜尋聽寫</string>
+    <string name="history_no_match">沒有符合「%1$s」的項目。</string>
+    <string name="state_done">完成</string>
+    <string name="state_raw">未潤飾</string>
+    <string name="state_pending">需要轉錄 · %1$d/%2$d</string>
+    <string name="state_recording">錄音中</string>
+    <string name="audio_saved">已儲存音訊</string>
+    <string name="not_transcribed">（尚未轉錄）</string>
+    <string name="cleaned">潤飾後的文字</string>
+    <string name="cleaned_missing">缺少潤飾結果。請輕觸「重試潤飾」。</string>
+    <string name="raw">原始轉錄</string>
+    <string name="raw_missing">%2$d 個部分中有 %1$d 個尚未轉錄。音訊已儲存：請輕觸「重試」。</string>
+    <string name="copy_cleaned">複製潤飾後的文字</string>
+    <string name="copy_raw">複製原始轉錄</string>
+    <string name="retry_transcription">重試轉錄</string>
+    <string name="retry_cleanup">重試潤飾</string>
+    <string name="redo_cleanup">重新潤飾</string>
+    <string name="working_background">正在背景處理…</string>
+    <string name="delete_confirm">要刪除這則聽寫嗎？</string>
+    <string name="delete_confirm_audio">要刪除這則聽寫及其儲存的音訊嗎？</string>
+    <string name="copied">已複製（%1$d 個字元）</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">開啟 VitalySpeak 之前</string>
+    <string name="disclosure_uses_title">VitalySpeak 為什麼使用無障礙服務</string>
+    <string name="disclosure_uses">VitalySpeak 是一款聽寫工具。它使用 Android 無障礙 API 來：\n\n• 在其他應用程式上方顯示浮動麥克風按鈕；\n• 偵測文字欄位何時處於使用中，讓按鈕只在你輸入時出現；\n• 將你聽寫的文字插入該欄位；\n• （選用）在錄音時，以調低音量鍵或耳機按鈕標記語音指令。</string>
+    <string name="disclosure_never_title">它絕不會做的事</string>
+    <string name="disclosure_never">VitalySpeak 不會讀取、儲存或傳送你的螢幕內容或其他應用程式的內容。它不會記錄你的按鍵輸入，不會代你執行操作，也沒有廣告或數據分析。</string>
+    <string name="disclosure_data_title">你的錄音</string>
+    <string name="disclosure_data">只有在你輕觸按鈕後才會使用麥克風。錄音會透過你自己的 API 金鑰傳送給 Groq, Inc. 進行轉錄和（如果已開啟 AI 潤飾）潤飾，然後文字會傳回你的手機。不會傳送任何內容給開發人員。除非你選擇保留，否則錄音會在轉錄後從手機上刪除；你的文字記錄會保留在手機上，直到你將其刪除。</string>
+    <string name="disclosure_policy_link">閱讀隱私權政策</string>
+    <string name="disclosure_agree">同意並開啟設定</string>
+    <string name="disclosure_decline">現在不要</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">VitalySpeak 麥克風。輕觸可開始或停止聽寫，長按可開啟應用程式。</string>
+    <string name="cmd_start">⌘ 指令</string>
+    <string name="cmd_end">■ 結束指令</string>
+    <string name="cmd_hint">⌘ 說出 AI 該做什麼</string>
+    <string name="btn_cancel">✕ 取消</string>
+    <string name="btn_screen_off">☾ 關閉螢幕</string>
+    <string name="pocket_title">錄音持續中</string>
+    <string name="pocket_countdown">螢幕將在 %1$d 秒後變暗…</string>
+    <string name="pocket_continues">輕觸兩下或按下電源鍵即可返回</string>
+    <string name="pocket_recording">錄音中 · %1$s</string>
+    <string name="dot_size_toast">按鈕大小 %1$d%%</string>
+    <string name="listening">正在聆聽…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">請在 VitalySpeak 應用程式中允許存取麥克風</string>
+    <string name="err_mic_busy">麥克風正由其他應用程式使用中</string>
+    <string name="err_no_key">請在 VitalySpeak 應用程式中新增你的 Groq API 金鑰</string>
+    <string name="err_storage_full">手機儲存空間幾乎已滿，繼續錄音並不安全</string>
+    <string name="err_storage_write">儲存空間錯誤。正在轉錄已儲存的部分。</string>
+    <string name="err_no_audio">未錄到任何音訊</string>
+    <string name="err_transcribe_kept">有 %1$d 個部分無法連線至 Groq。你的錄音已儲存：請開啟 VitalySpeak 的「記錄」重試。</string>
+    <string name="err_retry_failed">仍有 %1$d 個部分無法轉錄。已保留以便再次嘗試。</string>
+    <string name="stop_max_length">已達 4 小時。正在轉錄全部內容。</string>
+    <string name="stop_low_storage">儲存空間幾乎已滿。正在轉錄全部內容。</string>
+    <string name="cancelled">已取消。未傳送任何內容。</string>
+    <string name="finishing_parts">正在完成第 %1$d 個部分，共 %2$d 個…</string>
+    <string name="no_speech">未偵測到語音</string>
+    <string name="groq_busy">Groq 忙碌中。將在 %1$d 秒後完成…</string>
+    <string name="cleanup_partial">已略過 %1$d 個部分的潤飾。這些部分保留原始文字。</string>
+    <string name="applying_commands">正在套用你的指令…</string>
+    <string name="commands_partial">部分指令無法套用，已列在結尾。</string>
+    <string name="not_applied">未套用</string>
+    <string name="saved_to_history">已儲存至記錄</string>
+    <string name="copied_to_clipboard">找不到文字欄位。文字已複製到剪貼簿。</string>
+    <string name="cleanup_failed_again">潤飾再次失敗。原始文字仍已儲存。</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">設定提醒</string>
+    <string name="notif_off_title">VitalySpeak 已關閉</string>
+    <string name="notif_off_text">Android 已關閉其無障礙服務。輕觸即可重新開啟。</string>
+</resources>

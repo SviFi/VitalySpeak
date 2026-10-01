@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">يعرض VitalySpeak زر ميكروفون عائمًا أثناء الكتابة. انقر عليه لتبدأ الإملاء؛ يُحوَّل كلامك إلى نص ويُدرَج في الحقل الذي تكتب فيه. يستخدم VitalySpeak هذه الخدمة فقط لعرض الزر، ولاكتشاف استخدام حقل نصي، ولإدراج النص الذي تمليه، و(اختياريًا) لاستخدام زر خفض الصوت كمفتاح أوامر أثناء التسجيل. لا يقرأ محتوى شاشتك ولا يجمعه ولا يشاركه.</string>
+
+    <!-- Common -->
+    <string name="back">رجوع</string>
+    <string name="save">حفظ</string>
+    <string name="use">استخدام</string>
+    <string name="close">إغلاق</string>
+    <string name="copy">نسخ</string>
+    <string name="delete">حذف</string>
+    <string name="reset">إعادة ضبط</string>
+    <string name="default_value">افتراضي</string>
+    <string name="not_now">ليس الآن</string>
+    <string name="open_settings">فتح الإعدادات</string>
+    <string name="no_browser">لم يتم العثور على متصفح</string>
+    <string name="status_ok">تم</string>
+    <string name="status_missing">غير مكتمل</string>
+    <string name="status_recommended">موصى به</string>
+
+    <!-- Home: status -->
+    <string name="status">الحالة</string>
+    <string name="status_ready">جاهز. افتح لوحة المفاتيح في أي تطبيق وانقر على زر الميكروفون.</string>
+    <string name="status_incomplete">الإعداد غير مكتمل: %1$s. انظر أدناه.</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">السجل</string>
+    <string name="sec_setup">الإعداد</string>
+    <string name="sec_languages">اللغات</string>
+    <string name="sec_dictation">الإملاء</string>
+    <string name="sec_cleanup">التنقيح بالذكاء الاصطناعي</string>
+    <string name="sec_models">النماذج</string>
+    <string name="sec_appearance">المظهر</string>
+    <string name="sec_usage">استخدام Groq (تقديرات)</string>
+    <string name="sec_about">حول</string>
+
+    <!-- History row -->
+    <string name="history_row">كل الإملاءات</string>
+    <string name="history_needs_service">شغّل خدمة تسهيل الاستخدام لعرض سجلك.</string>
+    <string name="history_empty">لا توجد إملاءات بعد.</string>
+    <plurals name="history_count">
+        <item quantity="zero">%d إملاء</item>
+        <item quantity="one">إملاء واحد (%d)</item>
+        <item quantity="two">إملاءان (%d)</item>
+        <item quantity="few">%d إملاءات</item>
+        <item quantity="many">%d إملاءً</item>
+        <item quantity="other">%d إملاء</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="zero">%1$d تسجيل لم يُحوَّل إلى نص بعد. انقر لإعادة المحاولة (%2$d إجمالًا).</item>
+        <item quantity="one">تسجيل واحد (%1$d) لم يُحوَّل إلى نص بعد. انقر لإعادة المحاولة (%2$d إجمالًا).</item>
+        <item quantity="two">تسجيلان (%1$d) لم يُحوَّلا إلى نص بعد. انقر لإعادة المحاولة (%2$d إجمالًا).</item>
+        <item quantity="few">%1$d تسجيلات لم تُحوَّل إلى نص بعد. انقر لإعادة المحاولة (%2$d إجمالًا).</item>
+        <item quantity="many">%1$d تسجيلًا لم يُحوَّل إلى نص بعد. انقر لإعادة المحاولة (%2$d إجمالًا).</item>
+        <item quantity="other">%1$d تسجيل لم يُحوَّل إلى نص بعد. انقر لإعادة المحاولة (%2$d إجمالًا).</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">الميكروفون</string>
+    <string name="mic_ok">مسموح</string>
+    <string name="mic_missing">انقر للسماح بالوصول إلى الميكروفون</string>
+    <string name="setup_access">خدمة تسهيل الاستخدام</string>
+    <string name="access_ok">مفعّلة وتعمل</string>
+    <string name="access_stuck">مفعّلة لكنها لا تعمل. انقر، ثم أوقفها وشغّلها من جديد.</string>
+    <string name="access_off">متوقفة. انقر لتشغيلها.</string>
+    <string name="access_help">سيفتح Android صفحة تسهيل الاستخدام الخاصة بـ VitalySpeak.\n\n1. شغّل \"VitalySpeak\".\n2. أكّد بالنقر على \"سماح\".\n3. ارجع. سترى هنا علامة صح خضراء.\n\nإذا ظهرت لك قائمة تسهيل الاستخدام العامة بدلًا من ذلك، فافتح \"التطبيقات المثبتة\" (أو \"التطبيقات التي تم تنزيلها\")، ثم VitalySpeak.\n\nإذا كان المفتاح باهتًا (\"إعداد مقيّد\"): افتح الإعدادات، ثم التطبيقات، ثم VitalySpeak، وانقر على القائمة ⋮ واختر \"السماح بالإعدادات المقيّدة\". ثم حاول مرة أخرى.</string>
+    <string name="access_help_running">الخدمة مفعّلة وتعمل. جارٍ فتح صفحة إعداداتها.</string>
+    <string name="setup_key">مفتاح Groq API</string>
+    <string name="key_missing">انقر لإضافة مفتاحك. يمكنك إنشاء مفتاح مجانًا على console.groq.com.</string>
+    <string name="key_help">يرسل VitalySpeak تسجيلاتك إلى Groq باستخدام مفتاحك الخاص. يُخزَّن المفتاح على هذا الهاتف فقط.</string>
+    <string name="get_key">احصل على مفتاح</string>
+    <string name="key_first">أضف مفتاح Groq API أولًا</string>
+    <string name="setup_battery">البطارية: غير مقيّدة</string>
+    <string name="battery_ok">لن يضع Android تطبيق VitalySpeak في وضع السكون</string>
+    <string name="battery_missing">موصى به: يمنع Android من إيقاف VitalySpeak مؤقتًا في الخلفية</string>
+    <string name="battery_ok_help">غير مقيّدة بالفعل. على هواتف Samsung تحقّق أيضًا من الإعدادات، ثم البطارية، ثم حدود الاستخدام في الخلفية: يجب ألا يكون VitalySpeak ضمن \"التطبيقات الخاملة\" أو \"التطبيقات الخاملة بعمق\".</string>
+    <string name="setup_alerts">تنبيهات الإعداد</string>
+    <string name="alerts_ok">ستُبلَّغ إذا أوقف Android تطبيق VitalySpeak</string>
+    <string name="alerts_missing">موصى به: احصل على إشعار إذا أوقف Android تطبيق VitalySpeak</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">اللغات التي تتحدثها</string>
+    <string name="app_language">لغة التطبيق</string>
+    <string name="app_language_system">مثل لغة الهاتف</string>
+    <string name="app_language_service">سيغيّر الزر العائم لغته عند تشغيل الخدمة في المرة القادمة.</string>
+    <string name="languages_intro">اختر اللغات التي تملي بها. ضع اللغة التي تستخدمها أكثر في الأعلى، وأضف أي لغات أخرى تمزجها في كلامك. لا يغيّر هذا لغة التطبيق نفسه.</string>
+    <string name="languages_yours">لغاتك</string>
+    <string name="languages_primary">أساسية</string>
+    <string name="languages_primary_sub">تُستخدم عندما يكون الكلام غير واضح</string>
+    <string name="languages_make_primary">انقر لجعلها أساسية</string>
+    <string name="languages_remove">إزالة %1$s</string>
+    <string name="languages_add">إضافة لغة</string>
+    <string name="languages_search">البحث في اللغات</string>
+    <string name="languages_why_title">لماذا هذا مهم</string>
+    <string name="languages_why">يعرف نظام التعرّف على الكلام نحو 100 لغة. وعندما يُترك ليخمّن، يختار أحيانًا اللغة الخطأ: فقد تظهر لكنة قوية أو عبارة قصيرة بلغة أخرى أو مترجمة.\n\n• عند اختيار لغة واحدة، يعرف نظام التعرّف بالضبط ما يتوقعه. وهذا الخيار الأدق والأسرع.\n• عند اختيار عدة لغات، يتحقق VitalySpeak من اللغة التي تم التعرّف عليها. وإن لم تكن إحدى لغاتك، يُعاد تحويل ذلك الجزء إلى نص بلغتك الأساسية.\n• تُمرَّر لغاتك أيضًا إلى التنقيح بالذكاء الاصطناعي، فيُبقي كل لغة كما نطقتها تمامًا، حتى لو بدّلت اللغة في منتصف الجملة، ولا يترجم أبدًا.\n\nلذا أضف فقط اللغات التي تستخدمها فعلًا.</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">إظهار الزر أثناء الكتابة فقط</string>
+    <string name="only_while_typing_sub">يظهر الزر عندما يكون حقل نصي نشطًا. اضغط عليه مطولًا لفتح هذه الشاشة.</string>
+    <string name="live_preview">معاينة مباشرة</string>
+    <string name="live_preview_sub">يعرض كلماتك بجوار الزر أثناء حديثك (يستخدم طلبات قصيرة إضافية إلى Groq)</string>
+    <string name="vocabulary">المفردات</string>
+    <string name="vocabulary_none">لا شيء</string>
+    <string name="vocabulary_hint">أسماء، منتجات، مصطلحات…</string>
+    <string name="vocabulary_help">أسماء ومصطلحات تستخدمها، مفصولة بفواصل. يستخدمها التنقيح بالذكاء الاصطناعي لتصحيح الإملاء، فقط حيث قلتها فعلًا.</string>
+    <string name="command_keys">خفض الصوت للأوامر</string>
+    <string name="command_keys_sub">أثناء التسجيل، يبدأ زر خفض الصوت أو زر سماعة الرأس أمر ⌘ وينهيه: تعليمات للذكاء الاصطناعي بدلًا من نص</string>
+    <string name="keep_audio">الاحتفاظ بالصوت</string>
+    <string name="keep_audio_sub">متوقف: تُحذف التسجيلات بعد تحويلها إلى نص. مفعّل: يُحتفظ بها على هذا الهاتف (نحو 115 ميغابايت في الساعة).</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">التنقيح بالذكاء الاصطناعي</string>
+    <string name="cleanup_sub">يزيل كلمات الحشو ويصحح علامات الترقيم وأخطاء التعرّف</string>
+    <string name="style_standard">طبيعي</string>
+    <string name="style_standard_sub">كلماتك أنت، بعد تنقيحها</string>
+    <string name="style_formal">مصقول</string>
+    <string name="style_formal_sub">جمل كاملة، بأسلوب مهني</string>
+    <string name="style_notes">ملاحظات</string>
+    <string name="style_notes_sub">عنوان قصير ونقاط</string>
+    <string name="style_custom">مخصص</string>
+    <string name="style_custom_sub">تعليماتك الخاصة</string>
+    <string name="custom_instructions">تعليمات مخصصة</string>
+    <string name="custom_instructions_empty">انقر لكتابة تعليماتك</string>
+    <string name="custom_hint">مثال: اكتب في فقرات قصيرة. استخدم التهجئة البريطانية.</string>
+    <string name="custom_help">تُضاف إلى قواعد التنقيح الأساسية (الحفاظ على لغاتك، وإزالة كلمات الحشو، وعدم إضافة أي محتوى أبدًا).</string>
+
+    <!-- Models -->
+    <string name="model_stt">التعرّف على الكلام</string>
+    <string name="model_llm">نموذج التنقيح</string>
+    <string name="model_stable">مستقر</string>
+    <string name="model_preview">معاينة</string>
+    <string name="model_other">غير ذلك… (أدخل معرّف نموذج)</string>
+    <string name="model_id">معرّف النموذج</string>
+    <string name="check_updates">البحث عن نماذج وتحديثات جديدة</string>
+    <string name="checking">جارٍ التحقق…</string>
+    <string name="never_checked">لم يتم التحقق مطلقًا</string>
+    <string name="last_checked">آخر تحقق: %1$s</string>
+    <string name="check_failed">فشل التحقق: %1$s</string>
+    <string name="all_up_to_date">كل شيء محدَّث</string>
+    <string name="alert_update">يتوفر تحديث للتطبيق</string>
+    <string name="alert_update_sub">%1$s. انقر للتنزيل.</string>
+    <string name="alert_stt_gone">نموذج الكلام غير متاح</string>
+    <string name="alert_llm_gone">نموذج التنقيح غير متاح</string>
+    <string name="alert_gone_fix">لم يعد %1$s متاحًا لمفتاحك. انقر للتبديل إلى %2$s.</string>
+    <string name="alert_gone_pick">لم يعد %1$s متاحًا لمفتاحك. انقر لاختيار نموذج آخر.</string>
+    <string name="alert_switched">تم تبديل النموذج</string>
+    <string name="alert_switched_sub">الآن %1$s (كان %2$s). انقر للتراجع.</string>
+    <string name="alert_upgrade">يتوفر نموذج أحدث</string>
+    <string name="alert_recommended">النموذج الموصى به</string>
+    <plurals name="alert_new_models">
+        <item quantity="zero">%d نموذج Groq جديد</item>
+        <item quantity="one">نموذج Groq جديد (%d)</item>
+        <item quantity="two">نموذجا Groq جديدان (%d)</item>
+        <item quantity="few">%d نماذج Groq جديدة</item>
+        <item quantity="many">%d نموذجًا جديدًا من Groq</item>
+        <item quantity="other">%d نموذج Groq جديد</item>
+    </plurals>
+    <string name="upgrade_title">التبديل إلى %1$s؟</string>
+    <string name="upgrade_text">الحالي: %1$s (%2$s)\nالجديد: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">عائلة النموذج نفسها، إصدار أحدث.</string>
+    <string name="upgrade_other_line">عائلة نماذج مختلفة. الأحدث ليس دائمًا الأفضل، لذا جرّب بعض الإملاءات. يمكنك التراجع بنقرة واحدة.</string>
+    <string name="switch_model">تبديل</string>
+    <string name="dont_suggest">لا تقترح</string>
+
+    <!-- Appearance -->
+    <string name="look">المظهر والحركة</string>
+    <string name="look_sub">حجم الزر، التفاعل مع الصوت، الموجات، الألوان</string>
+    <string name="look_dot">الزر</string>
+    <string name="dot_size">الحجم</string>
+    <string name="dot_size_sub">يمكنك أيضًا تغيير حجم الزر بإصبعين</string>
+    <string name="look_animation">حركة التسجيل</string>
+    <string name="reaction">التفاعل مع الصوت</string>
+    <string name="reaction_sub">مدى قوة تتبّع الشكل لصوتك</string>
+    <string name="reaction_calm">هادئ</string>
+    <string name="reaction_lively">حيوي</string>
+    <string name="reaction_wild">جامح</string>
+    <string name="wave_speed">سرعة الموجات</string>
+    <string name="wave_speed_sub">مدى سرعة حركة الشكل</string>
+    <string name="wave_count">الموجات</string>
+    <string name="wave_count_sub">عدد التموجات التي تدور حول الشكل</string>
+    <string name="look_colours">الألوان</string>
+    <string name="colour_front">الطبقة الأمامية</string>
+    <string name="colour_front_sub">الطبقة العليا أثناء التسجيل</string>
+    <string name="colour_middle">الطبقة الوسطى</string>
+    <string name="colour_middle_sub">الطبقة الثانية</string>
+    <string name="colour_back">الطبقة الخلفية</string>
+    <string name="colour_back_sub">الطبقة الثالثة</string>
+    <string name="colour_ring">حلقة التمييز</string>
+    <string name="colour_ring_sub">حول الزر وفقاعة المعاينة</string>
+    <string name="not_a_colour">لون غير صالح</string>
+    <string name="reset_defaults">استعادة الإعدادات الافتراضية</string>
+    <string name="reset_confirm">هل تريد إعادة ضبط الحجم والحركة والألوان؟</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">طلبات اليوم: %1$d من %2$d</string>
+    <string name="usage_tokens">الرموز المميزة في هذه الدقيقة: %1$d من %2$d</string>
+    <string name="usage_audio">الصوت اليوم (محسوب على هذا الهاتف): %1$d دقيقة من الحد اليومي المجاني البالغ %2$d ساعة</string>
+    <string name="usage_console">الخطة والفوترة</string>
+    <string name="usage_console_sub">فتح وحدة تحكم Groq</string>
+    <string name="usage_none">يظهر بعد أول إملاء لك. انقر لفتح وحدة تحكم Groq.</string>
+    <string name="usage_warn_requests">Groq: تم استخدام %1$d%% من طلبات اليوم لـ %2$s</string>
+    <string name="usage_warn_audio">Groq: تم استخدام نحو %1$d%% من الصوت المجاني اليوم لـ %2$s</string>
+
+    <!-- Stats -->
+    <string name="stats_title">إملاءاتك</string>
+    <string name="stats_spoken">مدة الكلام</string>
+    <string name="stats_words">كلمات</string>
+    <string name="stats_dictations">إملاءات</string>
+    <string name="stats_average">المتوسط</string>
+    <string name="stats_longest">الأطول</string>
+    <string name="stats_streak">أيام متتالية</string>
+    <string name="stats_wpm">تتحدث بنحو %1$d كلمة في الدقيقة، أي أسرع بنحو %2$d× من الكتابة على الهاتف.</string>
+    <string name="stats_chart">آخر 14 يومًا، بالدقائق</string>
+
+    <!-- About -->
+    <string name="diagnostics">التشخيص</string>
+    <string name="diagnostics_sub">آخر إملاء والأخطاء وأحداث الخدمة، لاستكشاف المشكلات وإصلاحها</string>
+    <string name="privacy_policy">سياسة الخصوصية</string>
+    <string name="terms">شروط الاستخدام</string>
+    <string name="licenses">تراخيص البرامج مفتوحة المصدر</string>
+    <string name="licenses_text">يستخدم VitalySpeak هذه المكتبات مفتوحة المصدر، بموجب Apache License 2.0:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nالنص الكامل للترخيص: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">الإصدار</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">البحث في الإملاءات</string>
+    <string name="history_no_match">لا توجد نتائج مطابقة لـ \"%1$s\".</string>
+    <string name="state_done">تم</string>
+    <string name="state_raw">غير منقّح</string>
+    <string name="state_pending">بانتظار التحويل إلى نص · %1$d/%2$d</string>
+    <string name="state_recording">جارٍ التسجيل</string>
+    <string name="audio_saved">تم حفظ الصوت</string>
+    <string name="not_transcribed">(لم يُحوَّل إلى نص بعد)</string>
+    <string name="cleaned">النص المنقّح</string>
+    <string name="cleaned_missing">التنقيح مفقود. انقر على \"إعادة محاولة التنقيح\".</string>
+    <string name="raw">النص الخام</string>
+    <string name="raw_missing">%1$d من %2$d أجزاء لم تُحوَّل إلى نص بعد. تم حفظ الصوت: انقر على \"إعادة المحاولة\".</string>
+    <string name="copy_cleaned">نسخ النص المنقّح</string>
+    <string name="copy_raw">نسخ النص الخام</string>
+    <string name="retry_transcription">إعادة محاولة التحويل إلى نص</string>
+    <string name="retry_cleanup">إعادة محاولة التنقيح</string>
+    <string name="redo_cleanup">التنقيح مرة أخرى</string>
+    <string name="working_background">جارٍ العمل في الخلفية…</string>
+    <string name="delete_confirm">هل تريد حذف هذا الإملاء؟</string>
+    <string name="delete_confirm_audio">هل تريد حذف هذا الإملاء والصوت المحفوظ معه؟</string>
+    <string name="copied">تم النسخ (%1$d حرف)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">قبل تشغيل VitalySpeak</string>
+    <string name="disclosure_uses_title">لماذا يستخدم VitalySpeak خدمة تسهيل الاستخدام</string>
+    <string name="disclosure_uses">VitalySpeak أداة إملاء. يستخدم واجهة Android Accessibility API من أجل:\n\n• عرض زر الميكروفون العائم فوق التطبيقات الأخرى؛\n• ملاحظة متى يكون حقل نصي نشطًا، حتى يظهر الزر أثناء الكتابة فقط؛\n• إدراج النص الذي تمليه في ذلك الحقل؛\n• اختياريًا، السماح لزر خفض الصوت أو زر سماعة الرأس بتحديد أمر منطوق أثناء التسجيل.</string>
+    <string name="disclosure_never_title">ما لا يفعله أبدًا</string>
+    <string name="disclosure_never">لا يقرأ VitalySpeak محتوى شاشتك أو التطبيقات الأخرى ولا يخزّنه ولا يرسله. لا يسجّل ضغطات المفاتيح، ولا ينفّذ إجراءات نيابةً عنك، ولا يحتوي على إعلانات أو أدوات تحليل.</string>
+    <string name="disclosure_data_title">تسجيلاتك</string>
+    <string name="disclosure_data">لا يُستخدم الميكروفون إلا بعد النقر على الزر. يُرسَل التسجيل إلى Groq, Inc. باستخدام مفتاح API الخاص بك، لتحويله إلى نص و(إذا كان التنقيح بالذكاء الاصطناعي مفعّلًا) تنقيحه، ثم يعود النص إلى هاتفك. لا يُرسَل أي شيء إلى المطوّر. تُحذف التسجيلات من هاتفك بعد تحويلها إلى نص ما لم تختر الاحتفاظ بها؛ ويبقى سجل النصوص على هاتفك حتى تحذفه.</string>
+    <string name="disclosure_policy_link">قراءة سياسة الخصوصية</string>
+    <string name="disclosure_agree">أوافق، افتح الإعدادات</string>
+    <string name="disclosure_decline">ليس الآن</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">ميكروفون VitalySpeak. انقر لبدء الإملاء أو إيقافه، واضغط مطولًا لفتح التطبيق.</string>
+    <string name="cmd_start">⌘ أمر</string>
+    <string name="cmd_end">■ إنهاء الأمر</string>
+    <string name="cmd_hint">⌘ قل ما يجب أن يفعله الذكاء الاصطناعي</string>
+    <string name="btn_cancel">✕ إلغاء</string>
+    <string name="btn_screen_off">☾ إطفاء الشاشة</string>
+    <string name="pocket_title">التسجيل مستمر</string>
+    <string name="pocket_countdown">ستخفت الشاشة خلال %1$d…</string>
+    <string name="pocket_continues">انقر مرتين أو اضغط زر التشغيل للعودة</string>
+    <string name="pocket_recording">جارٍ التسجيل · %1$s</string>
+    <string name="dot_size_toast">حجم الزر %1$d%%</string>
+    <string name="listening">جارٍ الاستماع…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">اسمح بالوصول إلى الميكروفون في تطبيق VitalySpeak</string>
+    <string name="err_mic_busy">الميكروفون قيد الاستخدام من قِبل تطبيق آخر</string>
+    <string name="err_no_key">أضف مفتاح Groq API في تطبيق VitalySpeak</string>
+    <string name="err_storage_full">مساحة تخزين الهاتف ممتلئة تقريبًا، لذا فإن التسجيل غير آمن</string>
+    <string name="err_storage_write">خطأ في التخزين. جارٍ تحويل ما تم حفظه إلى نص.</string>
+    <string name="err_no_audio">لم يُسجَّل أي صوت</string>
+    <string name="err_transcribe_kept">تعذّر الوصول إلى Groq لـ %1$d جزء/أجزاء. تم حفظ تسجيلك: افتح VitalySpeak، ثم السجل، لإعادة المحاولة.</string>
+    <string name="err_retry_failed">ما زال تعذّر تحويل %1$d جزء/أجزاء إلى نص. تم الاحتفاظ بها لمحاولة أخرى.</string>
+    <string name="stop_max_length">تم بلوغ 4 ساعات. جارٍ تحويل كل شيء إلى نص.</string>
+    <string name="stop_low_storage">مساحة التخزين ممتلئة تقريبًا. جارٍ تحويل كل شيء إلى نص.</string>
+    <string name="cancelled">تم الإلغاء. لم يُرسَل أي شيء.</string>
+    <string name="finishing_parts">جارٍ إنهاء الجزء %1$d من %2$d…</string>
+    <string name="no_speech">لم يُكتشف أي كلام</string>
+    <string name="groq_busy">Groq مشغول. سينتهي خلال %1$d ث…</string>
+    <string name="cleanup_partial">تم تخطي التنقيح لـ %1$d جزء/أجزاء. يبقى النص الخام فيها.</string>
+    <string name="applying_commands">جارٍ تطبيق أوامرك…</string>
+    <string name="commands_partial">تعذّر تطبيق بعض الأوامر. وهي مُدرجة في النهاية.</string>
+    <string name="not_applied">لم يُطبَّق</string>
+    <string name="saved_to_history">تم الحفظ في السجل</string>
+    <string name="copied_to_clipboard">لم يتم العثور على حقل نصي. النص موجود في الحافظة.</string>
+    <string name="cleanup_failed_again">فشل التنقيح مرة أخرى. ما زال النص الخام محفوظًا.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">تنبيهات الإعداد</string>
+    <string name="notif_off_title">تم إيقاف VitalySpeak</string>
+    <string name="notif_off_text">أوقف Android خدمة تسهيل الاستخدام الخاصة بالتطبيق. انقر لإعادة تشغيلها.</string>
+</resources>

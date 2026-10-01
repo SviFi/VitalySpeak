@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand: warm orange, matching the logo -->
+    <color name="primary">#E8621A</color>
+    <color name="primary_container">#FFE2D1</color>
+    <color name="on_primary_container">#6B2600</color>
+    <color name="logo_bg">#141418</color>
+</resources>

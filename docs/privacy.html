@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VitalySpeak Privacy Policy</title>
+<meta name="description" content="How the VitalySpeak dictation app handles your data.">
+<style>
+  :root { --bg:#ffffff; --fg:#1d1d1f; --muted:#5f6368; --accent:#c4520f; --line:#e6e6e9; --box:#f6f6f8; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#141418; --fg:#ececf1; --muted:#a3a3ad; --accent:#ff9a5c; --line:#2c2c33; --box:#1d1d23; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 2rem; line-height:1.2; margin: 0 0 4px; }
+  h2 { font-size: 1.25rem; margin: 36px 0 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+  h3 { font-size: 1.05rem; margin: 20px 0 4px; }
+  p, li { color: var(--fg); }
+  .meta { color: var(--muted); margin: 0 0 24px; }
+  .summary { background: var(--box); border-radius: 12px; padding: 16px 20px; }
+  .summary ul { margin: 8px 0 0; padding-left: 20px; }
+  a { color: var(--accent); }
+  table { width:100%; border-collapse: collapse; margin: 12px 0; font-size: .95rem; }
+  th, td { text-align:left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  .scroll { overflow-x: auto; }
+</style>
+</head>
+<body>
+<main>
+<h1>VitalySpeak Privacy Policy</h1>
+<p class="meta">Effective 1 October 2026 · Applies to the VitalySpeak app for Android (Google Play and direct download)</p>
+
+<div class="summary">
+  <strong>In short</strong>
+  <ul>
+    <li>The microphone records only after you tap the VitalySpeak button, and stops when you tap again.</li>
+    <li>Your recording is sent directly from your phone to <strong>Groq</strong> with <strong>your own Groq API key</strong> to be turned into text. The developer runs no servers and never receives your audio, text or key.</li>
+    <li>Your API key, settings and dictation history are stored only on your phone. Recordings are deleted after transcription unless you choose to keep them.</li>
+    <li>The Accessibility service is used only to show the button, detect an active text field, insert your text and (optionally) use the volume-down button as a command key. It does not read or collect your screen content.</li>
+    <li>No advertising, no analytics, no tracking, no sale of data.</li>
+  </ul>
+</div>
+
+<h2>1. Who is responsible</h2>
+<p>VitalySpeak is developed by Vitaly Stockman, an individual developer based in Porvoo, Finland (“I”, “the developer”). Contact: <a href="mailto:svifi@svifi.com">svifi@svifi.com</a>.</p>
+<p>Because the app has no backend, I do not collect or store your personal data. Where data leaves your phone, it goes to the services described in section 4, under your own accounts with them.</p>
+
+<h2>2. What the app handles and where it stays</h2>
+<div class="scroll">
+<table>
+  <tr><th>Data</th><th>Purpose</th><th>Where it is stored</th><th>How long</th></tr>
+  <tr><td>Microphone audio</td><td>Transcribing what you dictate</td><td>App’s private storage on your phone, in parts, while the dictation is processed</td><td>Deleted as soon as all parts are transcribed. Kept only if you turn on “Keep audio”, or if transcription has not finished yet (so you can retry)</td></tr>
+  <tr><td>Transcripts and cleaned text (History)</td><td>Showing, copying and retrying your dictations</td><td>Your phone</td><td>Until you delete an entry or uninstall the app</td></tr>
+  <tr><td>Groq API key</td><td>Authenticating your requests to Groq</td><td>Your phone (app-private settings)</td><td>Until you remove it or uninstall the app</td></tr>
+  <tr><td>Settings, vocabulary, custom instructions</td><td>Configuring the app</td><td>Your phone</td><td>Until you change them or uninstall</td></tr>
+  <tr><td>Usage statistics (dates, durations, word counts)</td><td>The “Your dictation” card and Groq usage estimates</td><td>Your phone</td><td>Until you uninstall</td></tr>
+  <tr><td>Diagnostic log (service start/stop, errors)</td><td>Troubleshooting, shown in the app</td><td>Your phone (size-limited)</td><td>Rolling; oldest lines are removed</td></tr>
+</table>
+</div>
+<p>App data is excluded from Android cloud backup and device-to-device transfer. Uninstalling the app deletes all of it.</p>
+
+<h2>3. Accessibility service</h2>
+<p>VitalySpeak uses the Android Accessibility API because a dictation button that works in every app is not possible otherwise. It uses it only to:</p>
+<ul>
+  <li>draw the floating microphone button over other apps;</li>
+  <li>detect when a text field is focused or the keyboard is open, so the button appears only while you type;</li>
+  <li>insert your dictated text at the cursor of that field (or paste it);</li>
+  <li>optionally, while you are recording, treat the volume-down or headset button as the “command” key.</li>
+</ul>
+<p>The app does not read, store or transmit the content of your screen or of other apps, does not record keystrokes, and does not perform actions on your behalf. Information about the focused field (whether it is editable, its current text and cursor position) is used only in memory, at the moment of inserting your text, and is never stored or sent anywhere. You are shown this explanation and asked for consent in the app before the service is turned on.</p>
+
+<h2>4. Services the app connects to</h2>
+<h3>Groq (speech recognition and AI cleanup)</h3>
+<p>When you finish a dictation, the app sends the audio to Groq, Inc. (api.groq.com) for transcription. If AI cleanup is on, the transcript, together with your selected languages, vocabulary and custom instructions, is sent to Groq for editing. While “Live preview” is on, short overlapping snippets of the most recent audio are also sent during recording. Requests use your API key, so they are made under your Groq account and Groq’s terms and privacy policy apply: <a href="https://groq.com/privacy-policy/" rel="noopener">groq.com/privacy-policy</a>. Groq may process data in the United States. When you open the app, it may also ask Groq for the list of available models and read the usage-limit information Groq returns.</p>
+<h3>GitHub (model recommendations, updates)</h3>
+<p>When you open the app (at most about once a day, or when you tap “Check”), it downloads a small public file listing the recommended models from GitHub (raw.githubusercontent.com) and Groq’s public model documentation. The version downloaded outside Google Play also checks GitHub (api.github.com) for a newer release. These requests contain no personal data from the app, but, like any web request, reveal your IP address to GitHub (see <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub’s privacy statement</a>).</p>
+<p>All connections use HTTPS. No other services are contacted; the app contains no advertising, analytics or crash-reporting SDKs.</p>
+
+<h2>5. Permissions</h2>
+<ul>
+  <li><strong>Microphone</strong>: recording your dictation, only after you tap the button.</li>
+  <li><strong>Internet</strong>: the connections in section 4.</li>
+  <li><strong>Notifications</strong> (optional): a notice if Android switches the accessibility service off.</li>
+  <li><strong>Run at startup</strong>: re-scheduling that setup check after a reboot.</li>
+  <li><strong>Accessibility service</strong>: see section 3.</li>
+</ul>
+
+<h2>6. Legal basis (GDPR)</h2>
+<p>Processing on your phone happens at your request, to provide the app you chose to use (Art. 6(1)(b) GDPR), and the accessibility use is based on your consent given in the app (Art. 6(1)(a)), which you can withdraw at any time by turning the service off in Android settings. Sending your recordings to Groq happens on your instruction, under your own agreement with Groq.</p>
+
+<h2>7. Your rights</h2>
+<p>Under the GDPR you have the right to access, correct, delete and port your personal data, to restrict or object to processing, and to withdraw consent. As your data stays on your phone, you can exercise most of these directly: view, copy or delete dictations in History, clear the app’s data, or uninstall it. For data held by Groq, use your Groq account or contact Groq. For any question, write to <a href="mailto:svifi@svifi.com">svifi@svifi.com</a>.</p>
+<p>You may also lodge a complaint with a supervisory authority, in Finland the Data Protection Ombudsman (<a href="https://tietosuoja.fi/en" rel="noopener">tietosuoja.fi</a>), or the authority in your country.</p>
+
+<h2>8. Recording other people</h2>
+<p>VitalySpeak is meant for dictating your own speech. If other people can be heard, make sure you have their consent where the law requires it.</p>
+
+<h2>9. Children</h2>
+<p>VitalySpeak is not directed at children under 16 and is not designed to be used by them.</p>
+
+<h2>10. Changes</h2>
+<p>If this policy changes, the new version will be published at this address with a new effective date. Significant changes will also be mentioned in the app’s release notes.</p>
+
+<h2>11. Contact</h2>
+<p>Vitaly Stockman · Porvoo, Finland · <a href="mailto:svifi@svifi.com">svifi@svifi.com</a></p>
+</main>
+</body>
+</html>

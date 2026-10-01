@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">VitalySpeak menampilkan tombol mikrofon mengambang saat Anda mengetik. Ketuk untuk mendikte; ucapan Anda ditranskripsi dan teksnya dimasukkan ke kolom yang sedang Anda isi. VitalySpeak menggunakan layanan ini hanya untuk menampilkan tombol, mendeteksi saat kolom teks sedang digunakan, memasukkan teks yang Anda diktekan, dan (opsional) menggunakan tombol volume turun sebagai tombol perintah saat merekam. VitalySpeak tidak membaca, mengumpulkan, atau membagikan konten layar Anda.</string>
+
+    <!-- Common -->
+    <string name="back">Kembali</string>
+    <string name="save">Simpan</string>
+    <string name="use">Gunakan</string>
+    <string name="close">Tutup</string>
+    <string name="copy">Salin</string>
+    <string name="delete">Hapus</string>
+    <string name="reset">Reset</string>
+    <string name="default_value">Default</string>
+    <string name="not_now">Nanti saja</string>
+    <string name="open_settings">Buka setelan</string>
+    <string name="no_browser">Browser tidak ditemukan</string>
+    <string name="status_ok">Selesai</string>
+    <string name="status_missing">Belum ada</string>
+    <string name="status_recommended">Disarankan</string>
+
+    <!-- Home: status -->
+    <string name="status">Status</string>
+    <string name="status_ready">Siap. Buka keyboard di aplikasi mana pun dan ketuk tombol mikrofon.</string>
+    <string name="status_incomplete">Penyiapan belum lengkap: %1$s. Lihat di bawah.</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">Riwayat</string>
+    <string name="sec_setup">Penyiapan</string>
+    <string name="sec_languages">Bahasa</string>
+    <string name="sec_dictation">Dikte</string>
+    <string name="sec_cleanup">Perapian AI</string>
+    <string name="sec_models">Model</string>
+    <string name="sec_appearance">Tampilan</string>
+    <string name="sec_usage">Penggunaan Groq (perkiraan)</string>
+    <string name="sec_about">Tentang</string>
+
+    <!-- History row -->
+    <string name="history_row">Semua dikte</string>
+    <string name="history_needs_service">Aktifkan layanan Aksesibilitas untuk melihat riwayat Anda.</string>
+    <string name="history_empty">Belum ada dikte.</string>
+    <plurals name="history_count">
+        <item quantity="other">%d dikte</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="other">%1$d rekaman belum ditranskripsi. Ketuk untuk mencoba lagi (total %2$d).</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">Mikrofon</string>
+    <string name="mic_ok">Diizinkan</string>
+    <string name="mic_missing">Ketuk untuk mengizinkan akses mikrofon</string>
+    <string name="setup_access">Layanan Aksesibilitas</string>
+    <string name="access_ok">Aktif dan berjalan</string>
+    <string name="access_stuck">Diaktifkan tetapi tidak berjalan. Ketuk, lalu nonaktifkan dan aktifkan lagi.</string>
+    <string name="access_off">Nonaktif. Ketuk untuk mengaktifkan.</string>
+    <string name="access_help">Android akan membuka halaman Aksesibilitas VitalySpeak.\n\n1. Aktifkan \"VitalySpeak\".\n2. Konfirmasi dengan \"Izinkan\".\n3. Kembali. Anda akan melihat tanda centang hijau di sini.\n\nJika yang muncul adalah daftar Aksesibilitas umum, buka \"Aplikasi terinstal\" (atau \"Aplikasi yang didownload\"), lalu VitalySpeak.\n\nJika tombolnya berwarna abu-abu (\"Setelan terbatas\"): buka Setelan, Aplikasi, VitalySpeak, ketuk menu ⋮ dan pilih \"Izinkan setelan terbatas\". Lalu coba lagi.</string>
+    <string name="access_help_running">Layanan aktif dan berjalan. Membuka halaman setelannya.</string>
+    <string name="setup_key">Kunci API Groq</string>
+    <string name="key_missing">Ketuk untuk menambahkan kunci Anda. Anda bisa membuatnya gratis di console.groq.com.</string>
+    <string name="key_help">VitalySpeak mengirim rekaman Anda ke Groq menggunakan kunci Anda sendiri. Kunci hanya disimpan di ponsel ini.</string>
+    <string name="get_key">Dapatkan kunci</string>
+    <string name="key_first">Tambahkan kunci API Groq Anda terlebih dahulu</string>
+    <string name="setup_battery">Baterai: tidak dibatasi</string>
+    <string name="battery_ok">Android tidak akan menidurkan VitalySpeak</string>
+    <string name="battery_missing">Disarankan: mencegah Android menjeda VitalySpeak di latar belakang</string>
+    <string name="battery_ok_help">Sudah tidak dibatasi. Di ponsel Samsung, periksa juga Setelan, Baterai, Batas penggunaan latar belakang: VitalySpeak tidak boleh ada di \"Aplikasi tidur\" atau \"Aplikasi tidur nyenyak\".</string>
+    <string name="setup_alerts">Peringatan penyiapan</string>
+    <string name="alerts_ok">Anda akan diberi tahu jika Android menonaktifkan VitalySpeak</string>
+    <string name="alerts_missing">Disarankan: dapatkan notifikasi jika Android menonaktifkan VitalySpeak</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">Bahasa yang Anda gunakan</string>
+    <string name="app_language">Bahasa aplikasi</string>
+    <string name="app_language_system">Sama seperti ponsel</string>
+    <string name="app_language_service">Bahasa tombol mengambang berganti saat layanan dimulai berikutnya.</string>
+    <string name="languages_intro">Pilih bahasa yang Anda gunakan untuk mendikte. Letakkan yang paling sering Anda pakai di urutan pertama; tambahkan bahasa lain yang sering Anda campur. Ini tidak mengubah bahasa aplikasi.</string>
+    <string name="languages_yours">Bahasa Anda</string>
+    <string name="languages_primary">Utama</string>
+    <string name="languages_primary_sub">Digunakan saat ucapan kurang jelas</string>
+    <string name="languages_make_primary">Ketuk untuk menjadikan utama</string>
+    <string name="languages_remove">Hapus %1$s</string>
+    <string name="languages_add">Tambah bahasa</string>
+    <string name="languages_search">Cari bahasa</string>
+    <string name="languages_why_title">Mengapa ini penting</string>
+    <string name="languages_why">Pengenal ucapan mengenali sekitar 100 bahasa. Jika dibiarkan menebak, terkadang ia memilih bahasa yang salah: aksen yang kental atau frasa pendek bisa keluar sebagai bahasa lain, atau malah diterjemahkan.\n\n• Dengan satu bahasa dipilih, pengenalan tahu persis apa yang diharapkan. Itu pilihan paling akurat dan tercepat.\n• Dengan beberapa bahasa, VitalySpeak memeriksa bahasa mana yang dikenali. Jika bukan salah satu bahasa Anda, bagian itu ditranskripsi ulang dalam bahasa utama Anda.\n• Bahasa Anda juga diteruskan ke perapian AI, sehingga setiap bahasa tetap persis seperti yang Anda ucapkan, bahkan saat Anda berganti bahasa di tengah kalimat, dan tidak pernah diterjemahkan.\n\nJadi, tambahkan hanya bahasa yang benar-benar Anda gunakan.</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">Tampilkan tombol hanya saat mengetik</string>
+    <string name="only_while_typing_sub">Tombol muncul saat kolom teks aktif. Tekan lama untuk membuka layar ini.</string>
+    <string name="live_preview">Pratinjau langsung</string>
+    <string name="live_preview_sub">Menampilkan kata-kata Anda di samping tombol saat Anda berbicara (memakai permintaan singkat tambahan ke Groq)</string>
+    <string name="vocabulary">Kosakata</string>
+    <string name="vocabulary_none">Tidak ada</string>
+    <string name="vocabulary_hint">Nama, produk, istilah…</string>
+    <string name="vocabulary_help">Nama dan istilah yang Anda gunakan, dipisahkan koma. Perapian AI memakainya untuk memperbaiki ejaan, hanya di bagian yang benar-benar Anda ucapkan.</string>
+    <string name="command_keys">Volume turun untuk perintah</string>
+    <string name="command_keys_sub">Saat merekam, tombol volume turun atau tombol headset memulai dan mengakhiri perintah ⌘: instruksi untuk AI, bukan teks</string>
+    <string name="keep_audio">Simpan audio</string>
+    <string name="keep_audio_sub">Nonaktif: rekaman dihapus setelah ditranskripsi. Aktif: rekaman disimpan di ponsel ini (sekitar 115 MB per jam).</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">Perapian AI</string>
+    <string name="cleanup_sub">Menghapus kata pengisi, memperbaiki tanda baca dan kesalahan pengenalan</string>
+    <string name="style_standard">Alami</string>
+    <string name="style_standard_sub">Kata-kata Anda sendiri, dirapikan</string>
+    <string name="style_formal">Rapi</string>
+    <string name="style_formal_sub">Kalimat lengkap, nada profesional</string>
+    <string name="style_notes">Catatan</string>
+    <string name="style_notes_sub">Judul singkat dan poin-poin</string>
+    <string name="style_custom">Kustom</string>
+    <string name="style_custom_sub">Instruksi Anda sendiri</string>
+    <string name="custom_instructions">Instruksi kustom</string>
+    <string name="custom_instructions_empty">Ketuk untuk menulis instruksi Anda</string>
+    <string name="custom_hint">Contoh: Tulis dalam paragraf pendek. Gunakan ejaan Inggris Britania.</string>
+    <string name="custom_help">Ditambahkan ke aturan perapian dasar (pertahankan bahasa Anda, hapus kata pengisi, jangan pernah menambah isi).</string>
+
+    <!-- Models -->
+    <string name="model_stt">Pengenalan ucapan</string>
+    <string name="model_llm">Model perapian</string>
+    <string name="model_stable">stabil</string>
+    <string name="model_preview">pratinjau</string>
+    <string name="model_other">Lainnya… (masukkan ID model)</string>
+    <string name="model_id">ID model</string>
+    <string name="check_updates">Periksa model baru dan pembaruan</string>
+    <string name="checking">Memeriksa…</string>
+    <string name="never_checked">Belum pernah diperiksa</string>
+    <string name="last_checked">Terakhir diperiksa %1$s</string>
+    <string name="check_failed">Pemeriksaan gagal: %1$s</string>
+    <string name="all_up_to_date">Semuanya sudah terbaru</string>
+    <string name="alert_update">Pembaruan aplikasi tersedia</string>
+    <string name="alert_update_sub">%1$s. Ketuk untuk mendownload.</string>
+    <string name="alert_stt_gone">Model ucapan tidak tersedia</string>
+    <string name="alert_llm_gone">Model perapian tidak tersedia</string>
+    <string name="alert_gone_fix">%1$s tidak lagi tersedia untuk kunci Anda. Ketuk untuk beralih ke %2$s.</string>
+    <string name="alert_gone_pick">%1$s tidak lagi tersedia untuk kunci Anda. Ketuk untuk memilih yang lain.</string>
+    <string name="alert_switched">Model diganti</string>
+    <string name="alert_switched_sub">Sekarang %1$s (sebelumnya %2$s). Ketuk untuk membatalkan.</string>
+    <string name="alert_upgrade">Model yang lebih baru tersedia</string>
+    <string name="alert_recommended">Model yang disarankan</string>
+    <plurals name="alert_new_models">
+        <item quantity="other">%d model Groq baru</item>
+    </plurals>
+    <string name="upgrade_title">Beralih ke %1$s?</string>
+    <string name="upgrade_text">Saat ini: %1$s (%2$s)\nBaru: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">Keluarga model yang sama, versi lebih baru.</string>
+    <string name="upgrade_other_line">Keluarga model yang berbeda. Yang lebih baru belum tentu lebih bagus, jadi coba beberapa kali dikte. Anda bisa membatalkannya dengan satu ketukan.</string>
+    <string name="switch_model">Beralih</string>
+    <string name="dont_suggest">Jangan sarankan</string>
+
+    <!-- Appearance -->
+    <string name="look">Tampilan dan animasi</string>
+    <string name="look_sub">Ukuran tombol, reaksi suara, gelombang, warna</string>
+    <string name="look_dot">Tombol</string>
+    <string name="dot_size">Ukuran</string>
+    <string name="dot_size_sub">Anda juga bisa mencubit tombol dengan dua jari</string>
+    <string name="look_animation">Animasi perekaman</string>
+    <string name="reaction">Reaksi suara</string>
+    <string name="reaction_sub">Seberapa kuat bentuknya mengikuti suara Anda</string>
+    <string name="reaction_calm">Tenang</string>
+    <string name="reaction_lively">Lincah</string>
+    <string name="reaction_wild">Liar</string>
+    <string name="wave_speed">Kecepatan gelombang</string>
+    <string name="wave_speed_sub">Seberapa cepat bentuknya bergerak</string>
+    <string name="wave_count">Gelombang</string>
+    <string name="wave_count_sub">Berapa banyak riak yang mengelilingi bentuknya</string>
+    <string name="look_colours">Warna</string>
+    <string name="colour_front">Lapisan depan</string>
+    <string name="colour_front_sub">Lapisan teratas saat merekam</string>
+    <string name="colour_middle">Lapisan tengah</string>
+    <string name="colour_middle_sub">Lapisan kedua</string>
+    <string name="colour_back">Lapisan belakang</string>
+    <string name="colour_back_sub">Lapisan ketiga</string>
+    <string name="colour_ring">Cincin aksen</string>
+    <string name="colour_ring_sub">Di sekitar tombol dan gelembung pratinjau</string>
+    <string name="not_a_colour">Warna tidak valid</string>
+    <string name="reset_defaults">Reset ke default</string>
+    <string name="reset_confirm">Reset ukuran, animasi, dan warna?</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">Permintaan hari ini: %1$d dari %2$d</string>
+    <string name="usage_tokens">Token menit ini: %1$d dari %2$d</string>
+    <string name="usage_audio">Audio hari ini (dihitung di ponsel ini): %1$d mnt dari batas gratis harian %2$d jam</string>
+    <string name="usage_console">Paket dan tagihan</string>
+    <string name="usage_console_sub">Buka konsol Groq</string>
+    <string name="usage_none">Ditampilkan setelah dikte pertama Anda. Ketuk untuk membuka konsol Groq.</string>
+    <string name="usage_warn_requests">Groq: %1$d%% permintaan hari ini untuk %2$s sudah terpakai</string>
+    <string name="usage_warn_audio">Groq: sekitar %1$d%% audio gratis hari ini untuk %2$s sudah terpakai</string>
+
+    <!-- Stats -->
+    <string name="stats_title">Dikte Anda</string>
+    <string name="stats_spoken">diucapkan</string>
+    <string name="stats_words">kata</string>
+    <string name="stats_dictations">dikte</string>
+    <string name="stats_average">rata-rata</string>
+    <string name="stats_longest">terlama</string>
+    <string name="stats_streak">hari berturut-turut</string>
+    <string name="stats_wpm">Anda berbicara sekitar %1$d kata per menit, kira-kira %2$d× lebih cepat daripada mengetik di ponsel.</string>
+    <string name="stats_chart">14 hari terakhir, menit</string>
+
+    <!-- About -->
+    <string name="diagnostics">Diagnostik</string>
+    <string name="diagnostics_sub">Dikte terakhir, error, dan peristiwa layanan, untuk pemecahan masalah</string>
+    <string name="privacy_policy">Kebijakan privasi</string>
+    <string name="terms">Ketentuan penggunaan</string>
+    <string name="licenses">Lisensi open source</string>
+    <string name="licenses_text">VitalySpeak menggunakan library open source berikut, di bawah Apache License 2.0:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nTeks lisensi lengkap: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">Versi</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">Cari dikte</string>
+    <string name="history_no_match">Tidak ada yang cocok dengan \"%1$s\".</string>
+    <string name="state_done">Selesai</string>
+    <string name="state_raw">Belum dirapikan</string>
+    <string name="state_pending">Perlu ditranskripsi · %1$d/%2$d</string>
+    <string name="state_recording">Merekam</string>
+    <string name="audio_saved">audio tersimpan</string>
+    <string name="not_transcribed">(belum ditranskripsi)</string>
+    <string name="cleaned">Teks yang dirapikan</string>
+    <string name="cleaned_missing">Perapian belum ada. Ketuk \"Coba rapikan lagi\".</string>
+    <string name="raw">Transkrip mentah</string>
+    <string name="raw_missing">%1$d dari %2$d bagian belum ditranskripsi. Audio sudah tersimpan: ketuk \"Coba lagi\".</string>
+    <string name="copy_cleaned">Salin teks yang dirapikan</string>
+    <string name="copy_raw">Salin transkrip mentah</string>
+    <string name="retry_transcription">Coba transkripsi lagi</string>
+    <string name="retry_cleanup">Coba rapikan lagi</string>
+    <string name="redo_cleanup">Rapikan ulang</string>
+    <string name="working_background">Memproses di latar belakang…</string>
+    <string name="delete_confirm">Hapus dikte ini?</string>
+    <string name="delete_confirm_audio">Hapus dikte ini dan audio yang tersimpan?</string>
+    <string name="copied">Disalin (%1$d karakter)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">Sebelum Anda mengaktifkan VitalySpeak</string>
+    <string name="disclosure_uses_title">Mengapa VitalySpeak menggunakan layanan Aksesibilitas</string>
+    <string name="disclosure_uses">VitalySpeak adalah alat dikte. Aplikasi ini menggunakan API Aksesibilitas Android untuk:\n\n• menampilkan tombol mikrofon mengambang di atas aplikasi lain;\n• mengetahui saat kolom teks aktif, sehingga tombol hanya muncul saat Anda mengetik;\n• memasukkan teks yang Anda diktekan ke kolom tersebut;\n• secara opsional, menggunakan tombol volume turun atau tombol headset untuk menandai perintah lisan saat merekam.</string>
+    <string name="disclosure_never_title">Yang tidak pernah dilakukannya</string>
+    <string name="disclosure_never">VitalySpeak tidak membaca, menyimpan, atau mengirim konten layar Anda atau aplikasi lain. Aplikasi ini tidak mencatat ketikan Anda, tidak melakukan tindakan atas nama Anda, dan tidak memiliki iklan atau analitik.</string>
+    <string name="disclosure_data_title">Rekaman Anda</string>
+    <string name="disclosure_data">Mikrofon hanya digunakan setelah Anda mengetuk tombol. Rekaman dikirim ke Groq, Inc. dengan kunci API Anda sendiri untuk ditranskripsi dan (jika perapian AI aktif) dirapikan, lalu teksnya dikembalikan ke ponsel Anda. Tidak ada yang dikirim ke developer. Rekaman dihapus dari ponsel Anda setelah ditranskripsi, kecuali Anda memilih untuk menyimpannya; riwayat teks Anda tetap ada di ponsel sampai Anda menghapusnya.</string>
+    <string name="disclosure_policy_link">Baca kebijakan privasi</string>
+    <string name="disclosure_agree">Saya setuju, buka setelan</string>
+    <string name="disclosure_decline">Nanti saja</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">Mikrofon VitalySpeak. Ketuk untuk memulai atau menghentikan dikte, tekan lama untuk membuka aplikasi.</string>
+    <string name="cmd_start">⌘ Perintah</string>
+    <string name="cmd_end">■ Akhiri perintah</string>
+    <string name="cmd_hint">⌘ Ucapkan apa yang harus dilakukan AI</string>
+    <string name="btn_cancel">✕ Batal</string>
+    <string name="btn_screen_off">☾ Matikan layar</string>
+    <string name="pocket_title">Perekaman berlanjut</string>
+    <string name="pocket_countdown">Layar meredup dalam %1$d…</string>
+    <string name="pocket_continues">Ketuk dua kali atau tekan tombol daya untuk kembali</string>
+    <string name="pocket_recording">Merekam · %1$s</string>
+    <string name="dot_size_toast">Ukuran tombol %1$d%%</string>
+    <string name="listening">Mendengarkan…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">Izinkan akses mikrofon di aplikasi VitalySpeak</string>
+    <string name="err_mic_busy">Mikrofon sedang digunakan oleh aplikasi lain</string>
+    <string name="err_no_key">Tambahkan kunci API Groq Anda di aplikasi VitalySpeak</string>
+    <string name="err_storage_full">Penyimpanan ponsel hampir penuh, jadi merekam tidak aman</string>
+    <string name="err_storage_write">Error penyimpanan. Mentranskripsi bagian yang sudah tersimpan.</string>
+    <string name="err_no_audio">Tidak ada audio yang terekam</string>
+    <string name="err_transcribe_kept">Tidak dapat menghubungi Groq untuk %1$d bagian. Rekaman Anda tersimpan: buka VitalySpeak, Riwayat, untuk mencoba lagi.</string>
+    <string name="err_retry_failed">%1$d bagian masih belum bisa ditranskripsi. Disimpan untuk dicoba lagi.</string>
+    <string name="stop_max_length">Sudah mencapai 4 jam. Mentranskripsi semuanya.</string>
+    <string name="stop_low_storage">Penyimpanan hampir penuh. Mentranskripsi semuanya.</string>
+    <string name="cancelled">Dibatalkan. Tidak ada yang dikirim.</string>
+    <string name="finishing_parts">Menyelesaikan %1$d dari %2$d bagian…</string>
+    <string name="no_speech">Tidak ada ucapan yang terdeteksi</string>
+    <string name="groq_busy">Groq sedang sibuk. Selesai dalam %1$d dtk…</string>
+    <string name="cleanup_partial">Perapian dilewati untuk %1$d bagian. Teks mentahnya tetap disimpan di sana.</string>
+    <string name="applying_commands">Menerapkan perintah Anda…</string>
+    <string name="commands_partial">Beberapa perintah tidak dapat diterapkan. Perintah tersebut tercantum di bagian akhir.</string>
+    <string name="not_applied">tidak diterapkan</string>
+    <string name="saved_to_history">Disimpan ke Riwayat</string>
+    <string name="copied_to_clipboard">Kolom teks tidak ditemukan. Teks ada di papan klip.</string>
+    <string name="cleanup_failed_again">Perapian gagal lagi. Teks mentah tetap tersimpan.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">Peringatan penyiapan</string>
+    <string name="notif_off_title">VitalySpeak dinonaktifkan</string>
+    <string name="notif_off_text">Android menonaktifkan layanan Aksesibilitasnya. Ketuk untuk mengaktifkannya lagi.</string>
+</resources>

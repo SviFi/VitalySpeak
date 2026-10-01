@@ -1,0 +1,5 @@
+{
+  "stt": "whisper-large-v3",
+  "llm": "openai/gpt-oss-120b",
+  "note": "Best RU+EN cleanup available on a standard Groq key (Llama 3.3 is now Enterprise-only)"
+}

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">टाइप करते समय VitalySpeak एक फ़्लोटिंग माइक्रोफ़ोन बटन दिखाता है। बोलकर लिखने के लिए इस पर टैप करें; आपकी बोली को टेक्स्ट में बदलकर उसी फ़ील्ड में डाल दिया जाता है जिसमें आप टाइप कर रहे हैं। VitalySpeak इस सेवा का उपयोग केवल बटन दिखाने, टेक्स्ट फ़ील्ड के इस्तेमाल का पता लगाने, आपका बोला गया टेक्स्ट डालने और (वैकल्पिक रूप से) रिकॉर्डिंग के दौरान वॉल्यूम-डाउन बटन को कमांड बटन की तरह इस्तेमाल करने के लिए करता है। यह आपकी स्क्रीन की सामग्री को न पढ़ता है, न इकट्ठा करता है और न ही शेयर करता है।</string>
+
+    <!-- Common -->
+    <string name="back">वापस</string>
+    <string name="save">सेव करें</string>
+    <string name="use">इस्तेमाल करें</string>
+    <string name="close">बंद करें</string>
+    <string name="copy">कॉपी करें</string>
+    <string name="delete">मिटाएं</string>
+    <string name="reset">रीसेट करें</string>
+    <string name="default_value">डिफ़ॉल्ट</string>
+    <string name="not_now">अभी नहीं</string>
+    <string name="open_settings">सेटिंग खोलें</string>
+    <string name="no_browser">कोई ब्राउज़र नहीं मिला</string>
+    <string name="status_ok">हो गया</string>
+    <string name="status_missing">बाकी है</string>
+    <string name="status_recommended">सुझाया गया</string>
+
+    <!-- Home: status -->
+    <string name="status">स्थिति</string>
+    <string name="status_ready">तैयार है। किसी भी ऐप में कीबोर्ड खोलें और माइक्रोफ़ोन बटन पर टैप करें।</string>
+    <string name="status_incomplete">सेटअप अधूरा है: %1$s। नीचे देखें।</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">इतिहास</string>
+    <string name="sec_setup">सेटअप</string>
+    <string name="sec_languages">भाषाएं</string>
+    <string name="sec_dictation">डिक्टेशन</string>
+    <string name="sec_cleanup">AI से सुधार</string>
+    <string name="sec_models">मॉडल</string>
+    <string name="sec_appearance">रूप-रंग</string>
+    <string name="sec_usage">Groq उपयोग (अनुमान)</string>
+    <string name="sec_about">जानकारी</string>
+
+    <!-- History row -->
+    <string name="history_row">सभी डिक्टेशन</string>
+    <string name="history_needs_service">अपना इतिहास देखने के लिए सुलभता सेवा चालू करें।</string>
+    <string name="history_empty">अभी तक कोई डिक्टेशन नहीं।</string>
+    <plurals name="history_count">
+        <item quantity="one">%d डिक्टेशन</item>
+        <item quantity="other">%d डिक्टेशन</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="one">%1$d रिकॉर्डिंग अभी टेक्स्ट में नहीं बदली गई। दोबारा कोशिश करने के लिए टैप करें (कुल %2$d)।</item>
+        <item quantity="other">%1$d रिकॉर्डिंग अभी टेक्स्ट में नहीं बदली गईं। दोबारा कोशिश करने के लिए टैप करें (कुल %2$d)।</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">माइक्रोफ़ोन</string>
+    <string name="mic_ok">अनुमति है</string>
+    <string name="mic_missing">माइक्रोफ़ोन की अनुमति देने के लिए टैप करें</string>
+    <string name="setup_access">सुलभता सेवा</string>
+    <string name="access_ok">चालू है और चल रही है</string>
+    <string name="access_stuck">चालू है, पर चल नहीं रही। टैप करें, फिर इसे बंद करके दोबारा चालू करें।</string>
+    <string name="access_off">बंद है। चालू करने के लिए टैप करें।</string>
+    <string name="access_help">Android, VitalySpeak का सुलभता पेज खोलेगा।\n\n1. \"VitalySpeak\" चालू करें।\n2. \"अनुमति दें\" से पुष्टि करें।\n3. वापस आएं। यहां आपको हरा टिक दिखेगा।\n\nअगर इसके बजाय सामान्य सुलभता सूची दिखे, तो \"इंस्टॉल किए गए ऐप्स\" (या \"डाउनलोड किए गए ऐप्स\") खोलें, फिर VitalySpeak चुनें।\n\nअगर स्विच धूसर है (\"प्रतिबंधित सेटिंग\"): सेटिंग, ऐप्स, VitalySpeak खोलें, ⋮ मेन्यू पर टैप करें और \"प्रतिबंधित सेटिंग की अनुमति दें\" चुनें। फिर दोबारा कोशिश करें।</string>
+    <string name="access_help_running">सेवा चालू है और चल रही है। इसका सेटिंग पेज खोला जा रहा है।</string>
+    <string name="setup_key">Groq API कुंजी</string>
+    <string name="key_missing">अपनी कुंजी जोड़ने के लिए टैप करें। आप console.groq.com पर मुफ़्त में कुंजी बना सकते हैं।</string>
+    <string name="key_help">VitalySpeak आपकी अपनी कुंजी से आपकी रिकॉर्डिंग Groq को भेजता है। कुंजी सिर्फ़ इसी फ़ोन पर सेव रहती है।</string>
+    <string name="get_key">कुंजी पाएं</string>
+    <string name="key_first">पहले अपनी Groq API कुंजी जोड़ें</string>
+    <string name="setup_battery">बैटरी: अप्रतिबंधित</string>
+    <string name="battery_ok">Android, VitalySpeak को स्लीप में नहीं डालेगा</string>
+    <string name="battery_missing">सुझाया गया: Android को बैकग्राउंड में VitalySpeak रोकने से बचाता है</string>
+    <string name="battery_ok_help">पहले से अप्रतिबंधित है। Samsung फ़ोन पर सेटिंग, बैटरी, बैकग्राउंड उपयोग सीमाएं भी जांचें: VitalySpeak \"स्लीपिंग ऐप्स\" या \"डीप स्लीपिंग ऐप्स\" में नहीं होना चाहिए।</string>
+    <string name="setup_alerts">सेटअप अलर्ट</string>
+    <string name="alerts_ok">अगर Android, VitalySpeak को बंद करता है तो आपको बताया जाएगा</string>
+    <string name="alerts_missing">सुझाया गया: अगर Android, VitalySpeak को बंद करे तो सूचना पाएं</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">आप कौन-सी भाषाएं बोलते हैं</string>
+    <string name="app_language">ऐप की भाषा</string>
+    <string name="app_language_system">फ़ोन जैसी ही</string>
+    <string name="app_language_service">फ़्लोटिंग बटन की भाषा अगली बार सेवा शुरू होने पर बदलेगी।</string>
+    <string name="languages_intro">वे भाषाएं चुनें जिनमें आप बोलकर लिखते हैं। सबसे ज़्यादा इस्तेमाल होने वाली भाषा को सबसे ऊपर रखें; बीच-बीच में बोली जाने वाली दूसरी भाषाएं भी जोड़ें। इससे ऐप की अपनी भाषा नहीं बदलती।</string>
+    <string name="languages_yours">आपकी भाषाएं</string>
+    <string name="languages_primary">मुख्य</string>
+    <string name="languages_primary_sub">बोली साफ़ न होने पर इसका इस्तेमाल होता है</string>
+    <string name="languages_make_primary">मुख्य बनाने के लिए टैप करें</string>
+    <string name="languages_remove">%1$s हटाएं</string>
+    <string name="languages_add">भाषा जोड़ें</string>
+    <string name="languages_search">भाषाएं खोजें</string>
+    <string name="languages_why_title">यह क्यों ज़रूरी है</string>
+    <string name="languages_why">स्पीच रिकग्नाइज़र लगभग 100 भाषाएं जानता है। अंदाज़ा लगाने पर यह कभी-कभी गलत भाषा चुन लेता है: गहरा लहजा या छोटा वाक्य किसी दूसरी भाषा में या अनुवाद होकर आ सकता है।\n\n• एक भाषा चुनने पर पहचान को ठीक-ठीक पता होता है कि क्या उम्मीद करनी है। यह सबसे सटीक और सबसे तेज़ विकल्प है।\n• कई भाषाएं चुनने पर VitalySpeak जांचता है कि कौन-सी भाषा पहचानी गई। अगर वह आपकी भाषाओं में नहीं है, तो उस हिस्से को आपकी मुख्य भाषा में दोबारा टेक्स्ट में बदला जाता है।\n• आपकी भाषाएं AI सुधार को भी भेजी जाती हैं, ताकि वह हर भाषा को ठीक वैसे ही रखे जैसे आपने बोली, वाक्य के बीच भाषा बदलने पर भी, और कभी अनुवाद न करे।\n\nइसलिए सिर्फ़ वही भाषाएं जोड़ें जिनका आप सच में इस्तेमाल करते हैं।</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">बटन सिर्फ़ टाइप करते समय दिखाएं</string>
+    <string name="only_while_typing_sub">टेक्स्ट फ़ील्ड सक्रिय होने पर बटन दिखता है। यह स्क्रीन खोलने के लिए इसे देर तक दबाएं।</string>
+    <string name="live_preview">लाइव प्रीव्यू</string>
+    <string name="live_preview_sub">बोलते समय आपके शब्द बटन के पास दिखाता है (Groq को अतिरिक्त छोटे अनुरोध भेजता है)</string>
+    <string name="vocabulary">शब्दावली</string>
+    <string name="vocabulary_none">कोई नहीं</string>
+    <string name="vocabulary_hint">नाम, प्रोडक्ट, शब्द…</string>
+    <string name="vocabulary_help">आपके इस्तेमाल किए जाने वाले नाम और शब्द, कॉमा से अलग करके। AI सुधार इनसे वर्तनी ठीक करता है, सिर्फ़ वहीं जहां आपने इन्हें सच में बोला हो।</string>
+    <string name="command_keys">कमांड के लिए वॉल्यूम-डाउन</string>
+    <string name="command_keys_sub">रिकॉर्डिंग के दौरान वॉल्यूम-डाउन या हेडसेट बटन ⌘ कमांड शुरू और खत्म करता है: टेक्स्ट के बजाय AI के लिए एक निर्देश</string>
+    <string name="keep_audio">ऑडियो रखें</string>
+    <string name="keep_audio_sub">बंद: टेक्स्ट में बदलने के बाद रिकॉर्डिंग मिटा दी जाती हैं। चालू: वे इसी फ़ोन पर रखी जाती हैं (लगभग 115 MB प्रति घंटा)।</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">AI से सुधार</string>
+    <string name="cleanup_sub">फ़ालतू शब्द हटाता है, विराम चिह्न और पहचान की गलतियां ठीक करता है</string>
+    <string name="style_standard">सहज</string>
+    <string name="style_standard_sub">आपके अपने शब्द, साफ़ किए हुए</string>
+    <string name="style_formal">निखरा हुआ</string>
+    <string name="style_formal_sub">पूरे वाक्य, पेशेवर अंदाज़</string>
+    <string name="style_notes">नोट्स</string>
+    <string name="style_notes_sub">छोटा शीर्षक और बुलेट पॉइंट</string>
+    <string name="style_custom">कस्टम</string>
+    <string name="style_custom_sub">आपके अपने निर्देश</string>
+    <string name="custom_instructions">कस्टम निर्देश</string>
+    <string name="custom_instructions_empty">अपने निर्देश लिखने के लिए टैप करें</string>
+    <string name="custom_hint">उदाहरण: छोटे पैराग्राफ़ में लिखें। ब्रिटिश वर्तनी इस्तेमाल करें।</string>
+    <string name="custom_help">बुनियादी सुधार नियमों में जोड़ा जाता है (आपकी भाषाएं बनाए रखें, फ़ालतू शब्द हटाएं, कभी कुछ नया न जोड़ें)।</string>
+
+    <!-- Models -->
+    <string name="model_stt">स्पीच पहचान</string>
+    <string name="model_llm">सुधार मॉडल</string>
+    <string name="model_stable">स्थिर</string>
+    <string name="model_preview">प्रीव्यू</string>
+    <string name="model_other">अन्य… (मॉडल ID डालें)</string>
+    <string name="model_id">मॉडल ID</string>
+    <string name="check_updates">नए मॉडल और अपडेट जांचें</string>
+    <string name="checking">जांच हो रही है…</string>
+    <string name="never_checked">कभी नहीं जांचा</string>
+    <string name="last_checked">पिछली जांच %1$s</string>
+    <string name="check_failed">जांच विफल: %1$s</string>
+    <string name="all_up_to_date">सब कुछ अप टू डेट है</string>
+    <string name="alert_update">ऐप अपडेट उपलब्ध है</string>
+    <string name="alert_update_sub">%1$s। डाउनलोड करने के लिए टैप करें।</string>
+    <string name="alert_stt_gone">स्पीच मॉडल उपलब्ध नहीं है</string>
+    <string name="alert_llm_gone">सुधार मॉडल उपलब्ध नहीं है</string>
+    <string name="alert_gone_fix">%1$s अब आपकी कुंजी के लिए उपलब्ध नहीं है। %2$s पर जाने के लिए टैप करें।</string>
+    <string name="alert_gone_pick">%1$s अब आपकी कुंजी के लिए उपलब्ध नहीं है। दूसरा चुनने के लिए टैप करें।</string>
+    <string name="alert_switched">मॉडल बदल दिया गया</string>
+    <string name="alert_switched_sub">अब %1$s (पहले %2$s)। पहले जैसा करने के लिए टैप करें।</string>
+    <string name="alert_upgrade">नया मॉडल उपलब्ध है</string>
+    <string name="alert_recommended">सुझाया गया मॉडल</string>
+    <plurals name="alert_new_models">
+        <item quantity="one">%d नया Groq मॉडल</item>
+        <item quantity="other">%d नए Groq मॉडल</item>
+    </plurals>
+    <string name="upgrade_title">%1$s पर जाएं?</string>
+    <string name="upgrade_text">मौजूदा: %1$s (%2$s)\nनया: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">वही मॉडल परिवार, नया वर्शन।</string>
+    <string name="upgrade_other_line">अलग मॉडल परिवार। नया हमेशा बेहतर नहीं होता, इसलिए कुछ डिक्टेशन आज़माकर देखें। एक टैप में पहले जैसा कर सकते हैं।</string>
+    <string name="switch_model">बदलें</string>
+    <string name="dont_suggest">सुझाव न दें</string>
+
+    <!-- Appearance -->
+    <string name="look">रूप और एनिमेशन</string>
+    <string name="look_sub">बटन का आकार, आवाज़ पर प्रतिक्रिया, तरंगें, रंग</string>
+    <string name="look_dot">बटन</string>
+    <string name="dot_size">आकार</string>
+    <string name="dot_size_sub">आप दो उंगलियों से बटन को पिंच भी कर सकते हैं</string>
+    <string name="look_animation">रिकॉर्डिंग एनिमेशन</string>
+    <string name="reaction">आवाज़ पर प्रतिक्रिया</string>
+    <string name="reaction_sub">आकृति आपकी आवाज़ के साथ कितनी ज़ोर से बदलती है</string>
+    <string name="reaction_calm">शांत</string>
+    <string name="reaction_lively">जीवंत</string>
+    <string name="reaction_wild">तेज़</string>
+    <string name="wave_speed">तरंग की गति</string>
+    <string name="wave_speed_sub">आकृति कितनी तेज़ी से हिलती है</string>
+    <string name="wave_count">तरंगें</string>
+    <string name="wave_count_sub">आकृति के चारों ओर कितनी लहरें चलती हैं</string>
+    <string name="look_colours">रंग</string>
+    <string name="colour_front">सामने की परत</string>
+    <string name="colour_front_sub">रिकॉर्डिंग के दौरान सबसे ऊपरी परत</string>
+    <string name="colour_middle">बीच की परत</string>
+    <string name="colour_middle_sub">दूसरी परत</string>
+    <string name="colour_back">पीछे की परत</string>
+    <string name="colour_back_sub">तीसरी परत</string>
+    <string name="colour_ring">एक्सेंट रिंग</string>
+    <string name="colour_ring_sub">बटन और प्रीव्यू बबल के चारों ओर</string>
+    <string name="not_a_colour">मान्य रंग नहीं है</string>
+    <string name="reset_defaults">डिफ़ॉल्ट पर रीसेट करें</string>
+    <string name="reset_confirm">आकार, एनिमेशन और रंग रीसेट करें?</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">आज के अनुरोध: %2$d में से %1$d</string>
+    <string name="usage_tokens">इस मिनट के टोकन: %2$d में से %1$d</string>
+    <string name="usage_audio">आज का ऑडियो (इस फ़ोन पर गिना गया): %2$d घंटे की मुफ़्त दैनिक सीमा में से %1$d मिनट</string>
+    <string name="usage_console">प्लान और बिलिंग</string>
+    <string name="usage_console_sub">Groq कंसोल खोलें</string>
+    <string name="usage_none">पहले डिक्टेशन के बाद दिखेगा। Groq कंसोल खोलने के लिए टैप करें।</string>
+    <string name="usage_warn_requests">Groq: %2$s के आज के अनुरोधों में से %1$d%% इस्तेमाल हो चुके हैं</string>
+    <string name="usage_warn_audio">Groq: %2$s के आज के मुफ़्त ऑडियो में से लगभग %1$d%% इस्तेमाल हो चुका है</string>
+
+    <!-- Stats -->
+    <string name="stats_title">आपका डिक्टेशन</string>
+    <string name="stats_spoken">बोला गया</string>
+    <string name="stats_words">शब्द</string>
+    <string name="stats_dictations">डिक्टेशन</string>
+    <string name="stats_average">औसत</string>
+    <string name="stats_longest">सबसे लंबा</string>
+    <string name="stats_streak">दिन लगातार</string>
+    <string name="stats_wpm">आप लगभग %1$d शब्द प्रति मिनट बोलते हैं, जो फ़ोन पर टाइप करने से करीब %2$d× तेज़ है।</string>
+    <string name="stats_chart">पिछले 14 दिन, मिनट</string>
+
+    <!-- About -->
+    <string name="diagnostics">डायग्नोस्टिक्स</string>
+    <string name="diagnostics_sub">समस्या हल करने के लिए पिछला डिक्टेशन, गड़बड़ियां और सेवा इवेंट</string>
+    <string name="privacy_policy">निजता नीति</string>
+    <string name="terms">उपयोग की शर्तें</string>
+    <string name="licenses">ओपन-सोर्स लाइसेंस</string>
+    <string name="licenses_text">VitalySpeak, Apache License 2.0 के तहत इन ओपन-सोर्स लाइब्रेरी का इस्तेमाल करता है:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nपूरा लाइसेंस टेक्स्ट: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">वर्शन</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">डिक्टेशन खोजें</string>
+    <string name="history_no_match">\"%1$s\" से कुछ मेल नहीं खाता।</string>
+    <string name="state_done">हो गया</string>
+    <string name="state_raw">सुधारा नहीं गया</string>
+    <string name="state_pending">टेक्स्ट में बदलना बाकी · %1$d/%2$d</string>
+    <string name="state_recording">रिकॉर्डिंग</string>
+    <string name="audio_saved">ऑडियो सेव है</string>
+    <string name="not_transcribed">(अभी टेक्स्ट में नहीं बदला गया)</string>
+    <string name="cleaned">सुधारा गया टेक्स्ट</string>
+    <string name="cleaned_missing">सुधार नहीं हुआ। \"सुधार दोबारा करें\" पर टैप करें।</string>
+    <string name="raw">मूल ट्रांसक्रिप्ट</string>
+    <string name="raw_missing">%2$d में से %1$d हिस्से अभी टेक्स्ट में नहीं बदले गए। ऑडियो सेव है: \"दोबारा कोशिश करें\" पर टैप करें।</string>
+    <string name="copy_cleaned">सुधारा गया टेक्स्ट कॉपी करें</string>
+    <string name="copy_raw">मूल ट्रांसक्रिप्ट कॉपी करें</string>
+    <string name="retry_transcription">ट्रांसक्रिप्शन दोबारा करें</string>
+    <string name="retry_cleanup">सुधार दोबारा करें</string>
+    <string name="redo_cleanup">फिर से सुधारें</string>
+    <string name="working_background">बैकग्राउंड में काम हो रहा है…</string>
+    <string name="delete_confirm">यह डिक्टेशन मिटाएं?</string>
+    <string name="delete_confirm_audio">यह डिक्टेशन और इसका सेव किया गया ऑडियो मिटाएं?</string>
+    <string name="copied">कॉपी किया गया (%1$d अक्षर)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">VitalySpeak चालू करने से पहले</string>
+    <string name="disclosure_uses_title">VitalySpeak सुलभता सेवा का इस्तेमाल क्यों करता है</string>
+    <string name="disclosure_uses">VitalySpeak एक डिक्टेशन टूल है। यह Android सुलभता API का इस्तेमाल इनके लिए करता है:\n\n• दूसरे ऐप्स के ऊपर फ़्लोटिंग माइक्रोफ़ोन बटन दिखाना;\n• यह पहचानना कि टेक्स्ट फ़ील्ड कब सक्रिय है, ताकि बटन सिर्फ़ टाइप करते समय दिखे;\n• आपका बोला गया टेक्स्ट उस फ़ील्ड में डालना;\n• वैकल्पिक रूप से, रिकॉर्डिंग के दौरान वॉल्यूम-डाउन या हेडसेट बटन से बोली गई कमांड को चिह्नित करना।</string>
+    <string name="disclosure_never_title">यह कभी क्या नहीं करता</string>
+    <string name="disclosure_never">VitalySpeak आपकी स्क्रीन या दूसरे ऐप्स की सामग्री को न पढ़ता है, न सेव करता है और न भेजता है। यह आपके कीस्ट्रोक लॉग नहीं करता, आपकी ओर से कोई कार्रवाई नहीं करता, और इसमें कोई विज्ञापन या एनालिटिक्स नहीं है।</string>
+    <string name="disclosure_data_title">आपकी रिकॉर्डिंग</string>
+    <string name="disclosure_data">माइक्रोफ़ोन का इस्तेमाल सिर्फ़ तब होता है जब आप बटन पर टैप करते हैं। रिकॉर्डिंग आपकी अपनी API कुंजी से Groq, Inc. को भेजी जाती है, ताकि उसे टेक्स्ट में बदला जा सके और (अगर AI सुधार चालू है) सुधारा जा सके, और टेक्स्ट आपके फ़ोन पर वापस आता है। डेवलपर को कुछ नहीं भेजा जाता। टेक्स्ट में बदलने के बाद रिकॉर्डिंग आपके फ़ोन से मिटा दी जाती हैं, जब तक आप उन्हें रखना न चुनें; आपका टेक्स्ट इतिहास तब तक आपके फ़ोन पर रहता है जब तक आप उसे मिटा न दें।</string>
+    <string name="disclosure_policy_link">निजता नीति पढ़ें</string>
+    <string name="disclosure_agree">मैं सहमत हूं, सेटिंग खोलें</string>
+    <string name="disclosure_decline">अभी नहीं</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">VitalySpeak माइक्रोफ़ोन। डिक्टेशन शुरू या बंद करने के लिए टैप करें, ऐप खोलने के लिए देर तक दबाएं।</string>
+    <string name="cmd_start">⌘ कमांड</string>
+    <string name="cmd_end">■ कमांड खत्म करें</string>
+    <string name="cmd_hint">⌘ बताएं कि AI को क्या करना है</string>
+    <string name="btn_cancel">✕ रद्द करें</string>
+    <string name="btn_screen_off">☾ स्क्रीन बंद</string>
+    <string name="pocket_title">रिकॉर्डिंग जारी है</string>
+    <string name="pocket_countdown">स्क्रीन %1$d में धीमी होगी…</string>
+    <string name="pocket_continues">वापस आने के लिए दो बार टैप करें या पावर बटन दबाएं</string>
+    <string name="pocket_recording">रिकॉर्डिंग · %1$s</string>
+    <string name="dot_size_toast">बटन का आकार %1$d%%</string>
+    <string name="listening">सुन रहा है…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">VitalySpeak ऐप में माइक्रोफ़ोन की अनुमति दें</string>
+    <string name="err_mic_busy">माइक्रोफ़ोन किसी दूसरे ऐप द्वारा इस्तेमाल हो रहा है</string>
+    <string name="err_no_key">VitalySpeak ऐप में अपनी Groq API कुंजी जोड़ें</string>
+    <string name="err_storage_full">फ़ोन का स्टोरेज लगभग भर गया है, इसलिए रिकॉर्डिंग सुरक्षित नहीं है</string>
+    <string name="err_storage_write">स्टोरेज में गड़बड़ी। जो सेव हुआ था उसे टेक्स्ट में बदला जा रहा है।</string>
+    <string name="err_no_audio">कोई ऑडियो रिकॉर्ड नहीं हुआ</string>
+    <string name="err_transcribe_kept">%1$d हिस्से के लिए Groq से संपर्क नहीं हो सका। आपकी रिकॉर्डिंग सेव है: दोबारा कोशिश करने के लिए VitalySpeak, इतिहास खोलें।</string>
+    <string name="err_retry_failed">%1$d हिस्से अब भी टेक्स्ट में नहीं बदले जा सके। अगली कोशिश के लिए रखे गए हैं।</string>
+    <string name="stop_max_length">4 घंटे पूरे हो गए। सब कुछ टेक्स्ट में बदला जा रहा है।</string>
+    <string name="stop_low_storage">स्टोरेज लगभग भर गया है। सब कुछ टेक्स्ट में बदला जा रहा है।</string>
+    <string name="cancelled">रद्द किया गया। कुछ नहीं भेजा गया।</string>
+    <string name="finishing_parts">%2$d में से %1$d हिस्से पूरे किए जा रहे हैं…</string>
+    <string name="no_speech">कोई बोली नहीं पहचानी गई</string>
+    <string name="groq_busy">Groq व्यस्त है। %1$d सेकंड में पूरा होगा…</string>
+    <string name="cleanup_partial">%1$d हिस्से का सुधार छोड़ा गया। वहां मूल टेक्स्ट रखा गया है।</string>
+    <string name="applying_commands">आपकी कमांड लागू की जा रही हैं…</string>
+    <string name="commands_partial">कुछ कमांड लागू नहीं हो सकीं। वे अंत में दी गई हैं।</string>
+    <string name="not_applied">लागू नहीं हुआ</string>
+    <string name="saved_to_history">इतिहास में सेव किया गया</string>
+    <string name="copied_to_clipboard">कोई टेक्स्ट फ़ील्ड नहीं मिला। टेक्स्ट क्लिपबोर्ड पर है।</string>
+    <string name="cleanup_failed_again">सुधार फिर से विफल रहा। मूल टेक्स्ट अब भी सेव है।</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">सेटअप अलर्ट</string>
+    <string name="notif_off_title">VitalySpeak बंद है</string>
+    <string name="notif_off_text">Android ने इसकी सुलभता सेवा बंद कर दी। इसे फिर से चालू करने के लिए टैप करें।</string>
+</resources>

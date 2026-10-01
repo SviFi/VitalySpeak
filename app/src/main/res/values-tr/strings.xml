@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">VitalySpeak, siz yazarken yüzen bir mikrofon düğmesi gösterir. Dikte etmek için ona dokunun; konuşmanız yazıya dökülür ve metin, yazdığınız alana eklenir. VitalySpeak bu hizmeti yalnızca düğmeyi göstermek, bir metin alanının ne zaman kullanıldığını algılamak, dikte ettiğiniz metni eklemek ve (isteğe bağlı olarak) kayıt sırasında ses kısma düğmesini komut tuşu olarak kullanmak için kullanır. Ekranınızın içeriğini okumaz, toplamaz veya paylaşmaz.</string>
+
+    <!-- Common -->
+    <string name="back">Geri</string>
+    <string name="save">Kaydet</string>
+    <string name="use">Kullan</string>
+    <string name="close">Kapat</string>
+    <string name="copy">Kopyala</string>
+    <string name="delete">Sil</string>
+    <string name="reset">Sıfırla</string>
+    <string name="default_value">Varsayılan</string>
+    <string name="not_now">Şimdi değil</string>
+    <string name="open_settings">Ayarları aç</string>
+    <string name="no_browser">Tarayıcı bulunamadı</string>
+    <string name="status_ok">Tamam</string>
+    <string name="status_missing">Eksik</string>
+    <string name="status_recommended">Önerilen</string>
+
+    <!-- Home: status -->
+    <string name="status">Durum</string>
+    <string name="status_ready">Hazır. Herhangi bir uygulamada klavyeyi açın ve mikrofon düğmesine dokunun.</string>
+    <string name="status_incomplete">Kurulum tamamlanmadı: %1$s. Aşağıya bakın.</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">Geçmiş</string>
+    <string name="sec_setup">Kurulum</string>
+    <string name="sec_languages">Diller</string>
+    <string name="sec_dictation">Dikte</string>
+    <string name="sec_cleanup">Yapay zekâ düzeltmesi</string>
+    <string name="sec_models">Modeller</string>
+    <string name="sec_appearance">Görünüm</string>
+    <string name="sec_usage">Groq kullanımı (tahmini)</string>
+    <string name="sec_about">Hakkında</string>
+
+    <!-- History row -->
+    <string name="history_row">Tüm dikteler</string>
+    <string name="history_needs_service">Geçmişinizi görmek için erişilebilirlik hizmetini açın.</string>
+    <string name="history_empty">Henüz dikte yok.</string>
+    <plurals name="history_count">
+        <item quantity="one">%d dikte</item>
+        <item quantity="other">%d dikte</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="one">%1$d kayıt henüz yazıya dökülmedi. Yeniden denemek için dokunun (toplam %2$d).</item>
+        <item quantity="other">%1$d kayıt henüz yazıya dökülmedi. Yeniden denemek için dokunun (toplam %2$d).</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">Mikrofon</string>
+    <string name="mic_ok">İzin verildi</string>
+    <string name="mic_missing">Mikrofon erişimine izin vermek için dokunun</string>
+    <string name="setup_access">Erişilebilirlik hizmeti</string>
+    <string name="access_ok">Açık ve çalışıyor</string>
+    <string name="access_stuck">Açık ama çalışmıyor. Dokunun, ardından kapatıp yeniden açın.</string>
+    <string name="access_off">Kapalı. Açmak için dokunun.</string>
+    <string name="access_help">Android, VitalySpeak\'in erişilebilirlik sayfasını açacak.\n\n1. \"VitalySpeak\" seçeneğini açın.\n2. \"İzin ver\" ile onaylayın.\n3. Geri dönün. Burada yeşil bir onay işareti göreceksiniz.\n\nBunun yerine genel Erişilebilirlik listesini görürseniz \"Yüklü uygulamalar\" (veya \"İndirilen uygulamalar\") bölümünü, ardından VitalySpeak\'i açın.\n\nAnahtar griyse (\"Kısıtlanmış ayar\"): Ayarlar, Uygulamalar, VitalySpeak\'i açın, ⋮ menüsüne dokunun ve \"Kısıtlanmış ayarlara izin ver\"i seçin. Sonra tekrar deneyin.</string>
+    <string name="access_help_running">Hizmet açık ve çalışıyor. Ayarlar sayfası açılıyor.</string>
+    <string name="setup_key">Groq API anahtarı</string>
+    <string name="key_missing">Anahtarınızı eklemek için dokunun. console.groq.com adresinden ücretsiz olarak oluşturabilirsiniz.</string>
+    <string name="key_help">VitalySpeak, kayıtlarınızı kendi anahtarınızla Groq\'a gönderir. Anahtar yalnızca bu telefonda saklanır.</string>
+    <string name="get_key">Anahtar al</string>
+    <string name="key_first">Önce Groq API anahtarınızı ekleyin</string>
+    <string name="setup_battery">Pil: kısıtlanmamış</string>
+    <string name="battery_ok">Android, VitalySpeak\'i uyku moduna almayacak</string>
+    <string name="battery_missing">Önerilen: Android\'in VitalySpeak\'i arka planda duraklatmasını önler</string>
+    <string name="battery_ok_help">Zaten kısıtlanmamış. Samsung telefonlarda ayrıca Ayarlar, Pil, Arka plan kullanım sınırları bölümünü kontrol edin: VitalySpeak \"Uyuyan uygulamalar\" veya \"Derin uyuyan uygulamalar\" listesinde olmamalı.</string>
+    <string name="setup_alerts">Kurulum uyarıları</string>
+    <string name="alerts_ok">Android VitalySpeak\'i kapatırsa haberiniz olacak</string>
+    <string name="alerts_missing">Önerilen: Android VitalySpeak\'i kapatırsa bildirim alın</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">Konuştuğunuz diller</string>
+    <string name="app_language">Uygulama dili</string>
+    <string name="app_language_system">Telefonla aynı</string>
+    <string name="app_language_service">Yüzen düğme, hizmet bir sonraki başlatılışında dil değiştirir.</string>
+    <string name="languages_intro">Dikte ettiğiniz dilleri seçin. En çok kullandığınızı en üste koyun; araya kattığınız diğer dilleri de ekleyin. Bu, uygulamanın kendi dilini değiştirmez.</string>
+    <string name="languages_yours">Dilleriniz</string>
+    <string name="languages_primary">Birincil</string>
+    <string name="languages_primary_sub">Konuşma net olmadığında kullanılır</string>
+    <string name="languages_make_primary">Birincil yapmak için dokunun</string>
+    <string name="languages_remove">%1$s dilini kaldır</string>
+    <string name="languages_add">Dil ekle</string>
+    <string name="languages_search">Dil ara</string>
+    <string name="languages_why_title">Bu neden önemli</string>
+    <string name="languages_why">Konuşma tanıma yaklaşık 100 dil bilir. Tahmin etmeye bırakılırsa bazen yanlış dili seçer: güçlü bir aksan veya kısa bir ifade başka bir dilde ya da çevrilmiş olarak çıkabilir.\n\n• Tek dil seçiliyken tanıma neyi beklemesi gerektiğini tam olarak bilir. Bu en doğru ve en hızlı seçenektir.\n• Birden fazla dil seçiliyken VitalySpeak hangi dilin tanındığını kontrol eder. Tanınan dil sizinkilerden biri değilse o bölüm birincil dilinizde yeniden yazıya dökülür.\n• Dilleriniz yapay zekâ düzeltmesine de iletilir; böylece cümlenin ortasında dil değiştirseniz bile her dil tam konuştuğunuz gibi kalır ve asla çeviri yapılmaz.\n\nBu yüzden yalnızca gerçekten kullandığınız dilleri ekleyin.</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">Düğmeyi yalnızca yazarken göster</string>
+    <string name="only_while_typing_sub">Düğme, bir metin alanı etkin olduğunda görünür. Bu ekranı açmak için düğmeye uzun basın.</string>
+    <string name="live_preview">Canlı önizleme</string>
+    <string name="live_preview_sub">Siz konuşurken sözlerinizi düğmenin yanında gösterir (Groq\'a ek kısa istekler gönderir)</string>
+    <string name="vocabulary">Sözlük</string>
+    <string name="vocabulary_none">Yok</string>
+    <string name="vocabulary_hint">İsimler, ürünler, terimler…</string>
+    <string name="vocabulary_help">Kullandığınız isimler ve terimler, virgülle ayrılmış olarak. Yapay zekâ düzeltmesi bunları yazımı düzeltmek için, yalnızca gerçekten söylediğiniz yerlerde kullanır.</string>
+    <string name="command_keys">Komutlar için ses kısma</string>
+    <string name="command_keys_sub">Kayıt sırasında ses kısma veya kulaklık düğmesi bir ⌘ komutu başlatır ve bitirir: metin yerine yapay zekâya verilen bir talimat</string>
+    <string name="keep_audio">Sesi sakla</string>
+    <string name="keep_audio_sub">Kapalı: kayıtlar yazıya döküldükten sonra silinir. Açık: bu telefonda saklanır (saatte yaklaşık 115 MB).</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">Yapay zekâ düzeltmesi</string>
+    <string name="cleanup_sub">Dolgu sözcüklerini kaldırır, noktalama ve tanıma hatalarını düzeltir</string>
+    <string name="style_standard">Doğal</string>
+    <string name="style_standard_sub">Kendi sözleriniz, düzeltilmiş</string>
+    <string name="style_formal">Özenli</string>
+    <string name="style_formal_sub">Tam cümleler, profesyonel ton</string>
+    <string name="style_notes">Notlar</string>
+    <string name="style_notes_sub">Kısa başlık ve madde işaretleri</string>
+    <string name="style_custom">Özel</string>
+    <string name="style_custom_sub">Kendi talimatlarınız</string>
+    <string name="custom_instructions">Özel talimatlar</string>
+    <string name="custom_instructions_empty">Talimatlarınızı yazmak için dokunun</string>
+    <string name="custom_hint">Örneğin: Kısa paragraflar halinde yaz. İngiliz yazımını kullan.</string>
+    <string name="custom_help">Temel düzeltme kurallarına eklenir (dillerinizi koru, dolgu sözcüklerini kaldır, asla içerik ekleme).</string>
+
+    <!-- Models -->
+    <string name="model_stt">Konuşma tanıma</string>
+    <string name="model_llm">Düzeltme modeli</string>
+    <string name="model_stable">kararlı</string>
+    <string name="model_preview">önizleme</string>
+    <string name="model_other">Diğer… (model kimliği girin)</string>
+    <string name="model_id">Model kimliği</string>
+    <string name="check_updates">Yeni modelleri ve güncellemeleri kontrol et</string>
+    <string name="checking">Kontrol ediliyor…</string>
+    <string name="never_checked">Hiç kontrol edilmedi</string>
+    <string name="last_checked">Son kontrol: %1$s</string>
+    <string name="check_failed">Kontrol başarısız: %1$s</string>
+    <string name="all_up_to_date">Her şey güncel</string>
+    <string name="alert_update">Uygulama güncellemesi var</string>
+    <string name="alert_update_sub">%1$s. İndirmek için dokunun.</string>
+    <string name="alert_stt_gone">Konuşma modeli kullanılamıyor</string>
+    <string name="alert_llm_gone">Düzeltme modeli kullanılamıyor</string>
+    <string name="alert_gone_fix">%1$s artık anahtarınızla kullanılamıyor. %2$s modeline geçmek için dokunun.</string>
+    <string name="alert_gone_pick">%1$s artık anahtarınızla kullanılamıyor. Başka bir model seçmek için dokunun.</string>
+    <string name="alert_switched">Model değiştirildi</string>
+    <string name="alert_switched_sub">Şimdi %1$s (önceki: %2$s). Geri almak için dokunun.</string>
+    <string name="alert_upgrade">Daha yeni model var</string>
+    <string name="alert_recommended">Önerilen model</string>
+    <plurals name="alert_new_models">
+        <item quantity="one">%d yeni Groq modeli</item>
+        <item quantity="other">%d yeni Groq modeli</item>
+    </plurals>
+    <string name="upgrade_title">%1$s modeline geçilsin mi?</string>
+    <string name="upgrade_text">Mevcut: %1$s (%2$s)\nYeni: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">Aynı model ailesi, daha yeni sürüm.</string>
+    <string name="upgrade_other_line">Farklı bir model ailesi. Daha yeni her zaman daha iyi değildir, birkaç dikte ile deneyin. Tek dokunuşla geri alabilirsiniz.</string>
+    <string name="switch_model">Geç</string>
+    <string name="dont_suggest">Önerme</string>
+
+    <!-- Appearance -->
+    <string name="look">Görünüm ve animasyon</string>
+    <string name="look_sub">Düğme boyutu, ses tepkisi, dalgalar, renkler</string>
+    <string name="look_dot">Düğme</string>
+    <string name="dot_size">Boyut</string>
+    <string name="dot_size_sub">Düğmeyi iki parmakla sıkıştırarak da boyutlandırabilirsiniz</string>
+    <string name="look_animation">Kayıt animasyonu</string>
+    <string name="reaction">Ses tepkisi</string>
+    <string name="reaction_sub">Şeklin sesinizi ne kadar güçlü takip ettiği</string>
+    <string name="reaction_calm">Sakin</string>
+    <string name="reaction_lively">Canlı</string>
+    <string name="reaction_wild">Çılgın</string>
+    <string name="wave_speed">Dalga hızı</string>
+    <string name="wave_speed_sub">Şeklin ne kadar hızlı hareket ettiği</string>
+    <string name="wave_count">Dalgalar</string>
+    <string name="wave_count_sub">Şeklin çevresinde kaç dalgacık dolaştığı</string>
+    <string name="look_colours">Renkler</string>
+    <string name="colour_front">Ön katman</string>
+    <string name="colour_front_sub">Kayıt sırasında en üstteki katman</string>
+    <string name="colour_middle">Orta katman</string>
+    <string name="colour_middle_sub">İkinci katman</string>
+    <string name="colour_back">Arka katman</string>
+    <string name="colour_back_sub">Üçüncü katman</string>
+    <string name="colour_ring">Vurgu halkası</string>
+    <string name="colour_ring_sub">Düğmenin ve önizleme balonunun çevresinde</string>
+    <string name="not_a_colour">Geçerli bir renk değil</string>
+    <string name="reset_defaults">Varsayılanlara sıfırla</string>
+    <string name="reset_confirm">Boyut, animasyon ve renkler sıfırlansın mı?</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">Bugünkü istekler: %1$d / %2$d</string>
+    <string name="usage_tokens">Bu dakikadaki token: %1$d / %2$d</string>
+    <string name="usage_audio">Bugünkü ses (bu telefonda sayıldı): günlük %2$d sa ücretsiz sınırın %1$d dk\'sı</string>
+    <string name="usage_console">Plan ve faturalandırma</string>
+    <string name="usage_console_sub">Groq konsolunu aç</string>
+    <string name="usage_none">İlk diktenizden sonra gösterilir. Groq konsolunu açmak için dokunun.</string>
+    <string name="usage_warn_requests">Groq: %2$s için bugünkü isteklerin %%%1$d kadarı kullanıldı</string>
+    <string name="usage_warn_audio">Groq: %2$s için bugünkü ücretsiz sesin yaklaşık %%%1$d kadarı kullanıldı</string>
+
+    <!-- Stats -->
+    <string name="stats_title">Dikte istatistikleriniz</string>
+    <string name="stats_spoken">konuşulan</string>
+    <string name="stats_words">kelime</string>
+    <string name="stats_dictations">dikte</string>
+    <string name="stats_average">ortalama</string>
+    <string name="stats_longest">en uzun</string>
+    <string name="stats_streak">günlük seri</string>
+    <string name="stats_wpm">Dakikada yaklaşık %1$d kelime konuşuyorsunuz; bu, telefonda yazmaktan kabaca %2$d× daha hızlı.</string>
+    <string name="stats_chart">Son 14 gün, dakika</string>
+
+    <!-- About -->
+    <string name="diagnostics">Tanılama</string>
+    <string name="diagnostics_sub">Sorun giderme için son dikte, hatalar ve hizmet olayları</string>
+    <string name="privacy_policy">Gizlilik politikası</string>
+    <string name="terms">Kullanım koşulları</string>
+    <string name="licenses">Açık kaynak lisansları</string>
+    <string name="licenses_text">VitalySpeak, Apache License 2.0 kapsamında şu açık kaynak kitaplıkları kullanır:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nLisans metninin tamamı: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">Sürüm</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">Diktelerde ara</string>
+    <string name="history_no_match">\"%1$s\" ile eşleşen bir şey yok.</string>
+    <string name="state_done">Tamamlandı</string>
+    <string name="state_raw">Düzeltilmedi</string>
+    <string name="state_pending">Yazıya dökülmeyi bekliyor · %1$d/%2$d</string>
+    <string name="state_recording">Kaydediliyor</string>
+    <string name="audio_saved">ses kaydedildi</string>
+    <string name="not_transcribed">(henüz yazıya dökülmedi)</string>
+    <string name="cleaned">Düzeltilmiş metin</string>
+    <string name="cleaned_missing">Düzeltme eksik. \"Düzeltmeyi yeniden dene\"ye dokunun.</string>
+    <string name="raw">Ham metin</string>
+    <string name="raw_missing">%2$d bölümden %1$d tanesi henüz yazıya dökülmedi. Ses kaydedildi: \"Yeniden dene\"ye dokunun.</string>
+    <string name="copy_cleaned">Düzeltilmiş metni kopyala</string>
+    <string name="copy_raw">Ham metni kopyala</string>
+    <string name="retry_transcription">Yazıya dökmeyi yeniden dene</string>
+    <string name="retry_cleanup">Düzeltmeyi yeniden dene</string>
+    <string name="redo_cleanup">Yeniden düzelt</string>
+    <string name="working_background">Arka planda çalışılıyor…</string>
+    <string name="delete_confirm">Bu dikte silinsin mi?</string>
+    <string name="delete_confirm_audio">Bu dikte ve kaydedilmiş sesi silinsin mi?</string>
+    <string name="copied">Kopyalandı (%1$d karakter)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">VitalySpeak\'i açmadan önce</string>
+    <string name="disclosure_uses_title">VitalySpeak neden Erişilebilirlik hizmetini kullanır</string>
+    <string name="disclosure_uses">VitalySpeak bir dikte aracıdır. Android Accessibility API\'sini şunlar için kullanır:\n\n• yüzen mikrofon düğmesini diğer uygulamaların üzerinde göstermek;\n• bir metin alanının ne zaman etkin olduğunu fark etmek, böylece düğme yalnızca siz yazarken görünür;\n• dikte ettiğiniz metni o alana eklemek;\n• isteğe bağlı olarak, kayıt sırasında ses kısma veya kulaklık düğmesinin sözlü bir komutu işaretlemesini sağlamak.</string>
+    <string name="disclosure_never_title">Asla yapmadıkları</string>
+    <string name="disclosure_never">VitalySpeak ekranınızın veya diğer uygulamaların içeriğini okumaz, saklamaz veya göndermez. Tuş vuruşlarınızı kaydetmez, sizin adınıza işlem yapmaz; reklam veya analiz içermez.</string>
+    <string name="disclosure_data_title">Kayıtlarınız</string>
+    <string name="disclosure_data">Mikrofon yalnızca düğmeye dokunduktan sonra kullanılır. Kayıt, yazıya dökülmek ve (yapay zekâ düzeltmesi açıksa) düzeltilmek üzere kendi API anahtarınızla Groq, Inc.\'e gönderilir ve metin telefonunuza geri gelir. Geliştiriciye hiçbir şey gönderilmez. Saklamayı seçmediğiniz sürece kayıtlar yazıya döküldükten sonra telefonunuzdan silinir; metin geçmişiniz siz silene kadar telefonunuzda kalır.</string>
+    <string name="disclosure_policy_link">Gizlilik politikasını okuyun</string>
+    <string name="disclosure_agree">Kabul ediyorum, ayarları aç</string>
+    <string name="disclosure_decline">Şimdi değil</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">VitalySpeak mikrofonu. Dikteyi başlatmak veya durdurmak için dokunun, uygulamayı açmak için uzun basın.</string>
+    <string name="cmd_start">⌘ Komut</string>
+    <string name="cmd_end">■ Komutu bitir</string>
+    <string name="cmd_hint">⌘ Yapay zekânın ne yapması gerektiğini söyleyin</string>
+    <string name="btn_cancel">✕ İptal</string>
+    <string name="btn_screen_off">☾ Ekranı kapat</string>
+    <string name="pocket_title">Kayıt devam ediyor</string>
+    <string name="pocket_countdown">Ekran %1$d sn içinde kararacak…</string>
+    <string name="pocket_continues">Geri dönmek için iki kez dokunun veya güç düğmesine basın</string>
+    <string name="pocket_recording">Kaydediliyor · %1$s</string>
+    <string name="dot_size_toast">Düğme boyutu %%%1$d</string>
+    <string name="listening">Dinleniyor…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">VitalySpeak uygulamasında mikrofon erişimine izin verin</string>
+    <string name="err_mic_busy">Mikrofon başka bir uygulama tarafından kullanılıyor</string>
+    <string name="err_no_key">VitalySpeak uygulamasında Groq API anahtarınızı ekleyin</string>
+    <string name="err_storage_full">Telefon depolama alanı neredeyse dolu, kayıt yapmak güvenli değil</string>
+    <string name="err_storage_write">Depolama hatası. Kaydedilen kısım yazıya dökülüyor.</string>
+    <string name="err_no_audio">Ses kaydedilmedi</string>
+    <string name="err_transcribe_kept">%1$d bölüm için Groq\'a ulaşılamadı. Kaydınız saklandı: yeniden denemek için VitalySpeak, Geçmiş\'i açın.</string>
+    <string name="err_retry_failed">%1$d bölüm hâlâ yazıya dökülemedi. Bir sonraki deneme için saklandı.</string>
+    <string name="stop_max_length">4 saate ulaşıldı. Tümü yazıya dökülüyor.</string>
+    <string name="stop_low_storage">Depolama alanı neredeyse dolu. Tümü yazıya dökülüyor.</string>
+    <string name="cancelled">İptal edildi. Hiçbir şey gönderilmedi.</string>
+    <string name="finishing_parts">%2$d bölümden %1$d. bölüm tamamlanıyor…</string>
+    <string name="no_speech">Konuşma algılanmadı</string>
+    <string name="groq_busy">Groq meşgul. %1$d sn içinde tamamlanacak…</string>
+    <string name="cleanup_partial">%1$d bölüm için düzeltme atlandı. Oralarda ham metin korunuyor.</string>
+    <string name="applying_commands">Komutlarınız uygulanıyor…</string>
+    <string name="commands_partial">Bazı komutlar uygulanamadı. Sonda listelenmiştir.</string>
+    <string name="not_applied">uygulanmadı</string>
+    <string name="saved_to_history">Geçmiş\'e kaydedildi</string>
+    <string name="copied_to_clipboard">Metin alanı bulunamadı. Metin panoda.</string>
+    <string name="cleanup_failed_again">Düzeltme yine başarısız oldu. Ham metin hâlâ kayıtlı.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">Kurulum uyarıları</string>
+    <string name="notif_off_title">VitalySpeak kapatıldı</string>
+    <string name="notif_off_text">Android, uygulamanın erişilebilirlik hizmetini kapattı. Yeniden açmak için dokunun.</string>
+</resources>

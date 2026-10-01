@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#FF9A5C</color>
+    <color name="primary_container">#5A2A0E</color>
+    <color name="on_primary_container">#FFDCC7</color>
+    <color name="logo_bg">#141418</color>
+</resources>

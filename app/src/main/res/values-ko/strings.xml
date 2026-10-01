@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">VitalySpeak은 입력하는 동안 플로팅 마이크 버튼을 표시해요. 버튼을 탭하고 말하면 음성이 텍스트로 변환되어 입력 중인 필드에 삽입돼요. VitalySpeak은 버튼 표시, 텍스트 필드 사용 감지, 받아쓴 텍스트 삽입, 그리고 (선택 사항) 녹음 중 볼륨 낮추기 버튼을 명령 키로 사용하기 위해서만 이 서비스를 사용해요. 화면 내용을 읽거나 수집하거나 공유하지 않아요.</string>
+
+    <!-- Common -->
+    <string name="back">뒤로</string>
+    <string name="save">저장</string>
+    <string name="use">사용</string>
+    <string name="close">닫기</string>
+    <string name="copy">복사</string>
+    <string name="delete">삭제</string>
+    <string name="reset">초기화</string>
+    <string name="default_value">기본값</string>
+    <string name="not_now">나중에</string>
+    <string name="open_settings">설정 열기</string>
+    <string name="no_browser">브라우저를 찾을 수 없어요</string>
+    <string name="status_ok">완료</string>
+    <string name="status_missing">미설정</string>
+    <string name="status_recommended">권장</string>
+
+    <!-- Home: status -->
+    <string name="status">상태</string>
+    <string name="status_ready">준비됐어요. 아무 앱에서나 키보드를 열고 마이크 버튼을 탭하세요.</string>
+    <string name="status_incomplete">설정 미완료: %1$s. 아래를 확인하세요.</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">기록</string>
+    <string name="sec_setup">설정</string>
+    <string name="sec_languages">언어</string>
+    <string name="sec_dictation">받아쓰기</string>
+    <string name="sec_cleanup">AI 다듬기</string>
+    <string name="sec_models">모델</string>
+    <string name="sec_appearance">모양</string>
+    <string name="sec_usage">Groq 사용량 (추정치)</string>
+    <string name="sec_about">정보</string>
+
+    <!-- History row -->
+    <string name="history_row">모든 받아쓰기</string>
+    <string name="history_needs_service">기록을 보려면 접근성 서비스를 켜세요.</string>
+    <string name="history_empty">아직 받아쓰기가 없어요.</string>
+    <plurals name="history_count">
+        <item quantity="other">받아쓰기 %d개</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="other">아직 변환되지 않은 녹음이 %1$d개 있어요. 탭하여 다시 시도하세요 (총 %2$d개).</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">마이크</string>
+    <string name="mic_ok">허용됨</string>
+    <string name="mic_missing">탭하여 마이크 접근 허용</string>
+    <string name="setup_access">접근성 서비스</string>
+    <string name="access_ok">켜짐, 실행 중</string>
+    <string name="access_stuck">켜져 있지만 실행되지 않고 있어요. 탭한 다음 껐다가 다시 켜세요.</string>
+    <string name="access_off">꺼짐. 탭하여 켜세요.</string>
+    <string name="access_help">Android에서 VitalySpeak의 접근성 페이지가 열려요.\n\n1. ‘VitalySpeak’을 켜세요.\n2. ‘허용’을 눌러 확인하세요.\n3. 뒤로 돌아오세요. 여기에 초록색 체크 표시가 나타나요.\n\n일반 접근성 목록이 대신 보이면 ‘설치된 앱’(또는 ‘다운로드한 앱’)을 열고 VitalySpeak을 선택하세요.\n\n스위치가 회색으로 비활성화된 경우(‘제한된 설정’): 설정 → 애플리케이션 → VitalySpeak을 열고 ⋮ 메뉴를 탭한 다음 ‘제한된 설정 허용’을 선택하세요. 그런 다음 다시 시도하세요.</string>
+    <string name="access_help_running">서비스가 켜져 있고 실행 중이에요. 설정 페이지를 열게요.</string>
+    <string name="setup_key">Groq API 키</string>
+    <string name="key_missing">탭하여 키를 추가하세요. console.groq.com에서 무료로 만들 수 있어요.</string>
+    <string name="key_help">VitalySpeak은 내 키를 사용해 녹음을 Groq로 보내요. 키는 이 휴대전화에만 저장돼요.</string>
+    <string name="get_key">키 받기</string>
+    <string name="key_first">먼저 Groq API 키를 추가하세요</string>
+    <string name="setup_battery">배터리: 제한 없음</string>
+    <string name="battery_ok">Android가 VitalySpeak을 절전 상태로 만들지 않아요</string>
+    <string name="battery_missing">권장: Android가 백그라운드에서 VitalySpeak을 일시 중지하지 않도록 해요</string>
+    <string name="battery_ok_help">이미 제한 없음으로 설정되어 있어요. Samsung 휴대전화에서는 설정 → 배터리 → 백그라운드 사용 제한도 확인하세요. VitalySpeak이 ‘절전 상태 앱’이나 ‘완전 절전 상태 앱’에 있으면 안 돼요.</string>
+    <string name="setup_alerts">설정 알림</string>
+    <string name="alerts_ok">Android가 VitalySpeak을 끄면 알려 드려요</string>
+    <string name="alerts_missing">권장: Android가 VitalySpeak을 끄면 알림 받기</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">사용하는 언어</string>
+    <string name="app_language">앱 언어</string>
+    <string name="app_language_system">휴대전화와 동일</string>
+    <string name="app_language_service">플로팅 버튼의 언어는 다음에 서비스가 시작될 때 바뀌어요.</string>
+    <string name="languages_intro">받아쓰기에 사용할 언어를 선택하세요. 가장 많이 쓰는 언어를 맨 앞에 두고, 섞어 쓰는 다른 언어도 추가하세요. 앱 자체의 언어는 바뀌지 않아요.</string>
+    <string name="languages_yours">내 언어</string>
+    <string name="languages_primary">기본</string>
+    <string name="languages_primary_sub">음성이 불분명할 때 사용돼요</string>
+    <string name="languages_make_primary">탭하여 기본 언어로 설정</string>
+    <string name="languages_remove">%1$s 삭제</string>
+    <string name="languages_add">언어 추가</string>
+    <string name="languages_search">언어 검색</string>
+    <string name="languages_why_title">왜 중요한가요?</string>
+    <string name="languages_why">음성 인식기는 약 100개 언어를 알아요. 추측하게 두면 가끔 엉뚱한 언어를 고르기도 해요. 억양이 강하거나 구문이 짧으면 다른 언어로 인식되거나 번역된 결과가 나올 수 있어요.\n\n• 언어를 하나만 선택하면 인식기에 무엇을 기대해야 할지 정확히 알려 줘요. 가장 정확하고 빠른 방법이에요.\n• 여러 개를 선택하면 VitalySpeak이 인식된 언어를 확인해요. 내 언어가 아니면 그 부분을 기본 언어로 다시 변환해요.\n• 내 언어는 AI 다듬기에도 전달되므로, 문장 중간에 언어를 바꿔도 말한 그대로의 언어를 유지하고 절대 번역하지 않아요.\n\n그러니 실제로 사용하는 언어만 추가하세요.</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">입력할 때만 버튼 표시</string>
+    <string name="only_while_typing_sub">텍스트 필드가 활성화되면 버튼이 나타나요. 길게 누르면 이 화면이 열려요.</string>
+    <string name="live_preview">실시간 미리보기</string>
+    <string name="live_preview_sub">말하는 동안 버튼 옆에 단어를 표시해요 (Groq에 짧은 요청을 추가로 보내요)</string>
+    <string name="vocabulary">어휘</string>
+    <string name="vocabulary_none">없음</string>
+    <string name="vocabulary_hint">이름, 제품, 용어…</string>
+    <string name="vocabulary_help">자주 쓰는 이름과 용어를 쉼표로 구분해 입력하세요. AI 다듬기가 실제로 그 단어를 말한 곳에서만 철자를 고치는 데 사용해요.</string>
+    <string name="command_keys">볼륨 낮추기로 명령</string>
+    <string name="command_keys_sub">녹음 중에 볼륨 낮추기 버튼이나 헤드셋 버튼으로 ⌘ 명령을 시작하고 끝내요. 텍스트 대신 AI에게 주는 지시예요</string>
+    <string name="keep_audio">오디오 보관</string>
+    <string name="keep_audio_sub">끄기: 변환 후 녹음이 삭제돼요. 켜기: 이 휴대전화에 보관돼요 (시간당 약 115 MB).</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">AI 다듬기</string>
+    <string name="cleanup_sub">군더더기 말을 없애고 문장 부호와 인식 오류를 고쳐요</string>
+    <string name="style_standard">자연스럽게</string>
+    <string name="style_standard_sub">내가 한 말 그대로, 깔끔하게</string>
+    <string name="style_formal">세련되게</string>
+    <string name="style_formal_sub">완전한 문장, 전문적인 어조</string>
+    <string name="style_notes">메모</string>
+    <string name="style_notes_sub">짧은 제목과 글머리 기호</string>
+    <string name="style_custom">맞춤</string>
+    <string name="style_custom_sub">나만의 지시사항</string>
+    <string name="custom_instructions">맞춤 지시사항</string>
+    <string name="custom_instructions_empty">탭하여 지시사항 작성</string>
+    <string name="custom_hint">예: 짧은 문단으로 작성해 줘. 영국식 철자를 사용해 줘.</string>
+    <string name="custom_help">기본 다듬기 규칙(언어 유지, 군더더기 말 제거, 내용 추가 금지)에 추가돼요.</string>
+
+    <!-- Models -->
+    <string name="model_stt">음성 인식</string>
+    <string name="model_llm">다듬기 모델</string>
+    <string name="model_stable">안정</string>
+    <string name="model_preview">미리보기</string>
+    <string name="model_other">기타… (모델 ID 입력)</string>
+    <string name="model_id">모델 ID</string>
+    <string name="check_updates">새 모델 및 업데이트 확인</string>
+    <string name="checking">확인 중…</string>
+    <string name="never_checked">확인한 적 없음</string>
+    <string name="last_checked">마지막 확인: %1$s</string>
+    <string name="check_failed">확인 실패: %1$s</string>
+    <string name="all_up_to_date">모두 최신 상태예요</string>
+    <string name="alert_update">앱 업데이트 가능</string>
+    <string name="alert_update_sub">%1$s. 탭하여 다운로드하세요.</string>
+    <string name="alert_stt_gone">음성 모델을 사용할 수 없음</string>
+    <string name="alert_llm_gone">다듬기 모델을 사용할 수 없음</string>
+    <string name="alert_gone_fix">%1$s은(는) 이제 내 키로 사용할 수 없어요. 탭하여 %2$s(으)로 전환하세요.</string>
+    <string name="alert_gone_pick">%1$s은(는) 이제 내 키로 사용할 수 없어요. 탭하여 다른 모델을 선택하세요.</string>
+    <string name="alert_switched">모델이 전환됨</string>
+    <string name="alert_switched_sub">현재 %1$s (이전 %2$s). 탭하여 실행 취소하세요.</string>
+    <string name="alert_upgrade">새 모델 사용 가능</string>
+    <string name="alert_recommended">권장 모델</string>
+    <plurals name="alert_new_models">
+        <item quantity="other">새 Groq 모델 %d개</item>
+    </plurals>
+    <string name="upgrade_title">%1$s(으)로 전환할까요?</string>
+    <string name="upgrade_text">현재: %1$s (%2$s)\n새 모델: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">같은 모델 계열의 새 버전이에요.</string>
+    <string name="upgrade_other_line">다른 모델 계열이에요. 새것이 항상 더 좋은 건 아니니 몇 번 받아쓰기를 해 보세요. 한 번 탭으로 되돌릴 수 있어요.</string>
+    <string name="switch_model">전환</string>
+    <string name="dont_suggest">추천 안 함</string>
+
+    <!-- Appearance -->
+    <string name="look">모양 및 애니메이션</string>
+    <string name="look_sub">버튼 크기, 음성 반응, 물결, 색상</string>
+    <string name="look_dot">버튼</string>
+    <string name="dot_size">크기</string>
+    <string name="dot_size_sub">두 손가락으로 버튼을 오므리거나 벌려서 조절할 수도 있어요</string>
+    <string name="look_animation">녹음 애니메이션</string>
+    <string name="reaction">음성 반응</string>
+    <string name="reaction_sub">모양이 목소리에 얼마나 강하게 반응하는지</string>
+    <string name="reaction_calm">차분하게</string>
+    <string name="reaction_lively">활발하게</string>
+    <string name="reaction_wild">격렬하게</string>
+    <string name="wave_speed">물결 속도</string>
+    <string name="wave_speed_sub">모양이 움직이는 속도</string>
+    <string name="wave_count">물결 수</string>
+    <string name="wave_count_sub">모양 주위를 도는 물결의 개수</string>
+    <string name="look_colours">색상</string>
+    <string name="colour_front">앞 레이어</string>
+    <string name="colour_front_sub">녹음 중 맨 위 레이어</string>
+    <string name="colour_middle">가운데 레이어</string>
+    <string name="colour_middle_sub">두 번째 레이어</string>
+    <string name="colour_back">뒤 레이어</string>
+    <string name="colour_back_sub">세 번째 레이어</string>
+    <string name="colour_ring">강조 링</string>
+    <string name="colour_ring_sub">버튼과 미리보기 말풍선 주위</string>
+    <string name="not_a_colour">올바른 색상이 아니에요</string>
+    <string name="reset_defaults">기본값으로 초기화</string>
+    <string name="reset_confirm">크기, 애니메이션, 색상을 초기화할까요?</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">오늘 요청: %1$d / %2$d</string>
+    <string name="usage_tokens">이번 1분 토큰: %1$d / %2$d</string>
+    <string name="usage_audio">오늘 오디오 (이 휴대전화 기준): %1$d분 / 일일 무료 한도 %2$d시간</string>
+    <string name="usage_console">요금제 및 결제</string>
+    <string name="usage_console_sub">Groq 콘솔 열기</string>
+    <string name="usage_none">첫 받아쓰기 후에 표시돼요. 탭하여 Groq 콘솔을 여세요.</string>
+    <string name="usage_warn_requests">Groq: %2$s의 오늘 요청 중 %1$d%% 사용</string>
+    <string name="usage_warn_audio">Groq: %2$s의 오늘 무료 오디오 중 약 %1$d%% 사용</string>
+
+    <!-- Stats -->
+    <string name="stats_title">내 받아쓰기</string>
+    <string name="stats_spoken">말한 시간</string>
+    <string name="stats_words">단어</string>
+    <string name="stats_dictations">받아쓰기</string>
+    <string name="stats_average">평균</string>
+    <string name="stats_longest">최장</string>
+    <string name="stats_streak">일 연속</string>
+    <string name="stats_wpm">분당 약 %1$d단어를 말해요. 휴대전화로 입력하는 것보다 약 %2$d× 빨라요.</string>
+    <string name="stats_chart">최근 14일, 분</string>
+
+    <!-- About -->
+    <string name="diagnostics">진단</string>
+    <string name="diagnostics_sub">문제 해결을 위한 최근 받아쓰기, 오류, 서비스 이벤트</string>
+    <string name="privacy_policy">개인정보처리방침</string>
+    <string name="terms">이용약관</string>
+    <string name="licenses">오픈소스 라이선스</string>
+    <string name="licenses_text">VitalySpeak은 Apache License 2.0에 따라 다음 오픈소스 라이브러리를 사용해요:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\n라이선스 전문: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">버전</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">받아쓰기 검색</string>
+    <string name="history_no_match">‘%1$s’와(과) 일치하는 항목이 없어요.</string>
+    <string name="state_done">완료</string>
+    <string name="state_raw">다듬지 않음</string>
+    <string name="state_pending">변환 필요 · %1$d/%2$d</string>
+    <string name="state_recording">녹음 중</string>
+    <string name="audio_saved">오디오 저장됨</string>
+    <string name="not_transcribed">(아직 변환되지 않음)</string>
+    <string name="cleaned">다듬은 텍스트</string>
+    <string name="cleaned_missing">다듬기가 없어요. ‘다듬기 다시 시도’를 탭하세요.</string>
+    <string name="raw">원본 텍스트</string>
+    <string name="raw_missing">%2$d개 중 %1$d개 부분이 아직 변환되지 않았어요. 오디오는 저장되어 있어요. ‘다시 시도’를 탭하세요.</string>
+    <string name="copy_cleaned">다듬은 텍스트 복사</string>
+    <string name="copy_raw">원본 텍스트 복사</string>
+    <string name="retry_transcription">변환 다시 시도</string>
+    <string name="retry_cleanup">다듬기 다시 시도</string>
+    <string name="redo_cleanup">다시 다듬기</string>
+    <string name="working_background">백그라운드에서 처리 중…</string>
+    <string name="delete_confirm">이 받아쓰기를 삭제할까요?</string>
+    <string name="delete_confirm_audio">이 받아쓰기와 저장된 오디오를 삭제할까요?</string>
+    <string name="copied">복사됨 (%1$d자)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">VitalySpeak을 켜기 전에</string>
+    <string name="disclosure_uses_title">VitalySpeak이 접근성 서비스를 사용하는 이유</string>
+    <string name="disclosure_uses">VitalySpeak은 받아쓰기 도구예요. Android 접근성 API를 다음 용도로 사용해요:\n\n• 다른 앱 위에 플로팅 마이크 버튼 표시\n• 텍스트 필드가 활성화되었는지 감지하여 입력할 때만 버튼 표시\n• 받아쓴 텍스트를 해당 필드에 삽입\n• (선택 사항) 녹음 중 볼륨 낮추기 또는 헤드셋 버튼으로 음성 명령 구분</string>
+    <string name="disclosure_never_title">절대 하지 않는 일</string>
+    <string name="disclosure_never">VitalySpeak은 화면이나 다른 앱의 내용을 읽거나 저장하거나 보내지 않아요. 키 입력을 기록하지 않고, 사용자를 대신해 작업을 수행하지 않으며, 광고나 분석 도구도 없어요.</string>
+    <string name="disclosure_data_title">내 녹음</string>
+    <string name="disclosure_data">마이크는 버튼을 탭한 후에만 사용돼요. 녹음은 내 API 키로 Groq, Inc.에 전송되어 텍스트로 변환되고 (AI 다듬기가 켜져 있으면) 다듬어진 뒤, 텍스트가 휴대전화로 돌아와요. 개발자에게는 아무것도 전송되지 않아요. 녹음은 보관을 선택하지 않는 한 변환 후 휴대전화에서 삭제되고, 텍스트 기록은 직접 삭제할 때까지 휴대전화에 남아 있어요.</string>
+    <string name="disclosure_policy_link">개인정보처리방침 읽기</string>
+    <string name="disclosure_agree">동의하고 설정 열기</string>
+    <string name="disclosure_decline">나중에</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">VitalySpeak 마이크. 탭하여 받아쓰기를 시작하거나 중지하고, 길게 눌러 앱을 열어요.</string>
+    <string name="cmd_start">⌘ 명령</string>
+    <string name="cmd_end">■ 명령 종료</string>
+    <string name="cmd_hint">⌘ AI가 할 일을 말하세요</string>
+    <string name="btn_cancel">✕ 취소</string>
+    <string name="btn_screen_off">☾ 화면 끄기</string>
+    <string name="pocket_title">녹음 계속 중</string>
+    <string name="pocket_countdown">%1$d초 후 화면이 어두워져요…</string>
+    <string name="pocket_continues">두 번 탭하거나 전원 버튼을 눌러 돌아가세요</string>
+    <string name="pocket_recording">녹음 중 · %1$s</string>
+    <string name="dot_size_toast">버튼 크기 %1$d%%</string>
+    <string name="listening">듣는 중…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">VitalySpeak 앱에서 마이크 접근을 허용하세요</string>
+    <string name="err_mic_busy">다른 앱에서 마이크를 사용 중이에요</string>
+    <string name="err_no_key">VitalySpeak 앱에서 Groq API 키를 추가하세요</string>
+    <string name="err_storage_full">휴대전화 저장공간이 거의 가득 차서 녹음이 안전하지 않아요</string>
+    <string name="err_storage_write">저장공간 오류예요. 저장된 부분을 변환할게요.</string>
+    <string name="err_no_audio">녹음된 오디오가 없어요</string>
+    <string name="err_transcribe_kept">%1$d개 부분에서 Groq에 연결할 수 없었어요. 녹음은 저장되어 있어요. VitalySpeak → 기록에서 다시 시도하세요.</string>
+    <string name="err_retry_failed">%1$d개 부분을 여전히 변환하지 못했어요. 다음 시도를 위해 보관해 둘게요.</string>
+    <string name="stop_max_length">4시간에 도달했어요. 전체를 변환할게요.</string>
+    <string name="stop_low_storage">저장공간이 거의 가득 찼어요. 전체를 변환할게요.</string>
+    <string name="cancelled">취소됐어요. 아무것도 전송되지 않았어요.</string>
+    <string name="finishing_parts">%2$d개 중 %1$d개 부분 마무리 중…</string>
+    <string name="no_speech">음성이 감지되지 않았어요</string>
+    <string name="groq_busy">Groq가 사용 중이에요. %1$d초 후 마무리할게요…</string>
+    <string name="cleanup_partial">%1$d개 부분은 다듬기를 건너뛰었어요. 해당 부분은 원본 텍스트로 남아 있어요.</string>
+    <string name="applying_commands">명령을 적용하는 중…</string>
+    <string name="commands_partial">일부 명령을 적용할 수 없었어요. 맨 끝에 목록으로 표시돼요.</string>
+    <string name="not_applied">적용 안 됨</string>
+    <string name="saved_to_history">기록에 저장됨</string>
+    <string name="copied_to_clipboard">텍스트 필드를 찾을 수 없어요. 텍스트가 클립보드에 있어요.</string>
+    <string name="cleanup_failed_again">다듬기에 다시 실패했어요. 원본 텍스트는 그대로 저장되어 있어요.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">설정 알림</string>
+    <string name="notif_off_title">VitalySpeak이 꺼져 있어요</string>
+    <string name="notif_off_text">Android가 접근성 서비스를 껐어요. 탭하여 다시 켜세요.</string>
+</resources>

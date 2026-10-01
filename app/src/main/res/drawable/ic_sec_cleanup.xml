@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Section icon "cleanup": minimal 24dp line icon, tinted at runtime. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path android:pathData="M4.5,19.5L14,10 M12,8L16,12" android:strokeColor="#FFFFFFFF" android:strokeWidth="1.8" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    <path android:pathData="M17.5,3L18.1,4.9L20,5.5L18.1,6.1L17.5,8L16.9,6.1L15,5.5L16.9,4.9Z M8,3.5L8.4,4.6L9.5,5L8.4,5.4L8,6.5L7.6,5.4L6.5,5L7.6,4.6Z" android:fillColor="#FFFFFFFF" />
+</vector>

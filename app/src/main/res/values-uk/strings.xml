@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">VitalySpeak показує плаваючу кнопку мікрофона, поки ти друкуєш. Натисни її, щоб надиктувати: мовлення розпізнається, і текст вставляється в поле, у якому ти пишеш. VitalySpeak використовує цей сервіс лише для того, щоб показувати кнопку, визначати, коли активне текстове поле, вставляти надиктований текст і (за бажанням) використовувати кнопку зменшення гучності як командну клавішу під час запису. Він не читає, не збирає і не передає вміст екрана.</string>
+
+    <!-- Common -->
+    <string name="back">Назад</string>
+    <string name="save">Зберегти</string>
+    <string name="use">Використати</string>
+    <string name="close">Закрити</string>
+    <string name="copy">Копіювати</string>
+    <string name="delete">Видалити</string>
+    <string name="reset">Скинути</string>
+    <string name="default_value">За замовчуванням</string>
+    <string name="not_now">Не зараз</string>
+    <string name="open_settings">Відкрити налаштування</string>
+    <string name="no_browser">Браузер не знайдено</string>
+    <string name="status_ok">Готово</string>
+    <string name="status_missing">Не налаштовано</string>
+    <string name="status_recommended">Рекомендовано</string>
+
+    <!-- Home: status -->
+    <string name="status">Стан</string>
+    <string name="status_ready">Усе готово. Відкрий клавіатуру в будь-якому застосунку й натисни кнопку мікрофона.</string>
+    <string name="status_incomplete">Налаштування не завершено: %1$s. Див. нижче.</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">Історія</string>
+    <string name="sec_setup">Налаштування</string>
+    <string name="sec_languages">Мови</string>
+    <string name="sec_dictation">Диктування</string>
+    <string name="sec_cleanup">ШІ-обробка</string>
+    <string name="sec_models">Моделі</string>
+    <string name="sec_appearance">Вигляд</string>
+    <string name="sec_usage">Використання Groq (оцінка)</string>
+    <string name="sec_about">Про застосунок</string>
+
+    <!-- History row -->
+    <string name="history_row">Усі диктування</string>
+    <string name="history_needs_service">Увімкни сервіс у «Спеціальних можливостях», щоб бачити історію.</string>
+    <string name="history_empty">Диктувань ще немає.</string>
+    <plurals name="history_count">
+        <item quantity="one">%d диктування</item>
+        <item quantity="few">%d диктування</item>
+        <item quantity="many">%d диктувань</item>
+        <item quantity="other">%d диктування</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="one">%1$d запис ще не розпізнано. Натисни, щоб повторити (усього %2$d).</item>
+        <item quantity="few">%1$d записи ще не розпізнано. Натисни, щоб повторити (усього %2$d).</item>
+        <item quantity="many">%1$d записів ще не розпізнано. Натисни, щоб повторити (усього %2$d).</item>
+        <item quantity="other">%1$d запису ще не розпізнано. Натисни, щоб повторити (усього %2$d).</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">Мікрофон</string>
+    <string name="mic_ok">Дозволено</string>
+    <string name="mic_missing">Натисни, щоб дозволити доступ до мікрофона</string>
+    <string name="setup_access">Спеціальні можливості</string>
+    <string name="access_ok">Увімкнено й працює</string>
+    <string name="access_stuck">Увімкнено, але не працює. Натисни, потім вимкни й увімкни знову.</string>
+    <string name="access_off">Вимкнено. Натисни, щоб увімкнути.</string>
+    <string name="access_help">Android відкриє сторінку VitalySpeak у «Спеціальних можливостях».\n\n1. Увімкни «VitalySpeak».\n2. Підтверди кнопкою «Дозволити».\n3. Повернися назад. Тут зʼявиться зелена галочка.\n\nЯкщо натомість відкрився загальний список «Спеціальних можливостей», відкрий «Встановлені застосунки» (або «Завантажені застосунки»), потім VitalySpeak.\n\nЯкщо перемикач неактивний («Обмежене налаштування»): відкрий Налаштування, Застосунки, VitalySpeak, натисни меню ⋮ і вибери «Дозволити обмежені налаштування». Потім спробуй знову.</string>
+    <string name="access_help_running">Сервіс увімкнено й він працює. Відкриваю його налаштування.</string>
+    <string name="setup_key">API-ключ Groq</string>
+    <string name="key_missing">Натисни, щоб додати ключ. Створити його можна безкоштовно на console.groq.com.</string>
+    <string name="key_help">VitalySpeak надсилає твої записи в Groq з твоїм власним ключем. Ключ зберігається лише на цьому телефоні.</string>
+    <string name="get_key">Отримати ключ</string>
+    <string name="key_first">Спершу додай API-ключ Groq</string>
+    <string name="setup_battery">Батарея: без обмежень</string>
+    <string name="battery_ok">Android не присипатиме VitalySpeak</string>
+    <string name="battery_missing">Рекомендовано: Android не призупинятиме VitalySpeak у фоні</string>
+    <string name="battery_ok_help">Обмежень уже немає. На телефонах Samsung також перевір Налаштування, Батарея, Обмеження використання у фоні: VitalySpeak не має бути в списках «Програми в режимі сну» чи «Програми в режимі глибокого сну».</string>
+    <string name="setup_alerts">Сповіщення про налаштування</string>
+    <string name="alerts_ok">Ти дізнаєшся, якщо Android вимкне VitalySpeak</string>
+    <string name="alerts_missing">Рекомендовано: сповіщення, якщо Android вимкне VitalySpeak</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">Мови, якими ти говориш</string>
+    <string name="app_language">Мова застосунку</string>
+    <string name="app_language_system">Як на телефоні</string>
+    <string name="app_language_service">Плаваюча кнопка змінить мову під час наступного запуску сервісу.</string>
+    <string name="languages_intro">Вибери мови, якими диктуєш. Першою постав ту, що використовуєш найчастіше; додай інші, які змішуєш. Мову самого застосунку це не змінює.</string>
+    <string name="languages_yours">Твої мови</string>
+    <string name="languages_primary">Основна</string>
+    <string name="languages_primary_sub">Використовується, коли мовлення нечітке</string>
+    <string name="languages_make_primary">Натисни, щоб зробити основною</string>
+    <string name="languages_remove">Видалити %1$s</string>
+    <string name="languages_add">Додати мову</string>
+    <string name="languages_search">Пошук мов</string>
+    <string name="languages_why_title">Чому це важливо</string>
+    <string name="languages_why">Розпізнавання мовлення знає близько 100 мов. Коли йому доводиться вгадувати, іноді воно вибирає не ту: сильний акцент або коротка фраза можуть вийти іншою мовою чи в перекладі.\n\n• Якщо вибрано одну мову, розпізнавання точно знає, чого очікувати. Це найточніший і найшвидший варіант.\n• Якщо мов кілька, VitalySpeak перевіряє, яку мову розпізнано. Якщо це не одна з твоїх, цей фрагмент розпізнається знову основною мовою.\n• Твої мови також передаються ШІ-обробці, щоб вона зберігала кожну мову точно так, як ти говориш, навіть коли переходиш посеред речення, і ніколи не перекладала.\n\nТож додавай лише ті мови, якими справді користуєшся.</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">Показувати кнопку лише під час введення</string>
+    <string name="only_while_typing_sub">Кнопка зʼявляється, коли активне текстове поле. Утримуй її, щоб відкрити цей екран.</string>
+    <string name="live_preview">Живий перегляд</string>
+    <string name="live_preview_sub">Показує твої слова біля кнопки, поки ти говориш (додаткові короткі запити до Groq)</string>
+    <string name="vocabulary">Словник</string>
+    <string name="vocabulary_none">Порожньо</string>
+    <string name="vocabulary_hint">Імена, продукти, терміни…</string>
+    <string name="vocabulary_help">Імена й терміни, які ти використовуєш, через кому. ШІ-обробка використовує їх, щоб виправляти написання, лише там, де вони справді прозвучали.</string>
+    <string name="command_keys">Гучність вниз для команд</string>
+    <string name="command_keys_sub">Під час запису кнопка зменшення гучності або кнопка гарнітури починає й завершує ⌘ команду: вказівку для ШІ замість тексту</string>
+    <string name="keep_audio">Зберігати аудіо</string>
+    <string name="keep_audio_sub">Вимк.: записи видаляються після розпізнавання. Увімк.: вони зберігаються на цьому телефоні (близько 115 МБ на годину).</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">ШІ-обробка</string>
+    <string name="cleanup_sub">Прибирає слова-паразити, виправляє пунктуацію та помилки розпізнавання</string>
+    <string name="style_standard">Природний</string>
+    <string name="style_standard_sub">Твої слова, тільки чистіше</string>
+    <string name="style_formal">Діловий</string>
+    <string name="style_formal_sub">Завершені речення, професійний тон</string>
+    <string name="style_notes">Нотатки</string>
+    <string name="style_notes_sub">Короткий заголовок і пункти списку</string>
+    <string name="style_custom">Власний</string>
+    <string name="style_custom_sub">Твої власні інструкції</string>
+    <string name="custom_instructions">Власні інструкції</string>
+    <string name="custom_instructions_empty">Натисни, щоб написати інструкції</string>
+    <string name="custom_hint">Наприклад: пиши короткими абзацами. Використовуй британський правопис.</string>
+    <string name="custom_help">Додаються до базових правил обробки (зберігати твої мови, прибирати слова-паразити, ніколи не додавати змісту).</string>
+
+    <!-- Models -->
+    <string name="model_stt">Розпізнавання мовлення</string>
+    <string name="model_llm">Модель обробки</string>
+    <string name="model_stable">стабільна</string>
+    <string name="model_preview">попередня</string>
+    <string name="model_other">Інша… (введи ID моделі)</string>
+    <string name="model_id">ID моделі</string>
+    <string name="check_updates">Перевірити нові моделі й оновлення</string>
+    <string name="checking">Перевірка…</string>
+    <string name="never_checked">Ще не перевірялося</string>
+    <string name="last_checked">Остання перевірка: %1$s</string>
+    <string name="check_failed">Помилка перевірки: %1$s</string>
+    <string name="all_up_to_date">Усе актуальне</string>
+    <string name="alert_update">Доступне оновлення застосунку</string>
+    <string name="alert_update_sub">%1$s. Натисни, щоб завантажити.</string>
+    <string name="alert_stt_gone">Модель розпізнавання недоступна</string>
+    <string name="alert_llm_gone">Модель обробки недоступна</string>
+    <string name="alert_gone_fix">%1$s більше недоступна для твого ключа. Натисни, щоб перейти на %2$s.</string>
+    <string name="alert_gone_pick">%1$s більше недоступна для твого ключа. Натисни, щоб вибрати іншу.</string>
+    <string name="alert_switched">Модель змінено</string>
+    <string name="alert_switched_sub">Тепер %1$s (була %2$s). Натисни, щоб скасувати.</string>
+    <string name="alert_upgrade">Доступна новіша модель</string>
+    <string name="alert_recommended">Рекомендована модель</string>
+    <plurals name="alert_new_models">
+        <item quantity="one">%d нова модель Groq</item>
+        <item quantity="few">%d нові моделі Groq</item>
+        <item quantity="many">%d нових моделей Groq</item>
+        <item quantity="other">%d нової моделі Groq</item>
+    </plurals>
+    <string name="upgrade_title">Перейти на %1$s?</string>
+    <string name="upgrade_text">Зараз: %1$s (%2$s)\nНова: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">Та сама родина моделей, новіша версія.</string>
+    <string name="upgrade_other_line">Інша родина моделей. Новіша не завжди краща, тож спробуй кілька диктувань. Скасувати можна одним дотиком.</string>
+    <string name="switch_model">Перейти</string>
+    <string name="dont_suggest">Не пропонувати</string>
+
+    <!-- Appearance -->
+    <string name="look">Вигляд і анімація</string>
+    <string name="look_sub">Розмір кнопки, реакція на голос, хвилі, кольори</string>
+    <string name="look_dot">Кнопка</string>
+    <string name="dot_size">Розмір</string>
+    <string name="dot_size_sub">Кнопку також можна масштабувати двома пальцями</string>
+    <string name="look_animation">Анімація запису</string>
+    <string name="reaction">Реакція на голос</string>
+    <string name="reaction_sub">Наскільки сильно форма стежить за голосом</string>
+    <string name="reaction_calm">Спокійно</string>
+    <string name="reaction_lively">Жваво</string>
+    <string name="reaction_wild">Бурхливо</string>
+    <string name="wave_speed">Швидкість хвиль</string>
+    <string name="wave_speed_sub">Як швидко рухається форма</string>
+    <string name="wave_count">Хвилі</string>
+    <string name="wave_count_sub">Скільки хвиль біжить по контуру</string>
+    <string name="look_colours">Кольори</string>
+    <string name="colour_front">Передній шар</string>
+    <string name="colour_front_sub">Верхній шар під час запису</string>
+    <string name="colour_middle">Середній шар</string>
+    <string name="colour_middle_sub">Другий шар</string>
+    <string name="colour_back">Задній шар</string>
+    <string name="colour_back_sub">Третій шар</string>
+    <string name="colour_ring">Акцентне кільце</string>
+    <string name="colour_ring_sub">Навколо кнопки та хмаринки перегляду</string>
+    <string name="not_a_colour">Недійсний колір</string>
+    <string name="reset_defaults">Скинути до стандартних</string>
+    <string name="reset_confirm">Скинути розмір, анімацію та кольори?</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">Запитів сьогодні: %1$d з %2$d</string>
+    <string name="usage_tokens">Токенів за цю хвилину: %1$d з %2$d</string>
+    <string name="usage_audio">Аудіо сьогодні (за підрахунком телефона): %1$d хв з безкоштовного денного ліміту %2$d год</string>
+    <string name="usage_console">Тариф і оплата</string>
+    <string name="usage_console_sub">Відкрити консоль Groq</string>
+    <string name="usage_none">Зʼявиться після першого диктування. Натисни, щоб відкрити консоль Groq.</string>
+    <string name="usage_warn_requests">Groq: використано %1$d%% сьогоднішніх запитів для %2$s</string>
+    <string name="usage_warn_audio">Groq: використано близько %1$d%% сьогоднішнього безкоштовного аудіо для %2$s</string>
+
+    <!-- Stats -->
+    <string name="stats_title">Твоє диктування</string>
+    <string name="stats_spoken">наговорено</string>
+    <string name="stats_words">слів</string>
+    <string name="stats_dictations">диктувань</string>
+    <string name="stats_average">у середньому</string>
+    <string name="stats_longest">найдовше</string>
+    <string name="stats_streak">днів поспіль</string>
+    <string name="stats_wpm">Ти говориш близько %1$d слів за хвилину, це приблизно ×%2$d порівняно з набором на телефоні.</string>
+    <string name="stats_chart">Останні 14 днів, хвилини</string>
+
+    <!-- About -->
+    <string name="diagnostics">Діагностика</string>
+    <string name="diagnostics_sub">Останнє диктування, помилки та події сервісу, для пошуку проблем</string>
+    <string name="privacy_policy">Політика конфіденційності</string>
+    <string name="terms">Умови використання</string>
+    <string name="licenses">Ліцензії відкритого ПЗ</string>
+    <string name="licenses_text">VitalySpeak використовує ці бібліотеки з відкритим кодом за ліцензією Apache License 2.0:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nПовний текст ліцензії: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">Версія</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">Пошук у диктуваннях</string>
+    <string name="history_no_match">За запитом «%1$s» нічого не знайдено.</string>
+    <string name="state_done">Готово</string>
+    <string name="state_raw">Не оброблено</string>
+    <string name="state_pending">Потрібно розпізнати · %1$d/%2$d</string>
+    <string name="state_recording">Запис</string>
+    <string name="audio_saved">аудіо збережено</string>
+    <string name="not_transcribed">(ще не розпізнано)</string>
+    <string name="cleaned">Оброблений текст</string>
+    <string name="cleaned_missing">Обробки немає. Натисни «Повторити обробку».</string>
+    <string name="raw">Вихідна розшифровка</string>
+    <string name="raw_missing">Не розпізнано частин: %1$d з %2$d. Аудіо збережено: натисни «Повторити».</string>
+    <string name="copy_cleaned">Копіювати оброблений текст</string>
+    <string name="copy_raw">Копіювати вихідну розшифровку</string>
+    <string name="retry_transcription">Повторити розпізнавання</string>
+    <string name="retry_cleanup">Повторити обробку</string>
+    <string name="redo_cleanup">Обробити знову</string>
+    <string name="working_background">Працюю у фоні…</string>
+    <string name="delete_confirm">Видалити це диктування?</string>
+    <string name="delete_confirm_audio">Видалити це диктування і збережене аудіо?</string>
+    <string name="copied">Скопійовано (символів: %1$d)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">Перед увімкненням VitalySpeak</string>
+    <string name="disclosure_uses_title">Навіщо VitalySpeak потрібні «Спеціальні можливості»</string>
+    <string name="disclosure_uses">VitalySpeak — інструмент для диктування. Він використовує API спеціальних можливостей Android, щоб:\n\n• показувати плаваючу кнопку мікрофона поверх інших застосунків;\n• помічати, коли активне текстове поле, щоб кнопка зʼявлялася лише під час введення;\n• вставляти надиктований текст у це поле;\n• за бажанням, дозволяти кнопці зменшення гучності чи кнопці гарнітури позначати голосову команду під час запису.</string>
+    <string name="disclosure_never_title">Чого він ніколи не робить</string>
+    <string name="disclosure_never">VitalySpeak не читає, не зберігає і не надсилає вміст екрана чи інших застосунків. Він не записує натискання клавіш, не виконує дій від твого імені, і в ньому немає реклами чи аналітики.</string>
+    <string name="disclosure_data_title">Твої записи</string>
+    <string name="disclosure_data">Мікрофон використовується лише після натискання кнопки. Запис надсилається в Groq, Inc. з твоїм власним API-ключем для розпізнавання і (якщо ШІ-обробку ввімкнено) обробки, і текст повертається на телефон. Розробнику нічого не передається. Записи видаляються з телефона після розпізнавання, якщо ти не вирішиш їх зберігати; історія тексту лишається на телефоні, доки ти її не видалиш.</string>
+    <string name="disclosure_policy_link">Прочитати політику конфіденційності</string>
+    <string name="disclosure_agree">Погоджуюся, відкрити налаштування</string>
+    <string name="disclosure_decline">Не зараз</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">Мікрофон VitalySpeak. Натисни, щоб почати або зупинити диктування, утримуй, щоб відкрити застосунок.</string>
+    <string name="cmd_start">⌘ Команда</string>
+    <string name="cmd_end">■ Кінець команди</string>
+    <string name="cmd_hint">⌘ Скажи, що має зробити ШІ</string>
+    <string name="btn_cancel">✕ Скасувати</string>
+    <string name="btn_screen_off">☾ Вимкнути екран</string>
+    <string name="pocket_title">Запис триває</string>
+    <string name="pocket_countdown">Екран згасне через %1$d…</string>
+    <string name="pocket_continues">Торкнися двічі або натисни кнопку живлення, щоб повернутися</string>
+    <string name="pocket_recording">Запис · %1$s</string>
+    <string name="dot_size_toast">Розмір кнопки %1$d%%</string>
+    <string name="listening">Слухаю…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">Дозволь доступ до мікрофона в застосунку VitalySpeak</string>
+    <string name="err_mic_busy">Мікрофон використовує інший застосунок</string>
+    <string name="err_no_key">Додай API-ключ Groq у застосунку VitalySpeak</string>
+    <string name="err_storage_full">Памʼять телефона майже заповнена, записувати небезпечно</string>
+    <string name="err_storage_write">Помилка памʼяті. Розпізнаю те, що встигло зберегтися.</string>
+    <string name="err_no_audio">Аудіо не записано</string>
+    <string name="err_transcribe_kept">Не вдалося звʼязатися з Groq (частин: %1$d). Запис збережено: відкрий VitalySpeak, Історія, щоб повторити.</string>
+    <string name="err_retry_failed">Досі не вдалося розпізнати частин: %1$d. Збережено для наступної спроби.</string>
+    <string name="stop_max_length">Досягнуто 4 години. Розпізнаю все.</string>
+    <string name="stop_low_storage">Памʼять майже заповнена. Розпізнаю все.</string>
+    <string name="cancelled">Скасовано. Нічого не надіслано.</string>
+    <string name="finishing_parts">Завершую частини: %1$d з %2$d…</string>
+    <string name="no_speech">Мовлення не виявлено</string>
+    <string name="groq_busy">Groq зайнятий. Завершу через %1$d с…</string>
+    <string name="cleanup_partial">Обробку пропущено для частин: %1$d. Там лишився вихідний текст.</string>
+    <string name="applying_commands">Застосовую твої команди…</string>
+    <string name="commands_partial">Деякі команди не вдалося застосувати. Їх наведено в кінці.</string>
+    <string name="not_applied">не застосовано</string>
+    <string name="saved_to_history">Збережено в історії</string>
+    <string name="copied_to_clipboard">Текстове поле не знайдено. Текст скопійовано в буфер обміну.</string>
+    <string name="cleanup_failed_again">Обробка знову не вдалася. Вихідний текст збережено.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">Сповіщення про налаштування</string>
+    <string name="notif_off_title">VitalySpeak вимкнено</string>
+    <string name="notif_off_text">Android вимкнув його сервіс у «Спеціальних можливостях». Натисни, щоб увімкнути знову.</string>
+</resources>

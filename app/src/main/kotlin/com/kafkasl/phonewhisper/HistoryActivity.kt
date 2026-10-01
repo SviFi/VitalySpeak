@@ -24,11 +24,31 @@ class HistoryActivity : AppCompatActivity() {
 
     private lateinit var list: LinearLayout
     private lateinit var empty: TextView
+    private lateinit var search: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         root.addView(Ui.topBar(this, "History") { finish() })
+        // Search box: filters by cleaned or raw text as you type.
+        search = EditText(this).apply {
+            hint = "Search dictations"
+            setSingleLine()
+            textSize = 16f
+            setPadding(dp(16), dp(12), dp(16), dp(12))
+            background = GradientDrawable().apply {
+                cornerRadius = dp(24).toFloat()
+                setColor(attrColor(com.google.android.material.R.attr.colorSurfaceContainerHigh))
+            }
+            setCompoundDrawablesRelativeWithIntrinsicBounds(android.R.drawable.ic_menu_search, 0, 0, 0)
+            compoundDrawablePadding = dp(8)
+            addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
+                override fun onTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) { render() }
+            })
+        }
+        root.addView(search, LinearLayout.LayoutParams(-1, -2).apply { setMargins(dp(16), dp(4), dp(16), dp(8)) })
         root.addView(TextView(this).apply {
             text = "All your dictations. Tap one to copy or retry."
             textSize = 14f
@@ -64,10 +84,21 @@ class HistoryActivity : AppCompatActivity() {
 
     private fun render() {
         list.removeAllViews()
-        val items = svc()?.history().orEmpty()
+        val all = svc()?.history().orEmpty()
+        val q = search.text.toString().trim()
+        // Every word of the query must appear (in any order) in the cleaned or raw text.
+        val words = q.lowercase().split(Regex("\\s+")).filter { it.isNotEmpty() }
+        val items = if (words.isEmpty()) all else all.filter { s ->
+            val hay = ((s.clean() ?: "") + "\n" + (s.raw() ?: "")).lowercase()
+            words.all { it in hay }
+        }
         empty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
-        if (svc() == null) empty.text = "Enable the VitalySpeak accessibility service to see history."
-        for (s in items) list.addView(row(s))
+        empty.text = when {
+            svc() == null -> "Enable the VitalySpeak accessibility service to see history."
+            all.isEmpty() -> "No dictations yet."
+            else -> "Nothing matches \"$q\"."
+        }
+        for (s in items) list.addView(row(s, words))
     }
 
     private fun statusLabel(s: DictationStore.Session): Pair<String, Int> = when (s.status) {
@@ -85,9 +116,11 @@ class HistoryActivity : AppCompatActivity() {
         return "$date · $dur" + if (s.hasAudio()) " · audio saved" else ""
     }
 
-    private fun row(s: DictationStore.Session): View {
+    private fun row(s: DictationStore.Session, words: List<String> = emptyList()): View {
         val (label, color) = statusLabel(s)
-        val text = s.clean() ?: s.raw() ?: "(not transcribed yet)"
+        val full = s.clean() ?: s.raw() ?: "(not transcribed yet)"
+        // When searching, show the snippet around the first match, with matches highlighted.
+        val text: CharSequence = if (words.isEmpty()) full else highlight(snippet(full, words.first()), words)
         return LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(dp(24), dp(14), dp(24), dp(14))
@@ -114,7 +147,7 @@ class HistoryActivity : AppCompatActivity() {
                 })
             })
             addView(TextView(context).apply {
-                this.text = text.replace("\n", " ")
+                this.text = if (text is String) text.replace("\n", " ") else text
                 textSize = 16f
                 maxLines = 3
                 ellipsize = android.text.TextUtils.TruncateAt.END
@@ -173,6 +206,28 @@ class HistoryActivity : AppCompatActivity() {
                 .setNegativeButton("Keep", null).show()
         }
         dialog.show()
+    }
+
+    private fun snippet(t: String, w: String): String {
+        val i = t.lowercase().indexOf(w)
+        if (i < 0) return t
+        val start = maxOf(0, i - 60)
+        return (if (start > 0) "…" else "") + t.substring(start).replace("\n", " ")
+    }
+
+    private fun highlight(t: String, words: List<String>): CharSequence {
+        val sp = android.text.SpannableString(t)
+        val lower = t.lowercase()
+        val c = attrColor(com.google.android.material.R.attr.colorPrimary)
+        for (w in words) {
+            var i = lower.indexOf(w)
+            while (i >= 0) {
+                sp.setSpan(android.text.style.ForegroundColorSpan(c), i, i + w.length, 0)
+                sp.setSpan(android.text.style.StyleSpan(Typeface.BOLD), i, i + w.length, 0)
+                i = lower.indexOf(w, i + w.length)
+            }
+        }
+        return sp
     }
 
     private fun copy(t: String) {

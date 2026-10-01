@@ -108,4 +108,16 @@ class DictationStoreTest {
         assertArrayEquals(byteArrayOf(3, 4, 5, 6, 7, 8, 9, 10, 11, 12), r.snapshot())
         assertEquals(12L, r.total)
     }
+
+    @Test fun `commands and timed units persist`() {
+        val s = store().newSession()
+        s.addCommand(1.5, 3.25); s.addCommand(10.0, 9.0)   // second is invalid and ignored
+        assertEquals(listOf(1.5 to 3.25), s.commands())
+        s.writeUnits(0, listOf(Dictation.Timed(0.0, 0.5, "Привет"), Dictation.Timed(0.5, 1.0, "world\tx")))
+        val u = s.units(0)!!
+        assertEquals(2, u.size)
+        assertEquals("Привет", u[0].text)
+        assertEquals("world x", u[1].text)
+        assertNull(s.units(1))
+    }
 }

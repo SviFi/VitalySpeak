@@ -24,9 +24,15 @@ object Dictation {
      * main trigger for Whisper "hallucinating" text such as the vocabulary hint.
      */
     fun trimSilence(pcm: ByteArray, sampleRate: Int = 16000, threshold: Double = 350.0, padMs: Int = 400): ByteArray {
+        val r = trimRange(pcm, sampleRate, threshold, padMs)
+        return if (r.first == 0 && r.last + 1 == pcm.size) pcm else pcm.copyOfRange(r.first, r.last + 1)
+    }
+
+    /** Byte range kept by [trimSilence]; its start tells how much leading audio was cut. */
+    fun trimRange(pcm: ByteArray, sampleRate: Int = 16000, threshold: Double = 350.0, padMs: Int = 400): IntRange {
         val n = pcm.size / 2
         val win = sampleRate / 50                    // 20 ms windows
-        if (n < win * 5) return pcm
+        if (n < win * 5) return 0 until pcm.size
         var first = -1
         var last = -1
         var w = 0
@@ -34,11 +40,11 @@ object Dictation {
             if (meanAbs(pcm, w, w + win) > threshold) { if (first < 0) first = w; last = w + win }
             w += win
         }
-        if (first < 0) return pcm                    // all quiet: let Whisper decide
+        if (first < 0) return 0 until pcm.size       // all quiet: let Whisper decide
         val pad = sampleRate * padMs / 1000
         val start = maxOf(0, first - pad)
         val end = minOf(n, last + pad)
-        return pcm.copyOfRange(start * 2, end * 2)
+        return (start * 2) until (end * 2)
     }
 
     /** True if no 20 ms window rises above [threshold] — nothing worth sending to Whisper. */
@@ -141,4 +147,84 @@ object Dictation {
      */
     fun cleanupLostContent(raw: String, cleaned: String): Boolean =
         raw.length >= 80 && cleaned.length < raw.length * 0.6
+
+    // ---------- inline commands ----------
+
+    /** A word or segment with absolute times (seconds from the start of the recording). */
+    data class Timed(val start: Double, val end: Double, val text: String)
+
+    data class Block(val isCommand: Boolean, val text: String)
+
+    /**
+     * Splits timed words/segments into ordered content and command blocks using the command
+     * intervals the user marked while recording. A unit belongs to a command if its midpoint
+     * falls inside [start - lead, end + tail] (small allowance for tap/speech timing).
+     */
+    fun splitByCommands(units: List<Timed>, commands: List<Pair<Double, Double>>,
+                        lead: Double = 0.25, tail: Double = 0.35): List<Block> {
+        val out = mutableListOf<Block>()
+        val cur = StringBuilder()
+        var curCmd: Boolean? = null
+        fun flush() {
+            val t = cur.toString().replace(Regex("\\s+"), " ").trim()
+            if (t.isNotEmpty() && curCmd != null) out += Block(curCmd!!, t)
+            cur.clear()
+        }
+        for (u in units.sortedBy { it.start }) {
+            val mid = (u.start + u.end) / 2
+            val isCmd = commands.any { (s, e) -> mid >= s - lead && mid <= e + tail }
+            if (curCmd != null && isCmd != curCmd) flush()
+            curCmd = isCmd
+            if (cur.isNotEmpty()) cur.append(' ')
+            cur.append(u.text.trim())
+        }
+        flush()
+        // Merge neighbours of the same kind (can happen when a block was empty after trimming).
+        val merged = mutableListOf<Block>()
+        for (b in out) {
+            val last = merged.lastOrNull()
+            if (last != null && last.isCommand == b.isCommand) merged[merged.size - 1] = Block(b.isCommand, last.text + " " + b.text)
+            else merged += b
+        }
+        return merged
+    }
+
+    /** Tagged input for the command-aware cleanup model. */
+    fun toTagged(blocks: List<Block>): String {
+        val sb = StringBuilder()
+        var contentId = 0
+        for (b in blocks) {
+            if (b.isCommand) sb.append("<command after=\"$contentId\">").append(b.text).append("</command>\n")
+            else { contentId++; sb.append("<content id=\"$contentId\">").append(b.text).append("</content>\n") }
+        }
+        return sb.toString().trim()
+    }
+
+    /** Human-readable raw transcript with commands marked, for History. */
+    fun toMarked(blocks: List<Block>): String =
+        blocks.joinToString("\n\n") { if (it.isCommand) "⟦command: ${it.text}⟧" else it.text }
+
+    /**
+     * For very long recordings: windows that each end right after a command (plus the trailing
+     * content), so every command travels with the content it refers to.
+     */
+    fun windows(blocks: List<Block>, maxChars: Int = 10_000): List<List<Block>> {
+        val out = mutableListOf<List<Block>>()
+        var cur = mutableListOf<Block>()
+        var size = 0
+        for (b in blocks) {
+            cur += b; size += b.text.length
+            if (b.isCommand && size >= maxChars) { out += cur; cur = mutableListOf(); size = 0 }
+        }
+        if (cur.isNotEmpty()) out += cur
+        return out
+    }
+
+    /** Splits model output into (notes, pending-action lines) so windows can be merged. */
+    fun splitPending(text: String): Pair<String, List<String>> {
+        val m = Regex("(?im)^\\s*#*\\s*\\**pending actions\\**\\s*:?\\s*$").find(text) ?: return text.trim() to emptyList()
+        val notes = text.substring(0, m.range.first).trim()
+        val items = text.substring(m.range.last + 1).lines().map { it.trim() }.filter { it.isNotEmpty() }
+        return notes to items
+    }
 }

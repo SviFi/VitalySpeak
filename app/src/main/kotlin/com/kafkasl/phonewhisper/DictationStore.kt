@@ -51,6 +51,38 @@ class DictationStore(private val root: File) {
 
         fun hasAudio() = partCount() > 0
 
+        // --- inline commands: intervals the user marked, and timed words per part ---
+        private val commandsFile get() = File(dir, "commands.tsv")
+        fun partUnits(i: Int) = File(dir, "part-%03d.units.tsv".format(i))
+
+        /** Appends a finished command interval (seconds from recording start). */
+        fun addCommand(start: Double, end: Double) =
+            commandsFile.appendText("%.3f\t%.3f\n".format(java.util.Locale.US, start, end))
+
+        fun commands(): List<Pair<Double, Double>> = if (!commandsFile.exists()) emptyList() else
+            commandsFile.readLines().mapNotNull { l ->
+                val p = l.split('\t'); val a = p.getOrNull(0)?.toDoubleOrNull(); val b = p.getOrNull(1)?.toDoubleOrNull()
+                if (a != null && b != null && b > a) a to b else null
+            }
+
+        fun writeUnits(i: Int, units: List<Dictation.Timed>) {
+            partUnits(i).writeText(units.joinToString("") {
+                "%.3f\t%.3f\t%s\n".format(java.util.Locale.US, it.start, it.end, it.text.replace('\t', ' ').replace('\n', ' '))
+            })
+        }
+
+        fun units(i: Int): List<Dictation.Timed>? = partUnits(i).takeIf { it.exists() }?.readLines()?.mapNotNull { l ->
+            val p = l.split('\t', limit = 3)
+            if (p.size < 3) null else Dictation.Timed(p[0].toDoubleOrNull() ?: return@mapNotNull null, p[1].toDoubleOrNull() ?: 0.0, p[2])
+        }
+
+        /** Number of parts known (audio or transcript files) — still works after audio is deleted. */
+        fun knownParts(): Int = dir.listFiles { f -> f.name.matches(Regex("part-\\d{3}\\.txt")) }?.size ?: 0
+
+        /** Seconds of audio before part [i] (parts are contiguous). Needs the audio files. */
+        fun partOffsetSec(i: Int, sampleRate: Int = 16000): Double =
+            (0 until i).sumOf { partPcm(it).length() } / (2.0 * sampleRate)
+
         /** Deletes audio parts (transcripts stay). Only call once raw.txt exists. */
         fun deleteAudio() {
             check(rawTxt.exists()) { "refusing to delete audio before transcript is complete" }

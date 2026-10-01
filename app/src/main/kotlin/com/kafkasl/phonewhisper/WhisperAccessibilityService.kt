@@ -61,6 +61,7 @@ class WhisperAccessibilityService : AccessibilityService() {
         private const val MIN_FREE_BYTES = 50L * 1024 * 1024
         const val KEY_LAST_DICTATION = "last_dictation"
         const val KEY_KEEP_AUDIO = "keep_audio"
+        const val KEY_COMMAND_KEYS = "command_keys"
         const val KEY_WAVE_SPEED = Appearance.KEY_WAVE_SPEED
         const val KEY_WAVE_COUNT = Appearance.KEY_WAVE_COUNT
         private const val PREVIEW_INTERVAL_MS = 2000L
@@ -80,6 +81,12 @@ class WhisperAccessibilityService : AccessibilityService() {
             handler.post { resizeOverlay(roomy = value != State.IDLE) }
             handler.post {
                 button?.setImageResource(if (value == State.RECORDING) R.drawable.ic_stop else R.drawable.ic_mic)
+                // While recording: stop icon a bit higher, timer underneath it.
+                val p = dotPad
+                if (value == State.RECORDING) button?.setPadding(p, (p * 0.62f).toInt(), p, (p * 1.38f).toInt())
+                else button?.setPadding(p, p, p, p)
+                handler.removeCallbacks(timerTick)
+                if (value == State.RECORDING) handler.post(timerTick) else timerView?.visibility = View.GONE
                 if (value == State.RECORDING) waveView?.start() else waveView?.stop()
             }
             // After dictation ends, hide the dot again if the keyboard went away meanwhile.
@@ -94,7 +101,70 @@ class WhisperAccessibilityService : AccessibilityService() {
     private var previewView: TextView? = null
     private var waveView: WaveRingView? = null
     private var dotButtonSize = 0
+    private var dotPad = 0
+    private var timerView: TextView? = null
+    private val timerTick = object : Runnable {
+        override fun run() {
+            val t = timerView ?: return
+            if (state != State.RECORDING) { t.visibility = View.GONE; return }
+            val sec = ((System.currentTimeMillis() - recordStartMs) / 1000).toInt()
+            t.text = if (sec >= 3600) "%d:%02d:%02d".format(sec / 3600, sec / 60 % 60, sec % 60)
+                     else "%d:%02d".format(sec / 60, sec % 60)
+            t.visibility = View.VISIBLE
+            handler.postDelayed(this, 1000 - (System.currentTimeMillis() - recordStartMs) % 1000)
+        }
+    }
+
+    /** Pinch zone grows relative to the dot when it's small, shrinks when big (always > dot). */
+    private fun pinchZoneFactor(): Float {
+        val pct = prefs().getInt(KEY_DOT_SIZE, Appearance.DEF_DOT_SIZE).coerceIn(60, 160)
+        return 1.45f - 0.30f * (pct - 60) / 100f
+    }
     private var cancelView: LinearLayout? = null
+    private var commandPill: TextView? = null
+    /** Audio time (s) when the current command started, or null if not in a command. */
+    @Volatile private var commandStart: Double? = null
+
+    private fun audioNowSec(): Double = (ring?.total ?: 0L) / (2.0 * SAMPLE_RATE)
+
+    /** Start/stop marking speech as an instruction for the AI (not content). */
+    fun toggleCommand() {
+        handler.post {
+            if (state != State.RECORDING) return@post
+            val sess = session ?: return@post
+            val start = commandStart
+            if (start == null) {
+                commandStart = audioNowSec()
+                logEvent("command started at %.1fs".format(commandStart))
+            } else {
+                val end = audioNowSec()
+                try { sess.addCommand(start, end) } catch (_: Exception) {}
+                commandStart = null
+                logEvent("command %.1f–%.1fs".format(start, end))
+            }
+            renderCommandState()
+        }
+    }
+
+    /** Closes an open command when recording stops, so its words still count as a command. */
+    private fun closeOpenCommand() {
+        val start = commandStart ?: return
+        commandStart = null
+        try { session?.addCommand(start, audioNowSec() + 1.0) } catch (_: Exception) {}
+    }
+
+    private fun renderCommandState() {
+        val on = commandStart != null
+        commandPill?.apply {
+            text = if (on) "■  End command" else "⌘  Command"
+            background = pill(if (on) 0xF2E8A317.toInt() else 0xE63A3A3C.toInt())
+            setTextColor(if (on) 0xFF1A1A1A.toInt() else 0xFFFFFFFF.toInt())
+        }
+        // Amber shape while speaking a command; normal colours otherwise.
+        if (on) waveView?.setColors(0xF2E8A317.toInt(), Appearance.middle(prefs()), Appearance.back(prefs()))
+        else applyColors(waveView)
+        if (on) showPreview(elapsed() + " · ⌘ Command — say what the AI should do")
+    }
     private var pocketView: FrameLayout? = null
     private var cancelParams: WindowManager.LayoutParams? = null
     private var recThread: Thread? = null
@@ -109,7 +179,7 @@ class WhisperAccessibilityService : AccessibilityService() {
     private fun resizeOverlay(roomy: Boolean) {
         val v = overlayView ?: return
         val lp = layoutParams ?: return
-        val size = if (roomy) dotButtonSize * 2 else (dotButtonSize * 1.12f).toInt()
+        val size = if (roomy) dotButtonSize * 2 else (dotButtonSize * pinchZoneFactor()).toInt()
         if (size <= 0 || lp.width == size) return
         val cx = lp.x + lp.width / 2
         val cy = lp.y + lp.height / 2
@@ -175,6 +245,9 @@ class WhisperAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         instance = this
+        Health.installCrashLogger(this)
+        Health.log(this, "service connected (build ${try { packageManager.getPackageInfo(packageName, 0).longVersionCode } catch (_: Exception) { 0 }})")
+        try { Health.schedule(this) } catch (_: Exception) {}
         // Apply the event types/flags in code too, so they work even if Android kept the old
         // service config after an app update (config XML is only re-read on service restart).
         try {
@@ -185,10 +258,11 @@ class WhisperAccessibilityService : AccessibilityService() {
                     AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED or
                     AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED or
                     AccessibilityEvent.TYPE_WINDOWS_CHANGED
-                flags = flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+                flags = flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
+                    android.accessibilityservice.AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS
             }
         } catch (e: Exception) { Log.w(TAG, "Could not update serviceInfo", e) }
-        showOverlay()
+        try { showOverlay() } catch (e: Exception) { Health.log(this, "overlay failed: $e") }
         scheduleVisibilityCheck(0)
         GroqUsage.init(prefs())
         GroqUsage.onWarning = { msg -> logEvent(msg); showFeedback(msg, 5000) }
@@ -215,6 +289,17 @@ class WhisperAccessibilityService : AccessibilityService() {
 
     /** Recent show/hide decisions, shown in the app under "Diagnostics". */
     val visibilityLog = ArrayDeque<String>()
+
+    override fun onKeyEvent(event: android.view.KeyEvent): Boolean {
+        if (state != State.RECORDING || !prefs().getBoolean(KEY_COMMAND_KEYS, true)) return false
+        val k = event.keyCode
+        val ours = k == android.view.KeyEvent.KEYCODE_VOLUME_DOWN ||
+            k == android.view.KeyEvent.KEYCODE_HEADSETHOOK ||
+            k == android.view.KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
+        if (!ours) return false
+        if (event.action == android.view.KeyEvent.ACTION_UP) toggleCommand()
+        return true                                   // swallow both down and up
+    }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         event ?: return
@@ -341,7 +426,13 @@ class WhisperAccessibilityService : AccessibilityService() {
     }
     override fun onInterrupt() {}
 
+    override fun onUnbind(intent: android.content.Intent?): Boolean {
+        Health.log(this, "service unbound — accessibility switched off, app updated, or process stopping")
+        return super.onUnbind(intent)
+    }
+
     override fun onDestroy() {
+        Health.log(this, "service destroyed")
         instance = null
         removeOverlay()
         super.onDestroy()
@@ -379,11 +470,25 @@ class WhisperAccessibilityService : AccessibilityService() {
             background = circle(COLOR_IDLE)
         }
 
+        // Elapsed time shown inside the stop button while recording.
+        val timer = TextView(this).apply {
+            setTextColor(0xFFFFFFFF.toInt())
+            setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, buttonSize * 0.15f)
+            typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
+            fontFeatureSettings = "tnum"            // fixed-width digits: no jitter as it counts
+            gravity = Gravity.CENTER
+            visibility = View.GONE
+            translationY = buttonSize * 0.27f
+        }
+        timerView = timer
+
         val overlay = FrameLayout(this).apply {
             addView(wave, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.CENTER))
             addView(ring, FrameLayout.LayoutParams(spinnerSize, spinnerSize, Gravity.CENTER))
             addView(img, FrameLayout.LayoutParams(buttonSize, buttonSize, Gravity.CENTER))
+            addView(timer, FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER))
         }
+        dotPad = pad
 
         val params = WindowManager.LayoutParams(
             ringSize, ringSize,
@@ -412,23 +517,57 @@ class WhisperAccessibilityService : AccessibilityService() {
         }
         dotButtonSize = buttonSize
 
+        // Two-finger pinch on (or just around) the idle dot resizes it.
+        var pinching = false
+        var pinchScale = 1f
+        val pinch = android.view.ScaleGestureDetector(this, object : android.view.ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            override fun onScaleBegin(d: android.view.ScaleGestureDetector): Boolean {
+                if (state != State.IDLE) return false
+                pinching = true; pinchScale = 1f
+                handler.removeCallbacks(openApp)
+                return true
+            }
+            override fun onScale(d: android.view.ScaleGestureDetector): Boolean {
+                val pct = prefs().getInt(KEY_DOT_SIZE, Appearance.DEF_DOT_SIZE)
+                pinchScale = (pinchScale * d.scaleFactor).coerceIn(60f / pct, 160f / pct)
+                img.scaleX = pinchScale; img.scaleY = pinchScale
+                return true
+            }
+            override fun onScaleEnd(d: android.view.ScaleGestureDetector) {
+                val pct = prefs().getInt(KEY_DOT_SIZE, Appearance.DEF_DOT_SIZE)
+                val newPct = (pct * pinchScale).toInt().coerceIn(60, 160)
+                prefs().edit().putInt(KEY_DOT_SIZE, newPct).apply()
+                img.scaleX = 1f; img.scaleY = 1f
+                showFeedback("Dot size $newPct%", 1200)
+                applyAppearanceSettings()          // rebuild at the new size, same place
+            }
+        })
+        var onDot = false
+
         overlay.setOnTouchListener { v, ev ->
-            when (ev.action) {
+            if (state == State.IDLE) pinch.onTouchEvent(ev)
+            when (ev.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
-                    // Only the visible dot reacts, not the transparent margin around it.
                     val dx = ev.x - v.width / 2f
                     val dy = ev.y - v.height / 2f
-                    val r = buttonSize / 2f * (if (state == State.IDLE) 1.08f else 1.35f)
-                    if (dx * dx + dy * dy > r * r) { tracking = false; return@setOnTouchListener false }
+                    val d2 = dx * dx + dy * dy
+                    // Taps/drags/long-press: only the visible dot. Pinch: the slightly larger zone.
+                    val tapR = buttonSize / 2f * (if (state == State.IDLE) 1.05f else 1.35f)
+                    val zoneR = maxOf(tapR, v.width / 2f)
+                    if (d2 > zoneR * zoneR) { tracking = false; return@setOnTouchListener false }
+                    onDot = d2 <= tapR * tapR
                     tracking = true
+                    pinching = false
                     longPressed = false
                     startX = params.x; startY = params.y
                     touchX = ev.rawX; touchY = ev.rawY
-                    handler.postDelayed(openApp, 600)   // long-press → open VitalySpeak
+                    if (onDot) handler.postDelayed(openApp, 600)   // long-press → open VitalySpeak
                     true
                 }
+                MotionEvent.ACTION_POINTER_DOWN -> { handler.removeCallbacks(openApp); true }
                 MotionEvent.ACTION_MOVE -> {
                     if (!tracking) return@setOnTouchListener false
+                    if (pinching || ev.pointerCount > 1 || !onDot) return@setOnTouchListener true
                     if (abs(ev.rawX - touchX) + abs(ev.rawY - touchY) > TAP_THRESHOLD_DP * dp) handler.removeCallbacks(openApp)
                     params.x = startX + (ev.rawX - touchX).toInt()
                     params.y = startY + (ev.rawY - touchY).toInt()
@@ -444,8 +583,8 @@ class WhisperAccessibilityService : AccessibilityService() {
                     if (!tracking) return@setOnTouchListener false
                     tracking = false
                     val moved = abs(ev.rawX - touchX) + abs(ev.rawY - touchY)
-                    if (longPressed || ev.action == MotionEvent.ACTION_CANCEL) {
-                        // long-press already handled
+                    if (longPressed || pinching || !onDot || ev.actionMasked == MotionEvent.ACTION_CANCEL) {
+                        // handled by long-press / pinch, or a stray touch beside the dot
                     } else if (moved < TAP_THRESHOLD_DP * dp) {
                         onTap()
                     } else {
@@ -458,9 +597,10 @@ class WhisperAccessibilityService : AccessibilityService() {
                             wm.updateViewLayout(feedbackView, it); updatePreviewPosition()
                         }
                     }
+                    pinching = false
                     true
                 }
-                else -> false
+                else -> true
             }
         }
 
@@ -662,7 +802,8 @@ class WhisperAccessibilityService : AccessibilityService() {
                     }
                     val t = r.text?.trim().orEmpty()
                     if (t.isNotEmpty() && state == State.RECORDING && recordingSession == session) {
-                        showPreview(elapsed() + " · " + (if (start > 0) "…$t" else t))
+                        val tag = if (commandStart != null) "⌘ " else ""
+                        showPreview(elapsed() + " · " + tag + (if (start > 0) "…$t" else t))
                     }
                 }
             }
@@ -690,6 +831,9 @@ class WhisperAccessibilityService : AccessibilityService() {
             }
             val view = cancelView ?: LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
+                addView(pillButton("⌘  Command") { toggleCommand() }.also { commandPill = it },
+                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                        .apply { bottomMargin = (8 * dp).toInt() })
                 addView(pillButton("✕  Cancel") { cancelRecording() })
                 addView(pillButton("☾  Screen off") { enterPocketMode() },
                     LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -703,6 +847,8 @@ class WhisperAccessibilityService : AccessibilityService() {
                 PixelFormat.TRANSLUCENT
             ).also { cancelParams = it }
             positionCancel(lp, dot)
+            commandStart = null
+            renderCommandState()
             try {
                 if (view.isAttachedToWindow) wm.updateViewLayout(view, lp) else wm.addView(view, lp)
             } catch (e: Exception) { Log.w(TAG, "cancel pill", e) }
@@ -725,18 +871,23 @@ class WhisperAccessibilityService : AccessibilityService() {
             val wm = getSystemService(WINDOW_SERVICE) as WindowManager
             // Big, friendly instructions for 5 s (with countdown), then the screen dims and
             // the hint stays as faint white text so it's always clear how to get back.
+            // Nearly full-screen hint, auto-sized to this screen.
+            val sw = currentScreenW(); val sh = currentScreenH()
             val title = TextView(this).apply {
-                text = "Double-tap to wake"
-                textSize = 30f
+                text = "Double-tap\nto wake"
                 setTextColor(0xFFFFFFFF.toInt())
                 typeface = android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL)
                 gravity = Gravity.CENTER
+                setLineSpacing(0f, 0.9f)
+                setAutoSizeTextTypeUniformWithConfiguration(24, 400, 2, android.util.TypedValue.COMPLEX_UNIT_SP)
+                layoutParams = LinearLayout.LayoutParams((sw * 0.88f).toInt(), (sh * 0.42f).toInt())
             }
             val sub = TextView(this).apply {
-                textSize = 15f
-                setTextColor(0xB3FFFFFF.toInt())
+                textSize = 20f
+                setTextColor(0xCCFFFFFF.toInt())
                 gravity = Gravity.CENTER
-                setPadding(0, (12 * dp).toInt(), 0, 0)
+                typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
+                setPadding(0, (16 * dp).toInt(), 0, 0)
             }
             val label = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
@@ -768,6 +919,13 @@ class WhisperAccessibilityService : AccessibilityService() {
             try { wm.addView(root, lp) } catch (e: Exception) { Log.w(TAG, "pocket", e); return@post }
             pocketView = root
             logEvent("screen-off mode on")
+            // Pressing the power button turns the screen off: treat it like a double-tap, so the
+            // next time the screen comes on everything looks normal again.
+            val screenOff = object : android.content.BroadcastReceiver() {
+                override fun onReceive(c: Context, i: Intent) { exitPocketMode() }
+            }
+            pocketReceiver = screenOff
+            try { registerReceiver(screenOff, android.content.IntentFilter(Intent.ACTION_SCREEN_OFF)) } catch (_: Exception) {}
             // 5-second countdown, then dim: lowest backlight + faint text.
             var left = 5
             val countdown = object : Runnable {
@@ -779,7 +937,9 @@ class WhisperAccessibilityService : AccessibilityService() {
                         handler.postDelayed(this, 1000)
                     } else {
                         sub.text = "Recording continues"
-                        label.animate().alpha(0.14f).setDuration(800).start()
+                        // Dimmed: grey text, still readable up close, almost no power on OLED.
+                        title.setTextColor(0xFF5C5C5C.toInt())
+                        sub.setTextColor(0xFF444444.toInt())
                         lp.screenBrightness = 0.0f
                         try { wm.updateViewLayout(root, lp) } catch (_: Exception) {}
                     }
@@ -791,8 +951,9 @@ class WhisperAccessibilityService : AccessibilityService() {
                 override fun run() {
                     if (pocketView !== root) return
                     if (left <= 0) sub.text = "Recording ${elapsed()}"
-                    label.translationX = ((Math.random() - 0.5) * root.width * 0.5).toFloat()
-                    label.translationY = ((Math.random() - 0.5) * root.height * 0.5).toFloat()
+                    // Small drift only (the text fills the screen) — enough to avoid burn-in.
+                    label.translationX = ((Math.random() - 0.5) * root.width * 0.06).toFloat()
+                    label.translationY = ((Math.random() - 0.5) * root.height * 0.08).toFloat()
                     handler.postDelayed(this, 20_000)
                 }
             }
@@ -800,8 +961,12 @@ class WhisperAccessibilityService : AccessibilityService() {
         }
     }
 
+    private var pocketReceiver: android.content.BroadcastReceiver? = null
+
     private fun exitPocketMode() {
         handler.post {
+            pocketReceiver?.let { try { unregisterReceiver(it) } catch (_: Exception) {} }
+            pocketReceiver = null
             val v = pocketView ?: return@post
             pocketView = null
             try { (getSystemService(WINDOW_SERVICE) as WindowManager).removeViewImmediate(v) } catch (_: Exception) {}
@@ -829,6 +994,7 @@ class WhisperAccessibilityService : AccessibilityService() {
 
     private fun cancelRecording() {
         if (state != State.RECORDING) return
+        commandStart = null
         recordingSession++                 // drop any in-flight live preview
         state = State.IDLE
         stopPulse()
@@ -1011,6 +1177,7 @@ class WhisperAccessibilityService : AccessibilityService() {
     }
 
     private fun stopAndTranscribe() {
+        closeOpenCommand()
         state = State.TRANSCRIBING
         stopPulse()
         hidePreview()
@@ -1051,7 +1218,10 @@ class WhisperAccessibilityService : AccessibilityService() {
         val model = p.getString(Groq.KEY_STT_MODEL, Groq.DEFAULT_STT_MODEL) ?: Groq.DEFAULT_STT_MODEL
         val pcm = try { sess.partPcm(i).readBytes() } catch (e: Exception) { Log.e(TAG, "read part", e); return false }
         if (Dictation.isSilent(pcm, SAMPLE_RATE)) { safeWrite(sess, i, ""); return true }
-        val audio = Dictation.trimSilence(pcm, SAMPLE_RATE)
+        val kept = Dictation.trimRange(pcm, SAMPLE_RATE)
+        val audio = if (kept.first == 0 && kept.last + 1 == pcm.size) pcm else pcm.copyOfRange(kept.first, kept.last + 1)
+        // Absolute time of this audio's first sample (for mapping words to command marks).
+        val baseSec = sess.partOffsetSec(i, SAMPLE_RATE) + kept.first / (2.0 * SAMPLE_RATE)
         val context = if (i == 0) Groq.WHISPER_HINT else sess.transcriptOf(i - 1)?.takeLast(200)?.ifBlank { null } ?: Groq.WHISPER_HINT
         val wav = WavWriter.encode(audio)
         GroqUsage.addAudio(model, audio.size / 2.0 / SAMPLE_RATE)
@@ -1060,6 +1230,9 @@ class WhisperAccessibilityService : AccessibilityService() {
             if (!sess.exists()) return false
             val r = TranscriberClient.transcribeBlocking(wav, apiKey, model, context)
             if (r.text != null) {
+                r.units?.let { u ->
+                    try { sess.writeUnits(i, u.map { Dictation.Timed(it.start + baseSec, it.end + baseSec, it.text) }) } catch (_: Exception) {}
+                }
                 safeWrite(sess, i, r.text)
                 return true
             }
@@ -1098,7 +1271,9 @@ class WhisperAccessibilityService : AccessibilityService() {
             return
         }
         val vocab = prefs().getString(Groq.KEY_VOCAB, Groq.DEFAULT_VOCAB) ?: ""
-        val raw = Dictation.stripVocabEcho(joined, listOf(Groq.WHISPER_HINT, vocab))
+        val blocks = commandBlocks(sess)
+        val raw = if (blocks != null) Dictation.toMarked(blocks)
+                  else Dictation.stripVocabEcho(joined, listOf(Groq.WHISPER_HINT, vocab))
         lastRaw = raw
         logEvent("transcribed ${sess.audioSeconds(SAMPLE_RATE)}s in ${sess.partCount()} part(s), ${raw.length} chars")
         val firstTime = !sess.rawTxt.exists()
@@ -1111,11 +1286,101 @@ class WhisperAccessibilityService : AccessibilityService() {
             try { sess.deleteAudio() } catch (e: Exception) { Log.e(TAG, "delete audio", e) }
         }
         historyChanged()
-        handleTranscriptionResult(raw, inject) { finalText, cleanOk ->
+        val done: (String, Boolean) -> Unit = { finalText, cleanOk ->
             if (cleanOk) try { sess.saveClean(finalText) } catch (_: Exception) {}
             prefs().edit().putString(KEY_LAST_DICTATION, finalText).apply()
             historyChanged()
         }
+        if (blocks != null) processCommandBlocks(blocks, inject, done)
+        else handleTranscriptionResult(raw, inject, done)
+    }
+
+    /**
+     * Content/command blocks for a session where the user marked commands, or null for a
+     * normal dictation. Uses the saved word timings; a part without timings counts as content.
+     */
+    private fun commandBlocks(sess: DictationStore.Session): List<Dictation.Block>? {
+        val cmds = sess.commands()
+        if (cmds.isEmpty()) return null
+        val n = maxOf(sess.partCount(), sess.knownParts())
+        val units = mutableListOf<Dictation.Timed>()
+        for (i in 0 until n) {
+            val u = sess.units(i)
+            if (u != null) units += u
+            else sess.transcriptOf(i)?.takeIf { it.isNotBlank() }?.let { t ->
+                logEvent("part ${i + 1} has no word timings — treated as content")
+                units += Dictation.Timed(-10.0, -10.0, t)       // outside any command interval
+            }
+        }
+        val blocks = Dictation.splitByCommands(units, cmds)
+        if (blocks.none { it.isCommand }) return null
+        logEvent("commands: ${blocks.count { it.isCommand }} in ${blocks.size} blocks")
+        return blocks
+    }
+
+    /**
+     * Command-aware cleanup: tagged content/command blocks go to the LLM (in windows for very
+     * long recordings). Any window that fails falls back to its raw content plus the commands
+     * listed as not applied — nothing is lost.
+     */
+    private fun processCommandBlocks(blocks: List<Dictation.Block>, inject: Boolean, onDelivered: (String, Boolean) -> Unit) {
+        val p = prefs()
+        val apiKey = p.getString(Groq.KEY_API, "") ?: ""
+        val llm = p.getString(Groq.KEY_LLM_MODEL, Groq.DEFAULT_LLM_MODEL) ?: Groq.DEFAULT_LLM_MODEL
+        val vocab = p.getString(Groq.KEY_VOCAB, Groq.DEFAULT_VOCAB) ?: ""
+        val windows = Dictation.windows(blocks)
+        val notes = arrayOfNulls<String>(windows.size)
+        val pending = mutableListOf<String>()
+        var failed = 0
+        if (inject) showFeedback("Applying your commands…", 2500)
+
+        fun fallback(i: Int, w: List<Dictation.Block>) {
+            notes[i] = w.filter { !it.isCommand }.joinToString("\n\n") { it.text }
+            w.filter { it.isCommand }.forEach { pending += "- (not applied) ${it.text}" }
+            failed++
+        }
+
+        fun finish() {
+            val body = notes.filterNotNull().filter { it.isNotBlank() }.joinToString("\n\n")
+            val text = if (pending.isEmpty()) body else "$body\n\nPending actions\n${pending.joinToString("\n")}"
+            lastClean = text
+            handler.post {
+                deliver(text, inject, if (failed == 0) null else "Some commands couldn't be applied — listed at the end")
+                onDelivered(text, failed == 0)
+                if (inject) finishIdle()
+            }
+        }
+
+        fun next(i: Int, attempt: Int) {
+            if (i == windows.size) { finish(); return }
+            val w = windows[i]
+            if (apiKey.isBlank()) { fallback(i, w); next(i + 1, 0); return }
+            val contentChars = w.filter { !it.isCommand }.sumOf { it.text.length }
+            PostProcessor.process(Dictation.toTagged(w), "", apiKey, llm, vocab, PostProcessor.commandSystemPrompt(vocab)) { res ->
+                val out = res.text
+                // Commands may legitimately shorten text ("scratch that"), so only reject replies
+                // that lost most of it.
+                val ok = !out.isNullOrBlank() && !(contentChars > 200 && out.length < contentChars * 0.25)
+                when {
+                    ok -> {
+                        val (n, items) = Dictation.splitPending(out!!)
+                        notes[i] = n; pending += items
+                        next(i + 1, 0)
+                    }
+                    res.httpCode == 429 && attempt < 5 -> {
+                        val wait = minOf(60L, res.retryAfterSec ?: (5L shl attempt))
+                        logEvent("command cleanup rate-limited, waiting ${wait}s")
+                        handler.postDelayed({ next(i, attempt + 1) }, wait * 1000)
+                    }
+                    attempt == 0 -> { logEvent("command cleanup retry: ${res.error ?: "short/empty reply"}"); next(i, 1) }
+                    else -> {
+                        logEvent("COMMAND CLEANUP FAILED: ${res.error ?: "short/empty reply"} — raw kept")
+                        fallback(i, w); next(i + 1, 0)
+                    }
+                }
+            }
+        }
+        next(0, 0)
     }
 
     // --- History API for the app ---
@@ -1143,11 +1408,14 @@ class WhisperAccessibilityService : AccessibilityService() {
     fun retryCleanup(id: String) {
         val s = find(id) ?: return
         val raw = s.raw() ?: return retryTranscription(id)
-        handleTranscriptionResult(raw, inject = false) { text, ok ->
+        val done: (String, Boolean) -> Unit = { text, ok ->
             if (ok) try { s.saveClean(text) } catch (_: Exception) {}
             else handler.post { toast("Cleanup failed again — raw text is still saved") }
             historyChanged()
         }
+        val blocks = commandBlocks(s)
+        if (blocks != null) processCommandBlocks(blocks, inject = false, onDelivered = done)
+        else handleTranscriptionResult(raw, inject = false, onDelivered = done)
     }
 
     fun deleteSession(id: String) {

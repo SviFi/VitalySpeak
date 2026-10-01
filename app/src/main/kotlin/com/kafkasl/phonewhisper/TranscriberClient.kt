@@ -22,32 +22,77 @@ object TranscriberClient {
     }
 
     /** Synchronous variant for the background part worker. [httpCode] 0 = network error. */
-    data class Blocking(val text: String?, val error: String?, val httpCode: Int, val retryAfterSec: Long?)
+    data class Blocking(
+        val text: String?, val error: String?, val httpCode: Int, val retryAfterSec: Long?,
+        /** Words (or segments) with times relative to this audio, when Groq returned them. */
+        val units: List<Dictation.Timed>? = null
+    )
+
+    /**
+     * Request formats, best first. Groq wants the array form `timestamp_granularities[]`; if a
+     * format is ever rejected (HTTP 400), we fall back to the next and remember it.
+     */
+    private enum class Mode { WORDS, SEGMENTS, PLAIN }
+    @Volatile private var mode = Mode.WORDS
+
+    fun parseVerbose(json: String): Pair<String?, List<Dictation.Timed>?> = try {
+        val o = JSONObject(json)
+        val text = o.optString("text").trim()
+        fun list(key: String, textKey: String) = o.optJSONArray(key)?.let { a ->
+            (0 until a.length()).map { a.getJSONObject(it) }.map {
+                Dictation.Timed(it.optDouble("start", 0.0), it.optDouble("end", 0.0), it.optString(textKey).trim())
+            }.filter { it.text.isNotEmpty() }
+        }
+        val units = list("words", "word")?.takeIf { it.isNotEmpty() } ?: list("segments", "text")
+        text to units
+    } catch (_: Exception) { null to null }
 
     fun transcribeBlocking(wavData: ByteArray, apiKey: String, model: String, context: String): Blocking {
-        val builder = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("model", model)
-            .addFormDataPart("response_format", "json")
-            .addFormDataPart("temperature", "0")
-            .addFormDataPart("file", "audio.wav", wavData.toRequestBody("audio/wav".toMediaType()))
-        if (context.isNotBlank()) builder.addFormDataPart("prompt", context.take(800))
-        val request = Request.Builder()
-            .url("${Groq.BASE_URL}/audio/transcriptions")
-            .header("Authorization", "Bearer $apiKey")
-            .tag(String::class.java, model)
-            .post(builder.build())
-            .build()
-        return try {
-            Groq.client.newCall(request).execute().use { r ->
-                val body = r.body?.string() ?: ""
-                val parsed = parseResponse(body)
-                val retry = r.header("retry-after")?.toDoubleOrNull()?.toLong()
-                Blocking(if (r.isSuccessful) parsed.text else null,
-                    if (r.isSuccessful) parsed.error else (parsed.error ?: "HTTP ${r.code}"), r.code, retry)
+        while (true) {
+            val m = mode
+            val builder = MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("model", model)
+                .addFormDataPart("response_format", if (m == Mode.PLAIN) "json" else "verbose_json")
+                .addFormDataPart("temperature", "0")
+                .addFormDataPart("file", "audio.wav", wavData.toRequestBody("audio/wav".toMediaType()))
+            if (m == Mode.WORDS) {
+                builder.addFormDataPart("timestamp_granularities[]", "word")
+                builder.addFormDataPart("timestamp_granularities[]", "segment")
             }
-        } catch (e: Exception) {
-            Blocking(null, e.message ?: "network error", 0, null)
+            if (context.isNotBlank()) builder.addFormDataPart("prompt", context.take(800))
+            val request = Request.Builder()
+                .url("${Groq.BASE_URL}/audio/transcriptions")
+                .header("Authorization", "Bearer $apiKey")
+                .tag(String::class.java, model)
+                .post(builder.build())
+                .build()
+            val result = try {
+                Groq.client.newCall(request).execute().use { r ->
+                    val body = r.body?.string() ?: ""
+                    val retry = r.header("retry-after")?.toDoubleOrNull()?.toLong()
+                    if (r.isSuccessful) {
+                        if (m == Mode.PLAIN) {
+                            val p = parseResponse(body)
+                            Blocking(p.text, p.error, r.code, retry)
+                        } else {
+                            val (text, units) = parseVerbose(body)
+                            Blocking(text, if (text == null) "Unreadable response" else null, r.code, retry, units)
+                        }
+                    } else Blocking(null, parseResponse(body).error ?: "HTTP ${r.code}", r.code, retry)
+                }
+            } catch (e: Exception) {
+                Blocking(null, e.message ?: "network error", 0, null)
+            }
+            // Format rejected? Try the simpler one (never loops past PLAIN).
+            val formatProblem = result.error?.let { e ->
+                listOf("timestamp", "granular", "response_format", "verbose").any { e.contains(it, ignoreCase = true) }
+            } ?: false
+            if (result.httpCode == 400 && m != Mode.PLAIN && formatProblem) {
+                mode = if (m == Mode.WORDS) Mode.SEGMENTS else Mode.PLAIN
+                continue
+            }
+            return result
         }
     }
 

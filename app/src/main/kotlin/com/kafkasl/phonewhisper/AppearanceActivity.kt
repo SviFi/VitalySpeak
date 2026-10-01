@@ -30,11 +30,11 @@ class AppearanceActivity : AppCompatActivity() {
         content.removeAllViews()
         content.addView(Ui.topBar(this, "Appearance") { finish() })
 
-        content.addView(Ui.section(this, "Dot"))
+        content.addView(Ui.section(this, "Dot", R.drawable.ic_sec_dictation))
         content.addView(slider("Dot size", "Size of the floating mic dot",
             Appearance.KEY_DOT_SIZE, Appearance.DEF_DOT_SIZE, 60, 160) { "$it%" })
 
-        content.addView(Ui.section(this, "Recording animation"))
+        content.addView(Ui.section(this, "Recording animation", R.drawable.ic_sec_usage))
         content.addView(slider("Voice reaction", "How strongly the shape reacts to your voice",
             Appearance.KEY_REACTION, Appearance.DEF_REACTION, 0, 100) { v -> if (v < 34) "Calm" else if (v < 67) "Lively" else "Wild" })
         content.addView(slider("Wave speed", "How fast the shape moves",
@@ -42,7 +42,7 @@ class AppearanceActivity : AppCompatActivity() {
         content.addView(slider("Wave count", "How many ripples around the shape",
             Appearance.KEY_WAVE_COUNT, Appearance.DEF_WAVE_COUNT, 100, 300) { "%.1f×".format(it / 100f) })
 
-        content.addView(Ui.section(this, "Colours"))
+        content.addView(Ui.section(this, "Colours", R.drawable.ic_sec_appearance))
         content.addView(colorRow("Front shape", "Top layer while recording", Appearance.KEY_COLOR_FRONT, Appearance.DEF_COLOR_FRONT))
         content.addView(colorRow("Middle shape", "Second layer", Appearance.KEY_COLOR_MIDDLE, Appearance.DEF_COLOR_MIDDLE))
         content.addView(colorRow("Back shape", "Third layer", Appearance.KEY_COLOR_BACK, Appearance.DEF_COLOR_BACK))
@@ -194,12 +194,23 @@ object Ui {
             })
         }
 
-    fun section(ctx: android.content.Context, title: String): View = TextView(ctx).apply {
-        text = title.uppercase()
-        textSize = 12f
-        letterSpacing = 0.08f
-        typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-        setTextColor(attrColor(ctx, com.google.android.material.R.attr.colorPrimary))
+    /** Section header: small tinted line icon + spaced uppercase title. */
+    fun section(ctx: android.content.Context, title: String, icon: Int = 0): View = LinearLayout(ctx).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER_VERTICAL
         setPadding(dp(ctx, 24), dp(ctx, 28), dp(ctx, 24), dp(ctx, 6))
+        val color = attrColor(ctx, com.google.android.material.R.attr.colorPrimary)
+        if (icon != 0) addView(ImageView(ctx).apply {
+            setImageResource(icon)
+            imageTintList = android.content.res.ColorStateList.valueOf(color)
+            layoutParams = LinearLayout.LayoutParams(dp(ctx, 18), dp(ctx, 18)).apply { marginEnd = dp(ctx, 10) }
+        })
+        addView(TextView(ctx).apply {
+            text = title.uppercase()
+            textSize = 12f
+            letterSpacing = 0.08f
+            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+            setTextColor(color)
+        })
     }
 }

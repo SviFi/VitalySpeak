@@ -73,4 +73,51 @@ class DictationTest {
         assertFalse(Dictation.cleanupLostContent(raw, "a".repeat(180)))
         assertFalse(Dictation.cleanupLostContent("short", ""))
     }
+
+    private fun w(s: Double, e: Double, t: String) = Dictation.Timed(s, e, t)
+
+    @Test fun `splits words into content and command blocks`() {
+        val units = listOf(
+            w(0.0, 0.4, "Купить"), w(0.4, 0.8, "молоко"), w(0.8, 1.2, "and"), w(1.2, 1.6, "bread."),
+            w(2.0, 2.4, "make"), w(2.4, 2.8, "it"), w(2.8, 3.2, "a"), w(3.2, 3.6, "list"),
+            w(4.0, 4.5, "Next"), w(4.5, 5.0, "point.")
+        )
+        val b = Dictation.splitByCommands(units, listOf(1.9 to 3.7))
+        assertEquals(3, b.size)
+        assertEquals(Dictation.Block(false, "Купить молоко and bread."), b[0])
+        assertEquals(Dictation.Block(true, "make it a list"), b[1])
+        assertEquals(Dictation.Block(false, "Next point."), b[2])
+        val tagged = Dictation.toTagged(b)
+        assertTrue(tagged.contains("<command after=\"1\">make it a list</command>"))
+        assertTrue(tagged.contains("<content id=\"2\">Next point.</content>"))
+    }
+
+    @Test fun `no commands means a single content block`() {
+        val b = Dictation.splitByCommands(listOf(w(0.0, 1.0, "Hello"), w(1.0, 2.0, "world")), emptyList())
+        assertEquals(listOf(Dictation.Block(false, "Hello world")), b)
+    }
+
+    @Test fun `windows end after commands`() {
+        val blocks = listOf(Dictation.Block(false, "a".repeat(60)), Dictation.Block(true, "cmd1"),
+            Dictation.Block(false, "b".repeat(60)), Dictation.Block(true, "cmd2"), Dictation.Block(false, "tail"))
+        val w = Dictation.windows(blocks, maxChars = 50)
+        assertEquals(3, w.size)
+        assertTrue(w[0].last().isCommand)
+        assertEquals("tail", w[2].single().text)
+    }
+
+    @Test fun `separates pending actions section`() {
+        val (notes, items) = Dictation.splitPending("# Notes\n- one\n\nPending actions\n- Email Anna the list\n- Remind me at 5")
+        assertEquals("# Notes\n- one", notes)
+        assertEquals(listOf("- Email Anna the list", "- Remind me at 5"), items)
+        assertEquals("plain" to emptyList<String>(), Dictation.splitPending("plain"))
+    }
+
+    @Test fun `trim range reports cut start`() {
+        val sr = 16000
+        val audio = pcm(sr * 3 to 0, sr * 2 to 4000, sr * 1 to 0)
+        val r = Dictation.trimRange(audio)
+        val startSec = r.first / 2.0 / sr
+        assertTrue("start $startSec", startSec in 2.5..2.7)
+    }
 }

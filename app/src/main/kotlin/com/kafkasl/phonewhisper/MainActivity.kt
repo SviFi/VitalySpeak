@@ -47,6 +47,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recoverySub: TextView
     private lateinit var usageContainer: LinearLayout
     private lateinit var statsContainer: LinearLayout
+    private lateinit var statusBadge: TextView
+    private lateinit var audioBadge: TextView
+    private lateinit var accBadge: TextView
+    private lateinit var keyBadge: TextView
+    private lateinit var batteryBadge: TextView
+    private lateinit var batteryRowSub: TextView
+    private var notifBadge: TextView? = null
+    private var notifRowSub: TextView? = null
     /** Last model switch made in this session, for the one-tap undo row. */
     private data class ModelSwitch(val stt: Boolean, val from: String, val to: String)
     private var lastSwitch: ModelSwitch? = null
@@ -59,7 +67,8 @@ class MainActivity : AppCompatActivity() {
         // ← back (same as the back gesture: returns to the app you came from), logo, name
         root.addView(Ui.topBar(this, "VitalySpeak", showLogo = true) { finish() })
 
-        val statusRow = settingsRow("Status", "Checking...")
+        statusBadge = badge()
+        val statusRow = settingsRow("Status", "Checking...", statusBadge)
         statusSubtitle = statusRow.findViewWithTag("subtitle")
         root.addView(statusRow)
 
@@ -71,10 +80,19 @@ class MainActivity : AppCompatActivity() {
         statsContainer = vertical(0)
         root.addView(statsContainer)
 
-        // --- Setup ---
-        root.addView(Ui.section(this, "Setup"))
+        // --- History ---
+        root.addView(Ui.section(this, "History", R.drawable.ic_sec_history))
+        recoveryRow = settingsRow("Transcription history", "") {
+            startActivity(Intent(this, HistoryActivity::class.java))
+        }
+        recoverySub = recoveryRow.findViewWithTag("subtitle")
+        root.addView(recoveryRow)
 
-        val audioRow = settingsRow("Audio permission", "Checking...") {
+        // --- Setup ---
+        root.addView(Ui.section(this, "Setup", R.drawable.ic_sec_setup))
+
+        audioBadge = badge()
+        val audioRow = settingsRow("Microphone", "Checking...", audioBadge) {
             if (!hasPerm(Manifest.permission.RECORD_AUDIO)) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1)
             }
@@ -82,18 +100,39 @@ class MainActivity : AppCompatActivity() {
         audioRowSub = audioRow.findViewWithTag("subtitle")
         root.addView(audioRow)
 
-        val accRow = settingsRow("Accessibility service", "Checking...") {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        }
+        accBadge = badge()
+        val accRow = settingsRow("Accessibility service", "Checking...", accBadge) { onAccessibilityRow() }
         accRowSub = accRow.findViewWithTag("subtitle")
         root.addView(accRow)
 
-        val keyRow = settingsRow("Groq API Key", "Tap to set") { promptApiKey() }
+        keyBadge = badge()
+        val keyRow = settingsRow("Groq API key", "Tap to set", keyBadge) { promptApiKey() }
         keyRowSub = keyRow.findViewWithTag("subtitle")
         root.addView(keyRow)
 
+        batteryBadge = badge()
+        val batteryRow = settingsRow("Battery: unrestricted", "", batteryBadge) {
+            if (!Health.batteryUnrestricted(this)) Health.openBatterySettings(this)
+            else android.app.AlertDialog.Builder(this)
+                .setTitle("Battery")
+                .setMessage("Already unrestricted. On Samsung also check: Settings → Battery → Background usage limits → make sure VitalySpeak is NOT in \"Sleeping\" or \"Deep sleeping\" apps (add it to \"Never sleeping apps\").")
+                .setPositiveButton("OK", null).show()
+        }
+        batteryRowSub = batteryRow.findViewWithTag("subtitle")
+        root.addView(batteryRow)
+
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            notifBadge = badge()
+            val notifRow = settingsRow("Setup alerts", "", notifBadge) {
+                if (!Health.notificationsAllowed(this))
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2)
+            }
+            notifRowSub = notifRow.findViewWithTag("subtitle")
+            root.addView(notifRow)
+        }
+
         // --- Dictation ---
-        root.addView(Ui.section(this, "Dictation"))
+        root.addView(Ui.section(this, "Dictation", R.drawable.ic_sec_dictation))
 
         root.addView(switchRow("Show mic only while typing", "The dot appears when the keyboard is open. Long-press the dot to open this screen.",
             WhisperAccessibilityService.KEY_ONLY_WHILE_TYPING, true) {
@@ -108,19 +147,15 @@ class MainActivity : AppCompatActivity() {
         vocabRowSub.ellipsize = android.text.TextUtils.TruncateAt.END
         root.addView(vocabRow)
 
+        root.addView(switchRow("Volume-down for commands",
+            "While recording, volume-down or the headset button starts/ends a ⌘ Command (an instruction for the AI instead of text)",
+            WhisperAccessibilityService.KEY_COMMAND_KEYS, true))
+
         root.addView(switchRow("Keep audio", "Off: audio is deleted once every part is transcribed. On: keep recordings (~115 MB/hour)",
             WhisperAccessibilityService.KEY_KEEP_AUDIO, false))
 
-        // --- History ---
-        root.addView(Ui.section(this, "History"))
-        recoveryRow = settingsRow("Transcription history", "") {
-            startActivity(Intent(this, HistoryActivity::class.java))
-        }
-        recoverySub = recoveryRow.findViewWithTag("subtitle")
-        root.addView(recoveryRow)
-
         // --- Models ---
-        root.addView(Ui.section(this, "Models"))
+        root.addView(Ui.section(this, "Models", R.drawable.ic_sec_models))
 
         val sttRow = settingsRow("Speech-to-text", sttModel()) { pickModel(stt = true) }
         sttRowSub = sttRow.findViewWithTag("subtitle")
@@ -135,7 +170,7 @@ class MainActivity : AppCompatActivity() {
         root.addView(checkRow)
 
         // --- Cleanup ---
-        root.addView(Ui.section(this, "Cleanup"))
+        root.addView(Ui.section(this, "Cleanup", R.drawable.ic_sec_cleanup))
 
         root.addView(switchRow("Cleanup transcript", "Fixes grammar and punctuation, removes filler words",
             Groq.KEY_USE_CLEANUP, true) { refresh() })
@@ -151,18 +186,18 @@ class MainActivity : AppCompatActivity() {
         root.addView(promptRow)
 
         // --- Appearance (details on their own screen) ---
-        root.addView(Ui.section(this, "Appearance"))
+        root.addView(Ui.section(this, "Appearance", R.drawable.ic_sec_appearance))
         root.addView(settingsRow("Look & animation  ›", "Dot size, voice reaction, waves, colours, reset to defaults") {
             startActivity(Intent(this, AppearanceActivity::class.java))
         })
 
         // --- Groq usage (estimates, low-key) ---
-        root.addView(Ui.section(this, "Groq usage · estimates"))
+        root.addView(Ui.section(this, "Groq usage · estimates", R.drawable.ic_sec_usage))
         usageContainer = vertical(0)
         root.addView(usageContainer)
 
         // --- Advanced ---
-        root.addView(Ui.section(this, "Advanced"))
+        root.addView(Ui.section(this, "Advanced", R.drawable.ic_sec_advanced))
         root.addView(settingsRow("Diagnostics", "Last dictation (raw vs cleaned), errors, mic dot decisions") {
             val svc = WhisperAccessibilityService.instance
             val events = svc?.visibilityLog?.joinToString("\n")
@@ -172,9 +207,11 @@ class MainActivity : AppCompatActivity() {
                     (if (svc.lastClean.isNotBlank()) "Cleaned (${svc.lastClean.length} chars):\n${svc.lastClean}\n\n" else "") +
                     "EVENTS\n"
                 else ""
+            val health = "SERVICE LOG (newest first)\n${Health.readLog(this).ifBlank { "empty" }}\n\n" +
+                "ANDROID EXIT REASONS\n${Health.exitReasons(this)}\n\n"
             android.app.AlertDialog.Builder(this)
                 .setTitle("Diagnostics (newest first)")
-                .setMessage(last + events)
+                .setMessage(health + last + events)
                 .setPositiveButton("OK", null)
                 .show()
         })
@@ -191,10 +228,56 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 1)
         }
 
+        Health.installCrashLogger(this)
+        Health.schedule(this)
+        Health.check(this, "app opened")
+        if (android.os.Build.VERSION.SDK_INT >= 33 && !Health.notificationsAllowed(this) &&
+            !prefs().getBoolean("asked_notifications", false)) {
+            prefs().edit().putBoolean("asked_notifications", true).apply()
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2)
+        }
+
         report = ModelChecker.cached(prefs())
         refresh()
         // Background checks when the app is opened — never on the dictation path.
         runChecks(manual = false)
+    }
+
+    /** ✓ / ✕ / ! badge shown at the right of setup rows. */
+    private fun badge() = TextView(this).apply {
+        gravity = Gravity.CENTER
+        textSize = 14f
+        setTextColor(0xFFFFFFFF.toInt())
+        typeface = Typeface.DEFAULT_BOLD
+        layoutParams = LinearLayout.LayoutParams(dp(26), dp(26)).apply { marginStart = dp(12) }
+    }
+
+    private fun setBadge(b: TextView, ok: Boolean, warnOnly: Boolean = false) {
+        b.text = if (ok) "✓" else if (warnOnly) "!" else "✕"
+        b.background = android.graphics.drawable.GradientDrawable().apply {
+            shape = android.graphics.drawable.GradientDrawable.OVAL
+            setColor(if (ok) GREEN else if (warnOnly) AMBER else RED)
+        }
+    }
+
+    /** Explains the Android steps, then jumps straight to VitalySpeak's accessibility page. */
+    private fun onAccessibilityRow() {
+        val running = WhisperAccessibilityService.instance != null
+        val steps = if (running) "VitalySpeak's accessibility service is on and running. Opening its settings page."
+        else "Android will open VitalySpeak's accessibility page:\n\n" +
+            "1. Turn on \"Use VitalySpeak\" (or the switch at the top).\n" +
+            "2. Tap \"Allow\" in the confirmation.\n" +
+            "3. Press back to return here — you'll see a green ✓.\n\n" +
+            "If you land on the general Accessibility list instead: tap \"Installed apps\" " +
+            "(Samsung: \"Installed apps\" / \"Downloaded apps\") → VitalySpeak → switch on.\n\n" +
+            "If the switch is greyed out (\"Restricted setting\"): Settings → Apps → VitalySpeak → ⋮ → " +
+            "\"Allow restricted settings\", then try again."
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Accessibility service")
+            .setMessage(steps)
+            .setPositiveButton("Open settings") { _, _ -> Health.openAccessibility(this) }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     /** A settings row with a switch bound to a boolean preference. */
@@ -499,12 +582,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun refresh() {
         val audio = hasPerm(Manifest.permission.RECORD_AUDIO)
+        val accOn = Health.accessibilityEnabled(this)
         val acc = WhisperAccessibilityService.instance != null
         val useCleanup = prefs().getBoolean(Groq.KEY_USE_CLEANUP, true)
         val key = apiKey()
 
-        audioRowSub.text = if (audio) "Granted" else "Tap to grant permission"
-        accRowSub.text = if (acc) "Enabled" else "Tap to enable in settings"
+        audioRowSub.text = if (audio) "Granted" else "Tap to allow microphone access"
+        accRowSub.text = when {
+            acc -> "On and running"
+            accOn -> "Switched on but not running — tap to restart it (off, then on)"
+            else -> "OFF — tap, then turn on \"Use VitalySpeak\" and tap Allow"
+        }
+        setBadge(audioBadge, audio)
+        setBadge(accBadge, acc)
+        setBadge(keyBadge, apiKey().isNotBlank())
+        val batt = Health.batteryUnrestricted(this)
+        setBadge(batteryBadge, batt, warnOnly = true)
+        batteryRowSub.text = if (batt) "Android won't put VitalySpeak to sleep" else "Recommended — stops Android from putting VitalySpeak to sleep"
+        notifBadge?.let { b ->
+            val ok = Health.notificationsAllowed(this)
+            setBadge(b, ok, warnOnly = true)
+            notifRowSub?.text = if (ok) "You'll be notified if setup breaks" else "Recommended — get notified if the service gets switched off"
+        }
         keyRowSub.text = when {
             key.isBlank() -> "Tap to set — get one free at console.groq.com/keys"
             key.length > 8 -> "${key.take(4)}…${key.takeLast(4)}"
@@ -527,11 +626,12 @@ class MainActivity : AppCompatActivity() {
         promptPresets().forEach { refreshPromptRow(it) }
 
         val ready = audio && acc && key.isNotBlank()
-        statusSubtitle.text = if (ready) "Ready — open the keyboard in any app, then tap the mic dot" else "Setup required"
-        statusSubtitle.setTextColor(
-            if (ready) attrColor(com.google.android.material.R.attr.colorPrimary)
-            else attrColor(android.R.attr.textColorSecondary)
-        )
+        val missing = listOfNotNull(
+            "microphone".takeIf { !audio }, "accessibility".takeIf { !acc }, "API key".takeIf { key.isBlank() })
+        statusSubtitle.text = if (ready) "Ready — open the keyboard in any app, then tap the mic dot"
+            else "Setup incomplete: ${missing.joinToString(", ")} — see below"
+        statusSubtitle.setTextColor(if (ready) GREEN else RED)
+        setBadge(statusBadge, ready)
 
         renderAlerts()
         refreshRecovery()
@@ -821,6 +921,9 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val LP_MATCH = LinearLayout.LayoutParams.MATCH_PARENT
+        private const val GREEN = 0xFF2E9E4F.toInt()
+        private const val RED = 0xFFD93025.toInt()
+        private const val AMBER = 0xFFE8A317.toInt()
         private const val LP_WRAP = LinearLayout.LayoutParams.WRAP_CONTENT
     }
 }

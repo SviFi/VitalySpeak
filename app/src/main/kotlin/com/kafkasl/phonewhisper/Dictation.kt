@@ -184,8 +184,12 @@ object Dictation {
             if (boundaryBefore) first = j
             // Snap end forward to a sentence end / pause.
             var k = last
-            while (k < u.size - 1 && !endsSentence(u[k].text) && u[k + 1].start - u[k].end < pause && u[k + 1].end <= e + snapForward) k++
-            val boundaryAfter = k == u.size - 1 || endsSentence(u[k].text) || u[k + 1].start - u[k].end >= pause
+            // A capitalised next word starts a new sentence: never snap across it.
+            fun startsSentence(t: String) = t.trimStart().firstOrNull()?.isUpperCase() == true
+            while (k < u.size - 1 && !endsSentence(u[k].text) && !startsSentence(u[k + 1].text) &&
+                u[k + 1].start - u[k].end < pause && u[k + 1].end <= e + snapForward) k++
+            val boundaryAfter = k == u.size - 1 || endsSentence(u[k].text) ||
+                startsSentence(u[k + 1].text) || u[k + 1].start - u[k].end >= pause
             if (boundaryAfter) last = k
             for (x in first..last) isCmd[x] = true
         }

@@ -176,10 +176,13 @@ class WhisperAccessibilityService : AccessibilityService() {
      * Idle: the window hugs the dot (so taps next to it reach the app underneath).
      * Recording/transcribing: 2× room for the animated shape and spinner. Centre stays put.
      */
-    private fun resizeOverlay(roomy: Boolean) {
+    private fun resizeOverlay(roomy: Boolean) =
+        resizeOverlayPx(if (roomy) dotButtonSize * 2 else (dotButtonSize * pinchZoneFactor()).toInt())
+
+    /** Resizes the dot's window around its current centre. */
+    private fun resizeOverlayPx(size: Int) {
         val v = overlayView ?: return
         val lp = layoutParams ?: return
-        val size = if (roomy) dotButtonSize * 2 else (dotButtonSize * pinchZoneFactor()).toInt()
         if (size <= 0 || lp.width == size) return
         val cx = lp.x + lp.width / 2
         val cy = lp.y + lp.height / 2
@@ -525,6 +528,9 @@ class WhisperAccessibilityService : AccessibilityService() {
                 if (state != State.IDLE) return false
                 pinching = true; pinchScale = 1f
                 handler.removeCallbacks(openApp)
+                // Give the dot room to grow to its maximum size without hitting the window edges.
+                val pct = prefs().getInt(KEY_DOT_SIZE, Appearance.DEF_DOT_SIZE).coerceIn(60, 160)
+                resizeOverlayPx((dotButtonSize * 160f / pct * 1.2f).toInt())
                 return true
             }
             override fun onScale(d: android.view.ScaleGestureDetector): Boolean {

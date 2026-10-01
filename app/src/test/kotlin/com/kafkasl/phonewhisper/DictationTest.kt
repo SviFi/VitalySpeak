@@ -141,7 +141,7 @@ class DictationTest {
         // Sentence started 5 s before the mark: too far back, keep the mark as is.
         val units = (0 until 20).map { w(it * 0.3, it * 0.3 + 0.25, "w$it") } +
             listOf(w(6.0, 6.3, "make"), w(6.3, 6.6, "bullets."))
-        val b = Dictation.splitByCommands(units, listOf(5.95 to 6.7))
+        val b = Dictation.splitByCommands(units, listOf(6.1 to 6.7))
         assertEquals(Dictation.Block(true, "make bullets."), b.last())
         assertFalse(b.first().isCommand)
     }

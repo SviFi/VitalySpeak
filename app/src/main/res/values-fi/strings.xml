@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">VitalySpeak näyttää kelluvan mikrofonipainikkeen, kun kirjoitat. Napauta sitä sanellaksesi; puheesi muutetaan tekstiksi ja lisätään kenttään, johon kirjoitat. VitalySpeak käyttää tätä palvelua vain painikkeen näyttämiseen, tekstikentän käytön tunnistamiseen, sanelemasi tekstin lisäämiseen ja (valinnaisesti) äänenvoimakkuuden vähennyspainikkeen käyttämiseen komentonäppäimenä tallennuksen aikana. Se ei lue, kerää eikä jaa näyttösi sisältöä.</string>
+
+    <!-- Common -->
+    <string name="back">Takaisin</string>
+    <string name="save">Tallenna</string>
+    <string name="use">Käytä</string>
+    <string name="close">Sulje</string>
+    <string name="copy">Kopioi</string>
+    <string name="delete">Poista</string>
+    <string name="reset">Palauta</string>
+    <string name="default_value">Oletus</string>
+    <string name="not_now">Ei nyt</string>
+    <string name="open_settings">Avaa asetukset</string>
+    <string name="no_browser">Selainta ei löytynyt</string>
+    <string name="status_ok">Valmis</string>
+    <string name="status_missing">Puuttuu</string>
+    <string name="status_recommended">Suositeltu</string>
+
+    <!-- Home: status -->
+    <string name="status">Tila</string>
+    <string name="status_ready">Valmis. Avaa näppäimistö missä tahansa sovelluksessa ja napauta mikrofonipainiketta.</string>
+    <string name="status_incomplete">Käyttöönotto kesken: %1$s. Katso alta.</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">Historia</string>
+    <string name="sec_setup">Käyttöönotto</string>
+    <string name="sec_languages">Kielet</string>
+    <string name="sec_dictation">Sanelu</string>
+    <string name="sec_cleanup">Tekoälysiistintä</string>
+    <string name="sec_models">Mallit</string>
+    <string name="sec_appearance">Ulkoasu</string>
+    <string name="sec_usage">Groq-käyttö (arvioita)</string>
+    <string name="sec_about">Tietoja</string>
+
+    <!-- History row -->
+    <string name="history_row">Kaikki sanelut</string>
+    <string name="history_needs_service">Ota esteettömyyspalvelu käyttöön nähdäksesi historiasi.</string>
+    <string name="history_empty">Ei vielä saneluja.</string>
+    <plurals name="history_count">
+        <item quantity="one">%d sanelu</item>
+        <item quantity="other">%d sanelua</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="one">%1$d tallenne on vielä litteroimatta. Yritä uudelleen napauttamalla (yhteensä %2$d).</item>
+        <item quantity="other">%1$d tallennetta on vielä litteroimatta. Yritä uudelleen napauttamalla (yhteensä %2$d).</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">Mikrofoni</string>
+    <string name="mic_ok">Sallittu</string>
+    <string name="mic_missing">Salli mikrofonin käyttö napauttamalla</string>
+    <string name="setup_access">Esteettömyyspalvelu</string>
+    <string name="access_ok">Päällä ja käynnissä</string>
+    <string name="access_stuck">Kytketty päälle, mutta ei käynnissä. Napauta ja kytke se pois ja takaisin päälle.</string>
+    <string name="access_off">Pois päältä. Kytke päälle napauttamalla.</string>
+    <string name="access_help">Android avaa VitalySpeakin esteettömyyssivun.\n\n1. Kytke \"VitalySpeak\" päälle.\n2. Vahvista valitsemalla \"Salli\".\n3. Palaa takaisin. Näet täällä vihreän valintamerkin.\n\nJos näet sen sijaan yleisen Esteettömyys-luettelon, avaa \"Asennetut sovellukset\" (tai \"Ladatut sovellukset\") ja sitten VitalySpeak.\n\nJos kytkin on harmaana (\"Rajoitettu asetus\"): avaa Asetukset, Sovellukset, VitalySpeak, napauta ⋮-valikkoa ja valitse \"Salli rajoitetut asetukset\". Yritä sitten uudelleen.</string>
+    <string name="access_help_running">Palvelu on päällä ja käynnissä. Avataan sen asetussivu.</string>
+    <string name="setup_key">Groq-API-avain</string>
+    <string name="key_missing">Lisää avaimesi napauttamalla. Voit luoda sellaisen ilmaiseksi osoitteessa console.groq.com.</string>
+    <string name="key_help">VitalySpeak lähettää tallenteesi Groqille omalla avaimellasi. Avain tallennetaan vain tähän puhelimeen.</string>
+    <string name="get_key">Hanki avain</string>
+    <string name="key_first">Lisää ensin Groq-API-avaimesi</string>
+    <string name="setup_battery">Akku: ei rajoituksia</string>
+    <string name="battery_ok">Android ei laita VitalySpeakia lepotilaan</string>
+    <string name="battery_missing">Suositeltu: estää Androidia keskeyttämästä VitalySpeakia taustalla</string>
+    <string name="battery_ok_help">Jo rajoittamaton. Tarkista Samsung-puhelimissa myös Asetukset, Akku, Taustakäytön rajoitukset: VitalySpeak ei saa olla luettelossa \"Lepäävät sovellukset\" tai \"Syvässä lepotilassa olevat sovellukset\".</string>
+    <string name="setup_alerts">Käyttöönottohälytykset</string>
+    <string name="alerts_ok">Saat tiedon, jos Android sammuttaa VitalySpeakin</string>
+    <string name="alerts_missing">Suositeltu: saat ilmoituksen, jos Android sammuttaa VitalySpeakin</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">Puhumasi kielet</string>
+    <string name="app_language">Sovelluksen kieli</string>
+    <string name="app_language_system">Sama kuin puhelimessa</string>
+    <string name="app_language_service">Kelluva painike vaihtaa kieltä, kun palvelu käynnistyy seuraavan kerran.</string>
+    <string name="languages_intro">Valitse kielet, joilla sanelet. Laita eniten käyttämäsi kieli ensimmäiseksi ja lisää muut, joita sekoitat puheeseesi. Tämä ei muuta sovelluksen omaa kieltä.</string>
+    <string name="languages_yours">Omat kielesi</string>
+    <string name="languages_primary">Ensisijainen</string>
+    <string name="languages_primary_sub">Käytetään, kun puhe on epäselvää</string>
+    <string name="languages_make_primary">Tee ensisijaiseksi napauttamalla</string>
+    <string name="languages_remove">Poista %1$s</string>
+    <string name="languages_add">Lisää kieli</string>
+    <string name="languages_search">Hae kieliä</string>
+    <string name="languages_why_title">Miksi tällä on väliä</string>
+    <string name="languages_why">Puheentunnistus osaa noin 100 kieltä. Arvatessaan se valitsee joskus väärän: vahva aksentti tai lyhyt lause voi tulla ulos toisella kielellä tai käännettynä.\n\n• Kun valittuna on yksi kieli, tunnistus tietää tarkalleen, mitä odottaa. Se on tarkin ja nopein vaihtoehto.\n• Kun kieliä on useita, VitalySpeak tarkistaa, mikä kieli tunnistettiin. Jos se ei ole yksi kielistäsi, kyseinen osa litteroidaan uudelleen ensisijaisella kielelläsi.\n• Kielesi välitetään myös tekoälysiistinnälle, joten se säilyttää jokaisen kielen täsmälleen niin kuin puhuit sen, vaikka vaihtaisit kesken lauseen, eikä koskaan käännä.\n\nLisää siis vain kielet, joita oikeasti käytät.</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">Näytä painike vain kirjoittaessa</string>
+    <string name="only_while_typing_sub">Painike tulee näkyviin, kun tekstikenttä on aktiivinen. Avaa tämä näkymä painamalla sitä pitkään.</string>
+    <string name="live_preview">Reaaliaikainen esikatselu</string>
+    <string name="live_preview_sub">Näyttää sanasi painikkeen vieressä puhuessasi (käyttää ylimääräisiä lyhyitä pyyntöjä Groqiin)</string>
+    <string name="vocabulary">Sanasto</string>
+    <string name="vocabulary_none">Ei mitään</string>
+    <string name="vocabulary_hint">Nimiä, tuotteita, termejä…</string>
+    <string name="vocabulary_help">Käyttämiäsi nimiä ja termejä pilkuilla erotettuina. Tekoälysiistintä korjaa niiden avulla kirjoitusasun, mutta vain kohdissa, joissa todella sanoit ne.</string>
+    <string name="command_keys">Äänenvoimakkuus alas komennoille</string>
+    <string name="command_keys_sub">Tallennuksen aikana äänenvoimakkuuden vähennys- tai kuulokepainike aloittaa ja lopettaa ⌘ komennon: ohjeen tekoälylle tekstin sijaan</string>
+    <string name="keep_audio">Säilytä ääni</string>
+    <string name="keep_audio_sub">Pois: tallenteet poistetaan litteroinnin jälkeen. Päällä: ne säilytetään tässä puhelimessa (noin 115 Mt tunnissa).</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">Tekoälysiistintä</string>
+    <string name="cleanup_sub">Poistaa täytesanat, korjaa välimerkit ja tunnistusvirheet</string>
+    <string name="style_standard">Luonnollinen</string>
+    <string name="style_standard_sub">Omat sanasi siistittyinä</string>
+    <string name="style_formal">Viimeistelty</string>
+    <string name="style_formal_sub">Kokonaiset lauseet, ammattimainen sävy</string>
+    <string name="style_notes">Muistiinpanot</string>
+    <string name="style_notes_sub">Lyhyt otsikko ja luettelomerkit</string>
+    <string name="style_custom">Mukautettu</string>
+    <string name="style_custom_sub">Omat ohjeesi</string>
+    <string name="custom_instructions">Omat ohjeet</string>
+    <string name="custom_instructions_empty">Kirjoita ohjeesi napauttamalla</string>
+    <string name="custom_hint">Esimerkiksi: Kirjoita lyhyin kappalein. Käytä brittiläistä oikeinkirjoitusta.</string>
+    <string name="custom_help">Lisätään siistinnän perussääntöihin (säilytä kielesi, poista täytesanat, älä koskaan lisää sisältöä).</string>
+
+    <!-- Models -->
+    <string name="model_stt">Puheentunnistus</string>
+    <string name="model_llm">Siistintämalli</string>
+    <string name="model_stable">vakaa</string>
+    <string name="model_preview">esiversio</string>
+    <string name="model_other">Muu… (anna mallin tunnus)</string>
+    <string name="model_id">Mallin tunnus</string>
+    <string name="check_updates">Tarkista uudet mallit ja päivitykset</string>
+    <string name="checking">Tarkistetaan…</string>
+    <string name="never_checked">Ei koskaan tarkistettu</string>
+    <string name="last_checked">Tarkistettu viimeksi %1$s</string>
+    <string name="check_failed">Tarkistus epäonnistui: %1$s</string>
+    <string name="all_up_to_date">Kaikki on ajan tasalla</string>
+    <string name="alert_update">Sovelluspäivitys saatavilla</string>
+    <string name="alert_update_sub">%1$s. Lataa napauttamalla.</string>
+    <string name="alert_stt_gone">Puhemalli ei saatavilla</string>
+    <string name="alert_llm_gone">Siistintämalli ei saatavilla</string>
+    <string name="alert_gone_fix">%1$s ei ole enää käytettävissä avaimellasi. Vaihda malliin %2$s napauttamalla.</string>
+    <string name="alert_gone_pick">%1$s ei ole enää käytettävissä avaimellasi. Valitse toinen napauttamalla.</string>
+    <string name="alert_switched">Malli vaihdettu</string>
+    <string name="alert_switched_sub">Nyt %1$s (aiemmin %2$s). Kumoa napauttamalla.</string>
+    <string name="alert_upgrade">Uudempi malli saatavilla</string>
+    <string name="alert_recommended">Suositeltu malli</string>
+    <plurals name="alert_new_models">
+        <item quantity="one">%d uusi Groq-malli</item>
+        <item quantity="other">%d uutta Groq-mallia</item>
+    </plurals>
+    <string name="upgrade_title">Vaihdetaanko malliin %1$s?</string>
+    <string name="upgrade_text">Nykyinen: %1$s (%2$s)\nUusi: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">Sama malliperhe, uudempi versio.</string>
+    <string name="upgrade_other_line">Eri malliperhe. Uudempi ei aina ole parempi, joten kokeile muutamaa sanelua. Voit kumota yhdellä napautuksella.</string>
+    <string name="switch_model">Vaihda</string>
+    <string name="dont_suggest">Älä ehdota</string>
+
+    <!-- Appearance -->
+    <string name="look">Ulkoasu ja animaatio</string>
+    <string name="look_sub">Painikkeen koko, äänireaktio, aallot, värit</string>
+    <string name="look_dot">Painike</string>
+    <string name="dot_size">Koko</string>
+    <string name="dot_size_sub">Voit myös nipistää painiketta kahdella sormella</string>
+    <string name="look_animation">Tallennusanimaatio</string>
+    <string name="reaction">Äänireaktio</string>
+    <string name="reaction_sub">Kuinka voimakkaasti muoto seuraa ääntäsi</string>
+    <string name="reaction_calm">Rauhallinen</string>
+    <string name="reaction_lively">Eloisa</string>
+    <string name="reaction_wild">Villi</string>
+    <string name="wave_speed">Aaltojen nopeus</string>
+    <string name="wave_speed_sub">Kuinka nopeasti muoto liikkuu</string>
+    <string name="wave_count">Aallot</string>
+    <string name="wave_count_sub">Kuinka monta väreilyä kiertää muodon ympäri</string>
+    <string name="look_colours">Värit</string>
+    <string name="colour_front">Etukerros</string>
+    <string name="colour_front_sub">Ylin kerros tallennuksen aikana</string>
+    <string name="colour_middle">Keskikerros</string>
+    <string name="colour_middle_sub">Toinen kerros</string>
+    <string name="colour_back">Takakerros</string>
+    <string name="colour_back_sub">Kolmas kerros</string>
+    <string name="colour_ring">Korostusrengas</string>
+    <string name="colour_ring_sub">Painikkeen ja esikatselukuplan ympärillä</string>
+    <string name="not_a_colour">Virheellinen väri</string>
+    <string name="reset_defaults">Palauta oletukset</string>
+    <string name="reset_confirm">Palautetaanko koko, animaatio ja värit?</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">Pyyntöjä tänään: %1$d / %2$d</string>
+    <string name="usage_tokens">Tokeneita tällä minuutilla: %1$d / %2$d</string>
+    <string name="usage_audio">Ääntä tänään (laskettu tässä puhelimessa): %1$d min ilmaisesta %2$d h:n päivärajasta</string>
+    <string name="usage_console">Tilaus ja laskutus</string>
+    <string name="usage_console_sub">Avaa Groq-konsoli</string>
+    <string name="usage_none">Näytetään ensimmäisen sanelusi jälkeen. Avaa Groq-konsoli napauttamalla.</string>
+    <string name="usage_warn_requests">Groq: %1$d %% tämän päivän pyynnöistä mallille %2$s käytetty</string>
+    <string name="usage_warn_audio">Groq: noin %1$d %% tämän päivän ilmaisesta äänestä mallille %2$s käytetty</string>
+
+    <!-- Stats -->
+    <string name="stats_title">Sanelusi</string>
+    <string name="stats_spoken">puhuttu</string>
+    <string name="stats_words">sanaa</string>
+    <string name="stats_dictations">sanelua</string>
+    <string name="stats_average">keskimäärin</string>
+    <string name="stats_longest">pisin</string>
+    <string name="stats_streak">päivän putki</string>
+    <string name="stats_wpm">Puhut noin %1$d sanaa minuutissa, eli noin %2$d× nopeammin kuin kirjoitat puhelimella.</string>
+    <string name="stats_chart">Viimeiset 14 päivää, minuutteina</string>
+
+    <!-- About -->
+    <string name="diagnostics">Diagnostiikka</string>
+    <string name="diagnostics_sub">Viimeisin sanelu, virheet ja palvelun tapahtumat vianmääritystä varten</string>
+    <string name="privacy_policy">Tietosuojakäytäntö</string>
+    <string name="terms">Käyttöehdot</string>
+    <string name="licenses">Avoimen lähdekoodin lisenssit</string>
+    <string name="licenses_text">VitalySpeak käyttää näitä avoimen lähdekoodin kirjastoja Apache License 2.0 -lisenssillä:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nKoko lisenssiteksti: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">Versio</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">Hae saneluista</string>
+    <string name="history_no_match">Haulla \"%1$s\" ei löytynyt mitään.</string>
+    <string name="state_done">Valmis</string>
+    <string name="state_raw">Siistimätön</string>
+    <string name="state_pending">Odottaa litterointia · %1$d/%2$d</string>
+    <string name="state_recording">Tallennetaan</string>
+    <string name="audio_saved">ääni tallennettu</string>
+    <string name="not_transcribed">(ei vielä litteroitu)</string>
+    <string name="cleaned">Siistitty teksti</string>
+    <string name="cleaned_missing">Siistintä puuttuu. Napauta \"Yritä siistintää uudelleen\".</string>
+    <string name="raw">Raaka litterointi</string>
+    <string name="raw_missing">%1$d/%2$d osaa ei ole vielä litteroitu. Ääni on tallennettu: napauta \"Yritä uudelleen\".</string>
+    <string name="copy_cleaned">Kopioi siistitty teksti</string>
+    <string name="copy_raw">Kopioi raaka litterointi</string>
+    <string name="retry_transcription">Yritä litterointia uudelleen</string>
+    <string name="retry_cleanup">Yritä siistintää uudelleen</string>
+    <string name="redo_cleanup">Siisti uudelleen</string>
+    <string name="working_background">Käsitellään taustalla…</string>
+    <string name="delete_confirm">Poistetaanko tämä sanelu?</string>
+    <string name="delete_confirm_audio">Poistetaanko tämä sanelu ja sen tallennettu ääni?</string>
+    <string name="copied">Kopioitu (%1$d merkkiä)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">Ennen kuin otat VitalySpeakin käyttöön</string>
+    <string name="disclosure_uses_title">Miksi VitalySpeak käyttää esteettömyyspalvelua</string>
+    <string name="disclosure_uses">VitalySpeak on sanelutyökalu. Se käyttää Androidin Accessibility API -rajapintaa:\n\n• näyttääkseen kelluvan mikrofonipainikkeen muiden sovellusten päällä;\n• huomatakseen, kun tekstikenttä on aktiivinen, jotta painike näkyy vain kirjoittaessasi;\n• lisätäkseen sanelemasi tekstin kyseiseen kenttään;\n• valinnaisesti, jotta äänenvoimakkuuden vähennys- tai kuulokepainike voi merkitä puhutun komennon tallennuksen aikana.</string>
+    <string name="disclosure_never_title">Mitä se ei koskaan tee</string>
+    <string name="disclosure_never">VitalySpeak ei lue, tallenna eikä lähetä näyttösi tai muiden sovellusten sisältöä. Se ei kirjaa näppäinpainalluksiasi, ei tee toimintoja puolestasi eikä sisällä mainoksia tai analytiikkaa.</string>
+    <string name="disclosure_data_title">Tallenteesi</string>
+    <string name="disclosure_data">Mikrofonia käytetään vasta, kun napautat painiketta. Tallenne lähetetään omalla API-avaimellasi Groq, Inc. -yhtiölle litteroitavaksi ja (jos tekoälysiistintä on päällä) siistittäväksi, ja teksti palaa puhelimeesi. Kehittäjälle ei lähetetä mitään. Tallenteet poistetaan puhelimestasi litteroinnin jälkeen, ellet valitse niiden säilyttämistä; tekstihistoriasi pysyy puhelimessasi, kunnes poistat sen.</string>
+    <string name="disclosure_policy_link">Lue tietosuojakäytäntö</string>
+    <string name="disclosure_agree">Hyväksyn, avaa asetukset</string>
+    <string name="disclosure_decline">Ei nyt</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">VitalySpeak-mikrofoni. Aloita tai lopeta sanelu napauttamalla, avaa sovellus painamalla pitkään.</string>
+    <string name="cmd_start">⌘ Komento</string>
+    <string name="cmd_end">■ Lopeta komento</string>
+    <string name="cmd_hint">⌘ Kerro, mitä tekoälyn pitää tehdä</string>
+    <string name="btn_cancel">✕ Peruuta</string>
+    <string name="btn_screen_off">☾ Näyttö pois</string>
+    <string name="pocket_title">Tallennus jatkuu</string>
+    <string name="pocket_countdown">Näyttö himmenee: %1$d…</string>
+    <string name="pocket_continues">Palaa kaksoisnapauttamalla tai painamalla virtapainiketta</string>
+    <string name="pocket_recording">Tallennetaan · %1$s</string>
+    <string name="dot_size_toast">Painikkeen koko %1$d %%</string>
+    <string name="listening">Kuunnellaan…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">Salli mikrofonin käyttö VitalySpeak-sovelluksessa</string>
+    <string name="err_mic_busy">Toinen sovellus käyttää mikrofonia</string>
+    <string name="err_no_key">Lisää Groq-API-avaimesi VitalySpeak-sovelluksessa</string>
+    <string name="err_storage_full">Puhelimen tallennustila on lähes täynnä, joten tallentaminen ei ole turvallista</string>
+    <string name="err_storage_write">Tallennusvirhe. Litteroidaan tallennettu osa.</string>
+    <string name="err_no_audio">Ääntä ei tallentunut</string>
+    <string name="err_transcribe_kept">Groqiin ei saatu yhteyttä %1$d osan kohdalla. Tallenteesi on tallessa: yritä uudelleen kohdasta VitalySpeak, Historia.</string>
+    <string name="err_retry_failed">%1$d osaa ei vieläkään voitu litteroida. Säilytetty uutta yritystä varten.</string>
+    <string name="stop_max_length">4 tuntia täynnä. Litteroidaan kaikki.</string>
+    <string name="stop_low_storage">Tallennustila lähes täynnä. Litteroidaan kaikki.</string>
+    <string name="cancelled">Peruttu. Mitään ei lähetetty.</string>
+    <string name="finishing_parts">Viimeistellään osaa %1$d/%2$d…</string>
+    <string name="no_speech">Puhetta ei havaittu</string>
+    <string name="groq_busy">Groq on kiireinen. Valmista %1$d s kuluttua…</string>
+    <string name="cleanup_partial">Siistintä ohitettiin %1$d osan kohdalla. Niissä säilyy raaka teksti.</string>
+    <string name="applying_commands">Toteutetaan komentojasi…</string>
+    <string name="commands_partial">Joitakin komentoja ei voitu toteuttaa. Ne on lueteltu lopussa.</string>
+    <string name="not_applied">ei toteutettu</string>
+    <string name="saved_to_history">Tallennettu historiaan</string>
+    <string name="copied_to_clipboard">Tekstikenttää ei löytynyt. Teksti on leikepöydällä.</string>
+    <string name="cleanup_failed_again">Siistintä epäonnistui taas. Raaka teksti on yhä tallessa.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">Käyttöönottohälytykset</string>
+    <string name="notif_off_title">VitalySpeak on pois päältä</string>
+    <string name="notif_off_text">Android sammutti sen esteettömyyspalvelun. Kytke se takaisin päälle napauttamalla.</string>
+</resources>

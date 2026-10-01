@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">VitalySpeak wyświetla pływający przycisk mikrofonu podczas pisania. Dotknij go, aby dyktować: Twoja mowa zostaje rozpoznana, a tekst trafia do pola, w którym piszesz. VitalySpeak używa tej usługi wyłącznie do wyświetlania przycisku, wykrywania aktywnego pola tekstowego, wstawiania podyktowanego tekstu oraz (opcjonalnie) używania przycisku ściszania jako klawisza poleceń podczas nagrywania. Nie odczytuje, nie zbiera i nie udostępnia zawartości ekranu.</string>
+
+    <!-- Common -->
+    <string name="back">Wstecz</string>
+    <string name="save">Zapisz</string>
+    <string name="use">Użyj</string>
+    <string name="close">Zamknij</string>
+    <string name="copy">Kopiuj</string>
+    <string name="delete">Usuń</string>
+    <string name="reset">Resetuj</string>
+    <string name="default_value">Domyślne</string>
+    <string name="not_now">Nie teraz</string>
+    <string name="open_settings">Otwórz ustawienia</string>
+    <string name="no_browser">Nie znaleziono przeglądarki</string>
+    <string name="status_ok">Gotowe</string>
+    <string name="status_missing">Brak</string>
+    <string name="status_recommended">Zalecane</string>
+
+    <!-- Home: status -->
+    <string name="status">Stan</string>
+    <string name="status_ready">Gotowe. Otwórz klawiaturę w dowolnej aplikacji i dotknij przycisku mikrofonu.</string>
+    <string name="status_incomplete">Konfiguracja niekompletna: %1$s. Szczegóły poniżej.</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">Historia</string>
+    <string name="sec_setup">Konfiguracja</string>
+    <string name="sec_languages">Języki</string>
+    <string name="sec_dictation">Dyktowanie</string>
+    <string name="sec_cleanup">Porządkowanie AI</string>
+    <string name="sec_models">Modele</string>
+    <string name="sec_appearance">Wygląd</string>
+    <string name="sec_usage">Użycie Groq (szacunkowe)</string>
+    <string name="sec_about">Informacje</string>
+
+    <!-- History row -->
+    <string name="history_row">Wszystkie dyktowania</string>
+    <string name="history_needs_service">Włącz usługę w Ułatwieniach dostępu, aby zobaczyć historię.</string>
+    <string name="history_empty">Nie ma jeszcze dyktowań.</string>
+    <plurals name="history_count">
+        <item quantity="one">%d dyktowanie</item>
+        <item quantity="few">%d dyktowania</item>
+        <item quantity="many">%d dyktowań</item>
+        <item quantity="other">%d dyktowania</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="one">%1$d nagranie nie zostało jeszcze rozpoznane. Dotknij, aby ponowić (łącznie %2$d).</item>
+        <item quantity="few">%1$d nagrania nie zostały jeszcze rozpoznane. Dotknij, aby ponowić (łącznie %2$d).</item>
+        <item quantity="many">%1$d nagrań nie zostało jeszcze rozpoznanych. Dotknij, aby ponowić (łącznie %2$d).</item>
+        <item quantity="other">%1$d nagrania nie zostało jeszcze rozpoznane. Dotknij, aby ponowić (łącznie %2$d).</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">Mikrofon</string>
+    <string name="mic_ok">Dozwolone</string>
+    <string name="mic_missing">Dotknij, aby zezwolić na dostęp do mikrofonu</string>
+    <string name="setup_access">Usługa ułatwień dostępu</string>
+    <string name="access_ok">Włączona i działa</string>
+    <string name="access_stuck">Włączona, ale nie działa. Dotknij, a potem wyłącz ją i włącz ponownie.</string>
+    <string name="access_off">Wyłączona. Dotknij, aby włączyć.</string>
+    <string name="access_help">Android otworzy stronę VitalySpeak w Ułatwieniach dostępu.\n\n1. Włącz „VitalySpeak”.\n2. Potwierdź przyciskiem „Zezwól”.\n3. Wróć. Zobaczysz tu zielony znacznik.\n\nJeśli zamiast tego widzisz ogólną listę Ułatwień dostępu, otwórz „Zainstalowane aplikacje” (lub „Pobrane aplikacje”), a potem VitalySpeak.\n\nJeśli przełącznik jest wyszarzony („Ustawienie z ograniczeniami”): otwórz Ustawienia, Aplikacje, VitalySpeak, dotknij menu ⋮ i wybierz „Zezwól na ustawienia z ograniczeniami”. Potem spróbuj ponownie.</string>
+    <string name="access_help_running">Usługa jest włączona i działa. Otwieram jej ustawienia.</string>
+    <string name="setup_key">Klucz API Groq</string>
+    <string name="key_missing">Dotknij, aby dodać klucz. Możesz go utworzyć za darmo na console.groq.com.</string>
+    <string name="key_help">VitalySpeak wysyła Twoje nagrania do Groq z użyciem Twojego własnego klucza. Klucz jest przechowywany tylko na tym telefonie.</string>
+    <string name="get_key">Zdobądź klucz</string>
+    <string name="key_first">Najpierw dodaj klucz API Groq</string>
+    <string name="setup_battery">Bateria: bez ograniczeń</string>
+    <string name="battery_ok">Android nie uśpi VitalySpeak</string>
+    <string name="battery_missing">Zalecane: Android nie będzie wstrzymywać VitalySpeak w tle</string>
+    <string name="battery_ok_help">Już bez ograniczeń. Na telefonach Samsung sprawdź też Ustawienia, Bateria, Limity użycia w tle: VitalySpeak nie może być na liście „Uśpione aplikacje” ani „Głęboko uśpione aplikacje”.</string>
+    <string name="setup_alerts">Alerty konfiguracji</string>
+    <string name="alerts_ok">Dowiesz się, jeśli Android wyłączy VitalySpeak</string>
+    <string name="alerts_missing">Zalecane: otrzymuj powiadomienie, jeśli Android wyłączy VitalySpeak</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">Języki, którymi mówisz</string>
+    <string name="app_language">Język aplikacji</string>
+    <string name="app_language_system">Taki jak w telefonie</string>
+    <string name="app_language_service">Pływający przycisk zmieni język przy następnym uruchomieniu usługi.</string>
+    <string name="languages_intro">Wybierz języki, w których dyktujesz. Najczęściej używany ustaw jako pierwszy; dodaj inne, które mieszasz. Nie zmienia to języka samej aplikacji.</string>
+    <string name="languages_yours">Twoje języki</string>
+    <string name="languages_primary">Główny</string>
+    <string name="languages_primary_sub">Używany, gdy mowa jest niewyraźna</string>
+    <string name="languages_make_primary">Dotknij, aby ustawić jako główny</string>
+    <string name="languages_remove">Usuń %1$s</string>
+    <string name="languages_add">Dodaj język</string>
+    <string name="languages_search">Szukaj języków</string>
+    <string name="languages_why_title">Dlaczego to ważne</string>
+    <string name="languages_why">Rozpoznawanie mowy zna około 100 języków. Gdy musi zgadywać, czasem wybiera zły: mocny akcent lub krótka fraza mogą wyjść w innym języku albo przetłumaczone.\n\n• Przy jednym wybranym języku rozpoznawanie dokładnie wie, czego się spodziewać. To najdokładniejsza i najszybsza opcja.\n• Przy kilku językach VitalySpeak sprawdza, który język został rozpoznany. Jeśli nie jest to żaden z Twoich, ten fragment jest rozpoznawany ponownie w Twoim języku głównym.\n• Twoje języki trafiają też do porządkowania AI, dzięki czemu zachowuje każdy język dokładnie tak, jak mówisz, nawet gdy zmieniasz go w połowie zdania, i nigdy nie tłumaczy.\n\nDlatego dodawaj tylko języki, których naprawdę używasz.</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">Pokazuj przycisk tylko podczas pisania</string>
+    <string name="only_while_typing_sub">Przycisk pojawia się, gdy pole tekstowe jest aktywne. Przytrzymaj go, aby otworzyć ten ekran.</string>
+    <string name="live_preview">Podgląd na żywo</string>
+    <string name="live_preview_sub">Pokazuje Twoje słowa obok przycisku, gdy mówisz (dodatkowe krótkie zapytania do Groq)</string>
+    <string name="vocabulary">Słownik</string>
+    <string name="vocabulary_none">Brak</string>
+    <string name="vocabulary_hint">Nazwiska, produkty, terminy…</string>
+    <string name="vocabulary_help">Nazwy i terminy, których używasz, oddzielone przecinkami. Porządkowanie AI używa ich do poprawiania pisowni, tylko tam, gdzie faktycznie padły.</string>
+    <string name="command_keys">Ściszanie dla poleceń</string>
+    <string name="command_keys_sub">Podczas nagrywania przycisk ściszania lub przycisk zestawu słuchawkowego zaczyna i kończy polecenie ⌘: instrukcję dla AI zamiast tekstu</string>
+    <string name="keep_audio">Zachowuj dźwięk</string>
+    <string name="keep_audio_sub">Wył.: nagrania są usuwane po rozpoznaniu. Wł.: są przechowywane na tym telefonie (około 115 MB na godzinę).</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">Porządkowanie AI</string>
+    <string name="cleanup_sub">Usuwa wypełniacze, poprawia interpunkcję i błędy rozpoznawania</string>
+    <string name="style_standard">Naturalny</string>
+    <string name="style_standard_sub">Twoje słowa, uporządkowane</string>
+    <string name="style_formal">Dopracowany</string>
+    <string name="style_formal_sub">Pełne zdania, profesjonalny ton</string>
+    <string name="style_notes">Notatki</string>
+    <string name="style_notes_sub">Krótki nagłówek i punkty</string>
+    <string name="style_custom">Własny</string>
+    <string name="style_custom_sub">Twoje własne instrukcje</string>
+    <string name="custom_instructions">Własne instrukcje</string>
+    <string name="custom_instructions_empty">Dotknij, aby napisać instrukcje</string>
+    <string name="custom_hint">Na przykład: pisz krótkimi akapitami. Używaj pisowni brytyjskiej.</string>
+    <string name="custom_help">Dodawane do podstawowych zasad porządkowania (zachowaj Twoje języki, usuń wypełniacze, nigdy nie dodawaj treści).</string>
+
+    <!-- Models -->
+    <string name="model_stt">Rozpoznawanie mowy</string>
+    <string name="model_llm">Model porządkowania</string>
+    <string name="model_stable">stabilny</string>
+    <string name="model_preview">wersja testowa</string>
+    <string name="model_other">Inny… (wpisz ID modelu)</string>
+    <string name="model_id">ID modelu</string>
+    <string name="check_updates">Sprawdź nowe modele i aktualizacje</string>
+    <string name="checking">Sprawdzanie…</string>
+    <string name="never_checked">Nigdy nie sprawdzano</string>
+    <string name="last_checked">Ostatnio sprawdzono %1$s</string>
+    <string name="check_failed">Sprawdzanie nie powiodło się: %1$s</string>
+    <string name="all_up_to_date">Wszystko jest aktualne</string>
+    <string name="alert_update">Dostępna aktualizacja aplikacji</string>
+    <string name="alert_update_sub">%1$s. Dotknij, aby pobrać.</string>
+    <string name="alert_stt_gone">Model mowy niedostępny</string>
+    <string name="alert_llm_gone">Model porządkowania niedostępny</string>
+    <string name="alert_gone_fix">%1$s nie jest już dostępny dla Twojego klucza. Dotknij, aby przełączyć na %2$s.</string>
+    <string name="alert_gone_pick">%1$s nie jest już dostępny dla Twojego klucza. Dotknij, aby wybrać inny.</string>
+    <string name="alert_switched">Zmieniono model</string>
+    <string name="alert_switched_sub">Teraz %1$s (wcześniej %2$s). Dotknij, aby cofnąć.</string>
+    <string name="alert_upgrade">Dostępny nowszy model</string>
+    <string name="alert_recommended">Zalecany model</string>
+    <plurals name="alert_new_models">
+        <item quantity="one">%d nowy model Groq</item>
+        <item quantity="few">%d nowe modele Groq</item>
+        <item quantity="many">%d nowych modeli Groq</item>
+        <item quantity="other">%d nowego modelu Groq</item>
+    </plurals>
+    <string name="upgrade_title">Przełączyć na %1$s?</string>
+    <string name="upgrade_text">Obecny: %1$s (%2$s)\nNowy: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">Ta sama rodzina modeli, nowsza wersja.</string>
+    <string name="upgrade_other_line">Inna rodzina modeli. Nowszy nie zawsze znaczy lepszy, więc wypróbuj kilka dyktowań. Możesz cofnąć jednym dotknięciem.</string>
+    <string name="switch_model">Przełącz</string>
+    <string name="dont_suggest">Nie proponuj</string>
+
+    <!-- Appearance -->
+    <string name="look">Wygląd i animacja</string>
+    <string name="look_sub">Rozmiar przycisku, reakcja na głos, fale, kolory</string>
+    <string name="look_dot">Przycisk</string>
+    <string name="dot_size">Rozmiar</string>
+    <string name="dot_size_sub">Możesz też zmieniać rozmiar przycisku dwoma palcami</string>
+    <string name="look_animation">Animacja nagrywania</string>
+    <string name="reaction">Reakcja na głos</string>
+    <string name="reaction_sub">Jak mocno kształt podąża za Twoim głosem</string>
+    <string name="reaction_calm">Spokojnie</string>
+    <string name="reaction_lively">Żywo</string>
+    <string name="reaction_wild">Szaleńczo</string>
+    <string name="wave_speed">Prędkość fal</string>
+    <string name="wave_speed_sub">Jak szybko porusza się kształt</string>
+    <string name="wave_count">Fale</string>
+    <string name="wave_count_sub">Ile fal biegnie wokół kształtu</string>
+    <string name="look_colours">Kolory</string>
+    <string name="colour_front">Warstwa przednia</string>
+    <string name="colour_front_sub">Górna warstwa podczas nagrywania</string>
+    <string name="colour_middle">Warstwa środkowa</string>
+    <string name="colour_middle_sub">Druga warstwa</string>
+    <string name="colour_back">Warstwa tylna</string>
+    <string name="colour_back_sub">Trzecia warstwa</string>
+    <string name="colour_ring">Pierścień akcentu</string>
+    <string name="colour_ring_sub">Wokół przycisku i dymka podglądu</string>
+    <string name="not_a_colour">Nieprawidłowy kolor</string>
+    <string name="reset_defaults">Przywróć domyślne</string>
+    <string name="reset_confirm">Zresetować rozmiar, animację i kolory?</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">Zapytania dzisiaj: %1$d z %2$d</string>
+    <string name="usage_tokens">Tokeny w tej minucie: %1$d z %2$d</string>
+    <string name="usage_audio">Dźwięk dzisiaj (liczony na tym telefonie): %1$d min z darmowego dziennego limitu %2$d h</string>
+    <string name="usage_console">Plan i płatności</string>
+    <string name="usage_console_sub">Otwórz konsolę Groq</string>
+    <string name="usage_none">Widoczne po pierwszym dyktowaniu. Dotknij, aby otworzyć konsolę Groq.</string>
+    <string name="usage_warn_requests">Groq: wykorzystano %1$d%% dzisiejszych zapytań dla %2$s</string>
+    <string name="usage_warn_audio">Groq: wykorzystano około %1$d%% dzisiejszego darmowego dźwięku dla %2$s</string>
+
+    <!-- Stats -->
+    <string name="stats_title">Twoje dyktowanie</string>
+    <string name="stats_spoken">nagadane</string>
+    <string name="stats_words">słów</string>
+    <string name="stats_dictations">dyktowań</string>
+    <string name="stats_average">średnio</string>
+    <string name="stats_longest">najdłuższe</string>
+    <string name="stats_streak">dni z rzędu</string>
+    <string name="stats_wpm">Mówisz około %1$d słów na minutę, mniej więcej %2$d× szybciej niż piszesz na telefonie.</string>
+    <string name="stats_chart">Ostatnie 14 dni, minuty</string>
+
+    <!-- About -->
+    <string name="diagnostics">Diagnostyka</string>
+    <string name="diagnostics_sub">Ostatnie dyktowanie, błędy i zdarzenia usługi, do rozwiązywania problemów</string>
+    <string name="privacy_policy">Polityka prywatności</string>
+    <string name="terms">Warunki korzystania</string>
+    <string name="licenses">Licencje open source</string>
+    <string name="licenses_text">VitalySpeak korzysta z tych bibliotek open source na licencji Apache License 2.0:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nPełny tekst licencji: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">Wersja</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">Szukaj w dyktowaniach</string>
+    <string name="history_no_match">Brak wyników dla „%1$s”.</string>
+    <string name="state_done">Gotowe</string>
+    <string name="state_raw">Nieuporządkowane</string>
+    <string name="state_pending">Do rozpoznania · %1$d/%2$d</string>
+    <string name="state_recording">Nagrywanie</string>
+    <string name="audio_saved">dźwięk zapisany</string>
+    <string name="not_transcribed">(jeszcze nie rozpoznano)</string>
+    <string name="cleaned">Uporządkowany tekst</string>
+    <string name="cleaned_missing">Brak uporządkowania. Dotknij „Ponów porządkowanie”.</string>
+    <string name="raw">Surowa transkrypcja</string>
+    <string name="raw_missing">Nierozpoznane części: %1$d z %2$d. Dźwięk jest zapisany: dotknij „Ponów”.</string>
+    <string name="copy_cleaned">Kopiuj uporządkowany tekst</string>
+    <string name="copy_raw">Kopiuj surową transkrypcję</string>
+    <string name="retry_transcription">Ponów rozpoznawanie</string>
+    <string name="retry_cleanup">Ponów porządkowanie</string>
+    <string name="redo_cleanup">Uporządkuj ponownie</string>
+    <string name="working_background">Pracuję w tle…</string>
+    <string name="delete_confirm">Usunąć to dyktowanie?</string>
+    <string name="delete_confirm_audio">Usunąć to dyktowanie i zapisany dźwięk?</string>
+    <string name="copied">Skopiowano (znaki: %1$d)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">Zanim włączysz VitalySpeak</string>
+    <string name="disclosure_uses_title">Dlaczego VitalySpeak używa usługi ułatwień dostępu</string>
+    <string name="disclosure_uses">VitalySpeak to narzędzie do dyktowania. Używa interfejsu API ułatwień dostępu Androida, aby:\n\n• wyświetlać pływający przycisk mikrofonu nad innymi aplikacjami;\n• wykrywać aktywne pole tekstowe, tak aby przycisk pojawiał się tylko podczas pisania;\n• wstawiać podyktowany tekst do tego pola;\n• opcjonalnie pozwolić przyciskowi ściszania lub przyciskowi zestawu słuchawkowego oznaczać polecenie głosowe podczas nagrywania.</string>
+    <string name="disclosure_never_title">Czego nigdy nie robi</string>
+    <string name="disclosure_never">VitalySpeak nie odczytuje, nie przechowuje ani nie wysyła zawartości ekranu ani innych aplikacji. Nie rejestruje naciśnięć klawiszy, nie wykonuje działań w Twoim imieniu i nie ma reklam ani analityki.</string>
+    <string name="disclosure_data_title">Twoje nagrania</string>
+    <string name="disclosure_data">Mikrofon jest używany dopiero po dotknięciu przycisku. Nagranie jest wysyłane do Groq, Inc. z Twoim własnym kluczem API w celu rozpoznania i (jeśli porządkowanie AI jest włączone) uporządkowania, a tekst wraca na Twój telefon. Nic nie trafia do dewelopera. Nagrania są usuwane z telefonu po rozpoznaniu, chyba że zdecydujesz się je zachować; historia tekstu zostaje na telefonie, dopóki jej nie usuniesz.</string>
+    <string name="disclosure_policy_link">Przeczytaj politykę prywatności</string>
+    <string name="disclosure_agree">Zgadzam się, otwórz ustawienia</string>
+    <string name="disclosure_decline">Nie teraz</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">Mikrofon VitalySpeak. Dotknij, aby rozpocząć lub zatrzymać dyktowanie, przytrzymaj, aby otworzyć aplikację.</string>
+    <string name="cmd_start">⌘ Polecenie</string>
+    <string name="cmd_end">■ Zakończ polecenie</string>
+    <string name="cmd_hint">⌘ Powiedz, co ma zrobić AI</string>
+    <string name="btn_cancel">✕ Anuluj</string>
+    <string name="btn_screen_off">☾ Wyłącz ekran</string>
+    <string name="pocket_title">Nagrywanie trwa</string>
+    <string name="pocket_countdown">Ekran przyciemni się za %1$d…</string>
+    <string name="pocket_continues">Dotknij dwukrotnie lub naciśnij przycisk zasilania, aby wrócić</string>
+    <string name="pocket_recording">Nagrywanie · %1$s</string>
+    <string name="dot_size_toast">Rozmiar przycisku %1$d%%</string>
+    <string name="listening">Słucham…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">Zezwól na dostęp do mikrofonu w aplikacji VitalySpeak</string>
+    <string name="err_mic_busy">Mikrofon jest używany przez inną aplikację</string>
+    <string name="err_no_key">Dodaj klucz API Groq w aplikacji VitalySpeak</string>
+    <string name="err_storage_full">Pamięć telefonu jest prawie pełna, nagrywanie nie jest bezpieczne</string>
+    <string name="err_storage_write">Błąd pamięci. Rozpoznaję to, co zostało zapisane.</string>
+    <string name="err_no_audio">Nie nagrano dźwięku</string>
+    <string name="err_transcribe_kept">Nie udało się połączyć z Groq (części: %1$d). Nagranie jest zapisane: otwórz VitalySpeak, Historia, aby ponowić.</string>
+    <string name="err_retry_failed">Nadal nie udało się rozpoznać części: %1$d. Zachowano do kolejnej próby.</string>
+    <string name="stop_max_length">Osiągnięto 4 godziny. Rozpoznaję wszystko.</string>
+    <string name="stop_low_storage">Pamięć prawie pełna. Rozpoznaję wszystko.</string>
+    <string name="cancelled">Anulowano. Nic nie zostało wysłane.</string>
+    <string name="finishing_parts">Kończę części: %1$d z %2$d…</string>
+    <string name="no_speech">Nie wykryto mowy</string>
+    <string name="groq_busy">Groq jest zajęty. Kończę za %1$d s…</string>
+    <string name="cleanup_partial">Pominięto porządkowanie dla części: %1$d. Pozostaje tam surowy tekst.</string>
+    <string name="applying_commands">Stosuję Twoje polecenia…</string>
+    <string name="commands_partial">Nie udało się zastosować niektórych poleceń. Są wymienione na końcu.</string>
+    <string name="not_applied">nie zastosowano</string>
+    <string name="saved_to_history">Zapisano w historii</string>
+    <string name="copied_to_clipboard">Nie znaleziono pola tekstowego. Tekst jest w schowku.</string>
+    <string name="cleanup_failed_again">Porządkowanie znów się nie powiodło. Surowy tekst nadal jest zapisany.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">Alerty konfiguracji</string>
+    <string name="notif_off_title">VitalySpeak jest wyłączony</string>
+    <string name="notif_off_text">Android wyłączył jego usługę ułatwień dostępu. Dotknij, aby włączyć ją ponownie.</string>
+</resources>

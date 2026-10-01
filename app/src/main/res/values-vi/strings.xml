@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">VitalySpeak hiển thị một nút micrô nổi khi bạn nhập văn bản. Nhấn vào nút để đọc chính tả; lời nói của bạn được chuyển thành văn bản và chèn vào ô bạn đang nhập. VitalySpeak chỉ dùng dịch vụ này để hiển thị nút, phát hiện khi một ô văn bản đang được dùng, chèn văn bản bạn đọc và (tùy chọn) dùng nút giảm âm lượng làm phím lệnh khi ghi âm. Ứng dụng không đọc, thu thập hay chia sẻ nội dung trên màn hình của bạn.</string>
+
+    <!-- Common -->
+    <string name="back">Quay lại</string>
+    <string name="save">Lưu</string>
+    <string name="use">Dùng</string>
+    <string name="close">Đóng</string>
+    <string name="copy">Sao chép</string>
+    <string name="delete">Xóa</string>
+    <string name="reset">Đặt lại</string>
+    <string name="default_value">Mặc định</string>
+    <string name="not_now">Để sau</string>
+    <string name="open_settings">Mở cài đặt</string>
+    <string name="no_browser">Không tìm thấy trình duyệt</string>
+    <string name="status_ok">Xong</string>
+    <string name="status_missing">Còn thiếu</string>
+    <string name="status_recommended">Nên bật</string>
+
+    <!-- Home: status -->
+    <string name="status">Trạng thái</string>
+    <string name="status_ready">Sẵn sàng. Mở bàn phím trong bất kỳ ứng dụng nào và nhấn nút micrô.</string>
+    <string name="status_incomplete">Chưa thiết lập xong: %1$s. Xem bên dưới.</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">Lịch sử</string>
+    <string name="sec_setup">Thiết lập</string>
+    <string name="sec_languages">Ngôn ngữ</string>
+    <string name="sec_dictation">Đọc chính tả</string>
+    <string name="sec_cleanup">Chỉnh sửa bằng AI</string>
+    <string name="sec_models">Mô hình</string>
+    <string name="sec_appearance">Giao diện</string>
+    <string name="sec_usage">Mức dùng Groq (ước tính)</string>
+    <string name="sec_about">Giới thiệu</string>
+
+    <!-- History row -->
+    <string name="history_row">Tất cả bản đọc</string>
+    <string name="history_needs_service">Bật dịch vụ Hỗ trợ tiếp cận để xem lịch sử.</string>
+    <string name="history_empty">Chưa có bản đọc nào.</string>
+    <plurals name="history_count">
+        <item quantity="other">%d bản đọc</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="other">%1$d bản ghi âm chưa được chuyển thành văn bản. Nhấn để thử lại (tổng cộng %2$d).</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">Micrô</string>
+    <string name="mic_ok">Đã cho phép</string>
+    <string name="mic_missing">Nhấn để cho phép truy cập micrô</string>
+    <string name="setup_access">Dịch vụ Hỗ trợ tiếp cận</string>
+    <string name="access_ok">Đã bật và đang chạy</string>
+    <string name="access_stuck">Đã bật nhưng không chạy. Nhấn vào, rồi tắt và bật lại.</string>
+    <string name="access_off">Đang tắt. Nhấn để bật.</string>
+    <string name="access_help">Android sẽ mở trang Hỗ trợ tiếp cận của VitalySpeak.\n\n1. Bật \"VitalySpeak\".\n2. Xác nhận bằng \"Cho phép\".\n3. Quay lại. Bạn sẽ thấy dấu tích xanh ở đây.\n\nNếu thay vào đó bạn thấy danh sách Hỗ trợ tiếp cận chung, hãy mở \"Ứng dụng đã cài đặt\" (hoặc \"Ứng dụng đã tải xuống\"), rồi chọn VitalySpeak.\n\nNếu công tắc bị mờ (\"Chế độ cài đặt bị hạn chế\"): mở Cài đặt, Ứng dụng, VitalySpeak, nhấn menu ⋮ và chọn \"Cho phép chế độ cài đặt bị hạn chế\". Sau đó thử lại.</string>
+    <string name="access_help_running">Dịch vụ đã bật và đang chạy. Đang mở trang cài đặt của dịch vụ.</string>
+    <string name="setup_key">Khóa API Groq</string>
+    <string name="key_missing">Nhấn để thêm khóa của bạn. Bạn có thể tạo khóa miễn phí tại console.groq.com.</string>
+    <string name="key_help">VitalySpeak gửi bản ghi âm của bạn đến Groq bằng khóa của chính bạn. Khóa chỉ được lưu trên điện thoại này.</string>
+    <string name="get_key">Lấy khóa</string>
+    <string name="key_first">Hãy thêm khóa API Groq trước</string>
+    <string name="setup_battery">Pin: không hạn chế</string>
+    <string name="battery_ok">Android sẽ không đưa VitalySpeak vào chế độ ngủ</string>
+    <string name="battery_missing">Nên bật: ngăn Android tạm dừng VitalySpeak khi chạy nền</string>
+    <string name="battery_ok_help">Đã ở chế độ không hạn chế. Trên điện thoại Samsung, hãy kiểm tra thêm Cài đặt, Pin, Giới hạn sử dụng nền: VitalySpeak không được nằm trong \"Ứng dụng ở chế độ ngủ\" hoặc \"Ứng dụng ở chế độ ngủ sâu\".</string>
+    <string name="setup_alerts">Cảnh báo thiết lập</string>
+    <string name="alerts_ok">Bạn sẽ được báo nếu Android tắt VitalySpeak</string>
+    <string name="alerts_missing">Nên bật: nhận thông báo nếu Android tắt VitalySpeak</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">Ngôn ngữ bạn nói</string>
+    <string name="app_language">Ngôn ngữ ứng dụng</string>
+    <string name="app_language_system">Giống điện thoại</string>
+    <string name="app_language_service">Nút nổi sẽ đổi ngôn ngữ vào lần tới dịch vụ khởi động.</string>
+    <string name="languages_intro">Chọn các ngôn ngữ bạn dùng để đọc chính tả. Đặt ngôn ngữ bạn dùng nhiều nhất lên đầu; thêm các ngôn ngữ khác mà bạn hay nói xen vào. Việc này không thay đổi ngôn ngữ của ứng dụng.</string>
+    <string name="languages_yours">Ngôn ngữ của bạn</string>
+    <string name="languages_primary">Chính</string>
+    <string name="languages_primary_sub">Được dùng khi lời nói không rõ</string>
+    <string name="languages_make_primary">Nhấn để đặt làm ngôn ngữ chính</string>
+    <string name="languages_remove">Xóa %1$s</string>
+    <string name="languages_add">Thêm ngôn ngữ</string>
+    <string name="languages_search">Tìm ngôn ngữ</string>
+    <string name="languages_why_title">Vì sao điều này quan trọng</string>
+    <string name="languages_why">Bộ nhận dạng giọng nói biết khoảng 100 ngôn ngữ. Khi phải tự đoán, đôi lúc nó chọn sai: giọng địa phương nặng hoặc một cụm từ ngắn có thể ra thành ngôn ngữ khác, hoặc bị dịch.\n\n• Khi chọn một ngôn ngữ, bộ nhận dạng biết chính xác cần nghe gì. Đó là lựa chọn chính xác và nhanh nhất.\n• Khi chọn nhiều ngôn ngữ, VitalySpeak kiểm tra ngôn ngữ nào đã được nhận dạng. Nếu đó không phải ngôn ngữ của bạn, phần đó sẽ được chuyển lại thành văn bản bằng ngôn ngữ chính.\n• Ngôn ngữ của bạn cũng được chuyển cho tính năng chỉnh sửa bằng AI, để giữ nguyên từng ngôn ngữ đúng như bạn nói, kể cả khi bạn đổi ngôn ngữ giữa câu, và không bao giờ dịch.\n\nVì vậy, chỉ thêm những ngôn ngữ bạn thực sự dùng.</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">Chỉ hiện nút khi đang nhập</string>
+    <string name="only_while_typing_sub">Nút xuất hiện khi một ô văn bản đang hoạt động. Nhấn giữ nút để mở màn hình này.</string>
+    <string name="live_preview">Xem trước trực tiếp</string>
+    <string name="live_preview_sub">Hiện lời bạn nói cạnh nút trong khi nói (dùng thêm các yêu cầu ngắn tới Groq)</string>
+    <string name="vocabulary">Từ vựng</string>
+    <string name="vocabulary_none">Không có</string>
+    <string name="vocabulary_hint">Tên, sản phẩm, thuật ngữ…</string>
+    <string name="vocabulary_help">Tên và thuật ngữ bạn dùng, cách nhau bằng dấu phẩy. Tính năng chỉnh sửa bằng AI dùng chúng để sửa chính tả, chỉ ở những chỗ bạn thực sự nói ra.</string>
+    <string name="command_keys">Giảm âm lượng để ra lệnh</string>
+    <string name="command_keys_sub">Khi ghi âm, nút giảm âm lượng hoặc nút tai nghe sẽ bắt đầu và kết thúc lệnh ⌘: một chỉ dẫn cho AI thay vì văn bản</string>
+    <string name="keep_audio">Giữ âm thanh</string>
+    <string name="keep_audio_sub">Tắt: bản ghi âm bị xóa sau khi chuyển thành văn bản. Bật: bản ghi âm được giữ trên điện thoại này (khoảng 115 MB mỗi giờ).</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">Chỉnh sửa bằng AI</string>
+    <string name="cleanup_sub">Bỏ từ đệm, sửa dấu câu và lỗi nhận dạng</string>
+    <string name="style_standard">Tự nhiên</string>
+    <string name="style_standard_sub">Lời của chính bạn, được chỉnh gọn</string>
+    <string name="style_formal">Trau chuốt</string>
+    <string name="style_formal_sub">Câu hoàn chỉnh, giọng chuyên nghiệp</string>
+    <string name="style_notes">Ghi chú</string>
+    <string name="style_notes_sub">Tiêu đề ngắn và gạch đầu dòng</string>
+    <string name="style_custom">Tùy chỉnh</string>
+    <string name="style_custom_sub">Chỉ dẫn của riêng bạn</string>
+    <string name="custom_instructions">Chỉ dẫn tùy chỉnh</string>
+    <string name="custom_instructions_empty">Nhấn để viết chỉ dẫn</string>
+    <string name="custom_hint">Ví dụ: Viết thành các đoạn ngắn. Dùng chính tả kiểu Anh.</string>
+    <string name="custom_help">Được thêm vào các quy tắc chỉnh sửa cơ bản (giữ nguyên ngôn ngữ, bỏ từ đệm, không bao giờ thêm nội dung).</string>
+
+    <!-- Models -->
+    <string name="model_stt">Nhận dạng giọng nói</string>
+    <string name="model_llm">Mô hình chỉnh sửa</string>
+    <string name="model_stable">ổn định</string>
+    <string name="model_preview">xem trước</string>
+    <string name="model_other">Khác… (nhập ID mô hình)</string>
+    <string name="model_id">ID mô hình</string>
+    <string name="check_updates">Kiểm tra mô hình mới và bản cập nhật</string>
+    <string name="checking">Đang kiểm tra…</string>
+    <string name="never_checked">Chưa kiểm tra lần nào</string>
+    <string name="last_checked">Kiểm tra lần cuối %1$s</string>
+    <string name="check_failed">Kiểm tra thất bại: %1$s</string>
+    <string name="all_up_to_date">Mọi thứ đều đã mới nhất</string>
+    <string name="alert_update">Có bản cập nhật ứng dụng</string>
+    <string name="alert_update_sub">%1$s. Nhấn để tải xuống.</string>
+    <string name="alert_stt_gone">Mô hình giọng nói không khả dụng</string>
+    <string name="alert_llm_gone">Mô hình chỉnh sửa không khả dụng</string>
+    <string name="alert_gone_fix">%1$s không còn khả dụng với khóa của bạn. Nhấn để chuyển sang %2$s.</string>
+    <string name="alert_gone_pick">%1$s không còn khả dụng với khóa của bạn. Nhấn để chọn mô hình khác.</string>
+    <string name="alert_switched">Đã đổi mô hình</string>
+    <string name="alert_switched_sub">Hiện là %1$s (trước đây là %2$s). Nhấn để hoàn tác.</string>
+    <string name="alert_upgrade">Có mô hình mới hơn</string>
+    <string name="alert_recommended">Mô hình được đề xuất</string>
+    <plurals name="alert_new_models">
+        <item quantity="other">%d mô hình Groq mới</item>
+    </plurals>
+    <string name="upgrade_title">Chuyển sang %1$s?</string>
+    <string name="upgrade_text">Hiện tại: %1$s (%2$s)\nMới: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">Cùng dòng mô hình, phiên bản mới hơn.</string>
+    <string name="upgrade_other_line">Một dòng mô hình khác. Mới hơn chưa chắc đã tốt hơn, nên hãy thử đọc vài lần. Bạn có thể hoàn tác chỉ với một lần nhấn.</string>
+    <string name="switch_model">Chuyển</string>
+    <string name="dont_suggest">Không đề xuất nữa</string>
+
+    <!-- Appearance -->
+    <string name="look">Giao diện và hiệu ứng</string>
+    <string name="look_sub">Kích thước nút, phản ứng theo giọng, sóng, màu sắc</string>
+    <string name="look_dot">Nút</string>
+    <string name="dot_size">Kích thước</string>
+    <string name="dot_size_sub">Bạn cũng có thể chụm hai ngón tay trên nút</string>
+    <string name="look_animation">Hiệu ứng khi ghi âm</string>
+    <string name="reaction">Phản ứng theo giọng</string>
+    <string name="reaction_sub">Mức độ hình dạng thay đổi theo giọng nói của bạn</string>
+    <string name="reaction_calm">Nhẹ nhàng</string>
+    <string name="reaction_lively">Sinh động</string>
+    <string name="reaction_wild">Mạnh mẽ</string>
+    <string name="wave_speed">Tốc độ sóng</string>
+    <string name="wave_speed_sub">Hình dạng chuyển động nhanh đến đâu</string>
+    <string name="wave_count">Sóng</string>
+    <string name="wave_count_sub">Số gợn sóng chạy quanh hình dạng</string>
+    <string name="look_colours">Màu sắc</string>
+    <string name="colour_front">Lớp trước</string>
+    <string name="colour_front_sub">Lớp trên cùng khi ghi âm</string>
+    <string name="colour_middle">Lớp giữa</string>
+    <string name="colour_middle_sub">Lớp thứ hai</string>
+    <string name="colour_back">Lớp sau</string>
+    <string name="colour_back_sub">Lớp thứ ba</string>
+    <string name="colour_ring">Vòng nhấn</string>
+    <string name="colour_ring_sub">Quanh nút và bong bóng xem trước</string>
+    <string name="not_a_colour">Màu không hợp lệ</string>
+    <string name="reset_defaults">Đặt lại về mặc định</string>
+    <string name="reset_confirm">Đặt lại kích thước, hiệu ứng và màu sắc?</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">Yêu cầu hôm nay: %1$d / %2$d</string>
+    <string name="usage_tokens">Token trong phút này: %1$d / %2$d</string>
+    <string name="usage_audio">Âm thanh hôm nay (đếm trên điện thoại này): %1$d phút trong giới hạn miễn phí %2$d giờ mỗi ngày</string>
+    <string name="usage_console">Gói và thanh toán</string>
+    <string name="usage_console_sub">Mở bảng điều khiển Groq</string>
+    <string name="usage_none">Hiển thị sau lần đọc chính tả đầu tiên. Nhấn để mở bảng điều khiển Groq.</string>
+    <string name="usage_warn_requests">Groq: đã dùng %1$d%% số yêu cầu hôm nay cho %2$s</string>
+    <string name="usage_warn_audio">Groq: đã dùng khoảng %1$d%% lượng âm thanh miễn phí hôm nay cho %2$s</string>
+
+    <!-- Stats -->
+    <string name="stats_title">Hoạt động đọc của bạn</string>
+    <string name="stats_spoken">đã nói</string>
+    <string name="stats_words">từ</string>
+    <string name="stats_dictations">bản đọc</string>
+    <string name="stats_average">trung bình</string>
+    <string name="stats_longest">dài nhất</string>
+    <string name="stats_streak">ngày liên tiếp</string>
+    <string name="stats_wpm">Bạn nói khoảng %1$d từ mỗi phút, nhanh hơn gõ trên điện thoại khoảng %2$d×.</string>
+    <string name="stats_chart">14 ngày qua, phút</string>
+
+    <!-- About -->
+    <string name="diagnostics">Chẩn đoán</string>
+    <string name="diagnostics_sub">Lần đọc gần nhất, lỗi và sự kiện dịch vụ, để khắc phục sự cố</string>
+    <string name="privacy_policy">Chính sách quyền riêng tư</string>
+    <string name="terms">Điều khoản sử dụng</string>
+    <string name="licenses">Giấy phép nguồn mở</string>
+    <string name="licenses_text">VitalySpeak dùng các thư viện nguồn mở sau, theo Apache License 2.0:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nToàn văn giấy phép: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">Phiên bản</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">Tìm bản đọc</string>
+    <string name="history_no_match">Không có kết quả khớp với \"%1$s\".</string>
+    <string name="state_done">Xong</string>
+    <string name="state_raw">Chưa chỉnh sửa</string>
+    <string name="state_pending">Cần chuyển văn bản · %1$d/%2$d</string>
+    <string name="state_recording">Đang ghi âm</string>
+    <string name="audio_saved">đã lưu âm thanh</string>
+    <string name="not_transcribed">(chưa chuyển thành văn bản)</string>
+    <string name="cleaned">Văn bản đã chỉnh sửa</string>
+    <string name="cleaned_missing">Chưa có bản chỉnh sửa. Nhấn \"Thử chỉnh sửa lại\".</string>
+    <string name="raw">Bản ghi gốc</string>
+    <string name="raw_missing">%1$d/%2$d phần chưa được chuyển thành văn bản. Âm thanh đã được lưu: nhấn \"Thử lại\".</string>
+    <string name="copy_cleaned">Sao chép văn bản đã chỉnh sửa</string>
+    <string name="copy_raw">Sao chép bản ghi gốc</string>
+    <string name="retry_transcription">Thử chuyển văn bản lại</string>
+    <string name="retry_cleanup">Thử chỉnh sửa lại</string>
+    <string name="redo_cleanup">Chỉnh sửa lại</string>
+    <string name="working_background">Đang xử lý trong nền…</string>
+    <string name="delete_confirm">Xóa bản đọc này?</string>
+    <string name="delete_confirm_audio">Xóa bản đọc này và âm thanh đã lưu?</string>
+    <string name="copied">Đã sao chép (%1$d ký tự)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">Trước khi bạn bật VitalySpeak</string>
+    <string name="disclosure_uses_title">Vì sao VitalySpeak dùng dịch vụ Hỗ trợ tiếp cận</string>
+    <string name="disclosure_uses">VitalySpeak là công cụ đọc chính tả. Ứng dụng dùng API Hỗ trợ tiếp cận của Android để:\n\n• hiển thị nút micrô nổi trên các ứng dụng khác;\n• nhận biết khi một ô văn bản đang hoạt động, để nút chỉ hiện khi bạn nhập;\n• chèn văn bản bạn đọc vào ô đó;\n• tùy chọn, cho phép nút giảm âm lượng hoặc nút tai nghe đánh dấu một lệnh nói khi ghi âm.</string>
+    <string name="disclosure_never_title">Những gì ứng dụng không bao giờ làm</string>
+    <string name="disclosure_never">VitalySpeak không đọc, lưu hay gửi nội dung trên màn hình của bạn hoặc của ứng dụng khác. Ứng dụng không ghi lại thao tác gõ phím, không thay bạn thực hiện hành động nào, và không có quảng cáo hay phân tích.</string>
+    <string name="disclosure_data_title">Bản ghi âm của bạn</string>
+    <string name="disclosure_data">Micrô chỉ được dùng sau khi bạn nhấn nút. Bản ghi âm được gửi đến Groq, Inc. bằng khóa API của chính bạn để chuyển thành văn bản và (nếu bật chỉnh sửa bằng AI) chỉnh sửa, rồi văn bản được gửi về điện thoại của bạn. Không có gì được gửi cho nhà phát triển. Bản ghi âm bị xóa khỏi điện thoại sau khi chuyển thành văn bản, trừ khi bạn chọn giữ lại; lịch sử văn bản vẫn ở trên điện thoại cho đến khi bạn xóa.</string>
+    <string name="disclosure_policy_link">Đọc chính sách quyền riêng tư</string>
+    <string name="disclosure_agree">Tôi đồng ý, mở cài đặt</string>
+    <string name="disclosure_decline">Để sau</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">Micrô VitalySpeak. Nhấn để bắt đầu hoặc dừng đọc chính tả, nhấn giữ để mở ứng dụng.</string>
+    <string name="cmd_start">⌘ Lệnh</string>
+    <string name="cmd_end">■ Kết thúc lệnh</string>
+    <string name="cmd_hint">⌘ Nói điều AI cần làm</string>
+    <string name="btn_cancel">✕ Hủy</string>
+    <string name="btn_screen_off">☾ Tắt màn hình</string>
+    <string name="pocket_title">Vẫn đang ghi âm</string>
+    <string name="pocket_countdown">Màn hình tối sau %1$d…</string>
+    <string name="pocket_continues">Nhấn đúp hoặc nhấn nút nguồn để quay lại</string>
+    <string name="pocket_recording">Đang ghi âm · %1$s</string>
+    <string name="dot_size_toast">Kích thước nút %1$d%%</string>
+    <string name="listening">Đang nghe…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">Cho phép truy cập micrô trong ứng dụng VitalySpeak</string>
+    <string name="err_mic_busy">Micrô đang được một ứng dụng khác sử dụng</string>
+    <string name="err_no_key">Thêm khóa API Groq trong ứng dụng VitalySpeak</string>
+    <string name="err_storage_full">Bộ nhớ điện thoại gần đầy nên không thể ghi âm an toàn</string>
+    <string name="err_storage_write">Lỗi bộ nhớ. Đang chuyển phần đã lưu thành văn bản.</string>
+    <string name="err_no_audio">Không ghi được âm thanh nào</string>
+    <string name="err_transcribe_kept">Không kết nối được Groq cho %1$d phần. Bản ghi âm đã được lưu: mở VitalySpeak, Lịch sử để thử lại.</string>
+    <string name="err_retry_failed">Vẫn chưa chuyển được %1$d phần thành văn bản. Đã giữ lại để thử lần sau.</string>
+    <string name="stop_max_length">Đã đạt 4 giờ. Đang chuyển toàn bộ thành văn bản.</string>
+    <string name="stop_low_storage">Bộ nhớ gần đầy. Đang chuyển toàn bộ thành văn bản.</string>
+    <string name="cancelled">Đã hủy. Không có gì được gửi đi.</string>
+    <string name="finishing_parts">Đang hoàn tất %1$d/%2$d phần…</string>
+    <string name="no_speech">Không phát hiện giọng nói</string>
+    <string name="groq_busy">Groq đang bận. Hoàn tất sau %1$d giây…</string>
+    <string name="cleanup_partial">Đã bỏ qua chỉnh sửa cho %1$d phần. Văn bản gốc được giữ nguyên ở đó.</string>
+    <string name="applying_commands">Đang áp dụng lệnh của bạn…</string>
+    <string name="commands_partial">Không áp dụng được một số lệnh. Các lệnh đó được liệt kê ở cuối.</string>
+    <string name="not_applied">chưa áp dụng</string>
+    <string name="saved_to_history">Đã lưu vào Lịch sử</string>
+    <string name="copied_to_clipboard">Không tìm thấy ô văn bản. Văn bản đã có trong bảng nhớ tạm.</string>
+    <string name="cleanup_failed_again">Chỉnh sửa lại thất bại. Văn bản gốc vẫn được lưu.</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">Cảnh báo thiết lập</string>
+    <string name="notif_off_title">VitalySpeak đã bị tắt</string>
+    <string name="notif_off_text">Android đã tắt dịch vụ Hỗ trợ tiếp cận của ứng dụng. Nhấn để bật lại.</string>
+</resources>

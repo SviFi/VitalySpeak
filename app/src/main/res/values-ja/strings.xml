@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">VitalySpeak は、入力中にフローティングのマイクボタンを表示します。ボタンをタップして話すと、音声が文字に変換され、入力中のフィールドに挿入されます。VitalySpeak がこのサービスを使うのは、ボタンの表示、テキストフィールドの使用状況の検出、音声入力したテキストの挿入、および（任意で）録音中に音量ダウンボタンをコマンドキーとして使うためだけです。画面の内容を読み取ったり、収集・共有したりすることはありません。</string>
+
+    <!-- Common -->
+    <string name="back">戻る</string>
+    <string name="save">保存</string>
+    <string name="use">使用</string>
+    <string name="close">閉じる</string>
+    <string name="copy">コピー</string>
+    <string name="delete">削除</string>
+    <string name="reset">リセット</string>
+    <string name="default_value">デフォルト</string>
+    <string name="not_now">後で</string>
+    <string name="open_settings">設定を開く</string>
+    <string name="no_browser">ブラウザが見つかりません</string>
+    <string name="status_ok">完了</string>
+    <string name="status_missing">未設定</string>
+    <string name="status_recommended">推奨</string>
+
+    <!-- Home: status -->
+    <string name="status">ステータス</string>
+    <string name="status_ready">準備完了です。任意のアプリでキーボードを開き、マイクボタンをタップしてください。</string>
+    <string name="status_incomplete">セットアップが完了していません: %1$s。下記をご確認ください。</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">履歴</string>
+    <string name="sec_setup">セットアップ</string>
+    <string name="sec_languages">言語</string>
+    <string name="sec_dictation">音声入力</string>
+    <string name="sec_cleanup">AI 整形</string>
+    <string name="sec_models">モデル</string>
+    <string name="sec_appearance">表示</string>
+    <string name="sec_usage">Groq の使用量（推定）</string>
+    <string name="sec_about">アプリについて</string>
+
+    <!-- History row -->
+    <string name="history_row">すべての音声入力</string>
+    <string name="history_needs_service">履歴を表示するには、ユーザー補助サービスをオンにしてください。</string>
+    <string name="history_empty">音声入力はまだありません。</string>
+    <plurals name="history_count">
+        <item quantity="other">%d 件の音声入力</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="other">未変換の録音が %1$d 件あります。タップして再試行（合計 %2$d 件）。</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">マイク</string>
+    <string name="mic_ok">許可済み</string>
+    <string name="mic_missing">タップしてマイクへのアクセスを許可</string>
+    <string name="setup_access">ユーザー補助サービス</string>
+    <string name="access_ok">オン（実行中）</string>
+    <string name="access_stuck">オンですが実行されていません。タップして、一度オフにしてから再度オンにしてください。</string>
+    <string name="access_off">オフ。タップしてオンにします。</string>
+    <string name="access_help">Android で VitalySpeak のユーザー補助ページが開きます。\n\n1.「VitalySpeak」をオンにします。\n2.「許可」で確定します。\n3. 戻ります。ここに緑のチェックマークが表示されます。\n\nユーザー補助の一覧が表示された場合は、「インストール済みアプリ」（または「ダウンロードしたアプリ」）を開き、VitalySpeak を選択してください。\n\nスイッチがグレー表示（「制限付き設定」）の場合: 設定 → アプリ → VitalySpeak を開き、⋮ メニューから「制限付き設定を許可」を選択してから、もう一度お試しください。</string>
+    <string name="access_help_running">サービスはオンで実行中です。設定ページを開きます。</string>
+    <string name="setup_key">Groq API キー</string>
+    <string name="key_missing">タップしてキーを追加します。キーは console.groq.com で無料で作成できます。</string>
+    <string name="key_help">VitalySpeak はご自身のキーを使って録音を Groq に送信します。キーはこのスマートフォンにのみ保存されます。</string>
+    <string name="get_key">キーを取得</string>
+    <string name="key_first">先に Groq API キーを追加してください</string>
+    <string name="setup_battery">バッテリー: 制限なし</string>
+    <string name="battery_ok">Android が VitalySpeak をスリープさせることはありません</string>
+    <string name="battery_missing">推奨: Android がバックグラウンドで VitalySpeak を一時停止しないようにします</string>
+    <string name="battery_ok_help">すでに制限なしに設定されています。Samsung のスマートフォンでは、設定 → バッテリー → バックグラウンドでの使用制限 も確認してください。VitalySpeak が「スリープ中のアプリ」や「ディープスリープ中のアプリ」に含まれていないようにする必要があります。</string>
+    <string name="setup_alerts">セットアップの通知</string>
+    <string name="alerts_ok">Android が VitalySpeak をオフにした場合に通知されます</string>
+    <string name="alerts_missing">推奨: Android が VitalySpeak をオフにしたときに通知を受け取ります</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">話す言語</string>
+    <string name="app_language">アプリの言語</string>
+    <string name="app_language_system">スマートフォンと同じ</string>
+    <string name="app_language_service">フローティングボタンの言語は、次回サービスが起動したときに切り替わります。</string>
+    <string name="languages_intro">音声入力で使う言語を選択してください。最もよく使う言語を先頭にし、混ぜて話す言語があれば追加します。アプリ自体の表示言語は変わりません。</string>
+    <string name="languages_yours">あなたの言語</string>
+    <string name="languages_primary">メイン</string>
+    <string name="languages_primary_sub">音声が不明瞭なときに使用されます</string>
+    <string name="languages_make_primary">タップしてメインに設定</string>
+    <string name="languages_remove">%1$s を削除</string>
+    <string name="languages_add">言語を追加</string>
+    <string name="languages_search">言語を検索</string>
+    <string name="languages_why_title">設定が重要な理由</string>
+    <string name="languages_why">音声認識は約 100 の言語に対応しています。言語を推測させると、間違った言語を選ぶことがあります。強いなまりや短いフレーズが、別の言語として認識されたり、翻訳されたりする場合があります。\n\n• 1 つの言語を選択すると、認識エンジンに何を想定すべきかが正確に伝わります。最も正確で高速な方法です。\n• 複数の言語を選択すると、VitalySpeak は認識された言語を確認します。あなたの言語でない場合、その部分をメイン言語で再度文字起こしします。\n• 選択した言語は AI 整形にも渡されるため、文の途中で言語を切り替えても、話したとおりの言語が保たれ、翻訳されることはありません。\n\n実際に使う言語だけを追加してください。</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">入力中のみボタンを表示</string>
+    <string name="only_while_typing_sub">テキストフィールドがアクティブなときにボタンが表示されます。長押しするとこの画面が開きます。</string>
+    <string name="live_preview">ライブプレビュー</string>
+    <string name="live_preview_sub">話している言葉をボタンの横に表示します（Groq への短いリクエストが追加で発生します）</string>
+    <string name="vocabulary">語彙</string>
+    <string name="vocabulary_none">なし</string>
+    <string name="vocabulary_hint">名前、製品名、用語…</string>
+    <string name="vocabulary_help">よく使う名前や用語をカンマ区切りで入力します。AI 整形は、実際にその言葉を話した箇所に限り、つづりの修正に使用します。</string>
+    <string name="command_keys">音量ダウンでコマンド</string>
+    <string name="command_keys_sub">録音中に音量ダウンまたはヘッドセットのボタンで ⌘ コマンドを開始・終了します。テキストではなく AI への指示になります</string>
+    <string name="keep_audio">音声を保持</string>
+    <string name="keep_audio_sub">オフ: 録音は文字起こし後に削除されます。オン: このスマートフォンに保存されます（1 時間あたり約 115 MB）。</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">AI 整形</string>
+    <string name="cleanup_sub">フィラーを削除し、句読点や認識の誤りを修正します</string>
+    <string name="style_standard">ナチュラル</string>
+    <string name="style_standard_sub">あなたの言葉のまま整えます</string>
+    <string name="style_formal">洗練</string>
+    <string name="style_formal_sub">完全な文、ビジネス向けの文体</string>
+    <string name="style_notes">メモ</string>
+    <string name="style_notes_sub">短い見出しと箇条書き</string>
+    <string name="style_custom">カスタム</string>
+    <string name="style_custom_sub">独自の指示</string>
+    <string name="custom_instructions">カスタム指示</string>
+    <string name="custom_instructions_empty">タップして指示を入力</string>
+    <string name="custom_hint">例: 短い段落で書く。イギリス英語のつづりを使う。</string>
+    <string name="custom_help">基本の整形ルール（言語を保持、フィラーを削除、内容を追加しない）に追加されます。</string>
+
+    <!-- Models -->
+    <string name="model_stt">音声認識</string>
+    <string name="model_llm">整形モデル</string>
+    <string name="model_stable">安定版</string>
+    <string name="model_preview">プレビュー版</string>
+    <string name="model_other">その他…（モデル ID を入力）</string>
+    <string name="model_id">モデル ID</string>
+    <string name="check_updates">新しいモデルとアップデートを確認</string>
+    <string name="checking">確認中…</string>
+    <string name="never_checked">未確認</string>
+    <string name="last_checked">最終確認: %1$s</string>
+    <string name="check_failed">確認に失敗しました: %1$s</string>
+    <string name="all_up_to_date">すべて最新です</string>
+    <string name="alert_update">アプリのアップデートがあります</string>
+    <string name="alert_update_sub">%1$s。タップしてダウンロード。</string>
+    <string name="alert_stt_gone">音声モデルを利用できません</string>
+    <string name="alert_llm_gone">整形モデルを利用できません</string>
+    <string name="alert_gone_fix">%1$s はお使いのキーで利用できなくなりました。タップして %2$s に切り替えます。</string>
+    <string name="alert_gone_pick">%1$s はお使いのキーで利用できなくなりました。タップして別のモデルを選択してください。</string>
+    <string name="alert_switched">モデルを切り替えました</string>
+    <string name="alert_switched_sub">現在: %1$s（以前: %2$s）。タップして元に戻します。</string>
+    <string name="alert_upgrade">新しいモデルがあります</string>
+    <string name="alert_recommended">推奨モデル</string>
+    <plurals name="alert_new_models">
+        <item quantity="other">Groq の新しいモデル %d 件</item>
+    </plurals>
+    <string name="upgrade_title">%1$s に切り替えますか？</string>
+    <string name="upgrade_text">現在: %1$s（%2$s）\n新規: %3$s（%4$s）</string>
+    <string name="upgrade_same_line">同じモデルファミリーの新しいバージョンです。</string>
+    <string name="upgrade_other_line">別のモデルファミリーです。新しいほど良いとは限らないため、何回か音声入力を試してみてください。ワンタップで元に戻せます。</string>
+    <string name="switch_model">切り替え</string>
+    <string name="dont_suggest">今後表示しない</string>
+
+    <!-- Appearance -->
+    <string name="look">外観とアニメーション</string>
+    <string name="look_sub">ボタンのサイズ、声への反応、波、色</string>
+    <string name="look_dot">ボタン</string>
+    <string name="dot_size">サイズ</string>
+    <string name="dot_size_sub">ボタンを 2 本の指でピンチして変更することもできます</string>
+    <string name="look_animation">録音中のアニメーション</string>
+    <string name="reaction">声への反応</string>
+    <string name="reaction_sub">声に合わせて形がどれだけ大きく動くか</string>
+    <string name="reaction_calm">穏やか</string>
+    <string name="reaction_lively">活発</string>
+    <string name="reaction_wild">激しい</string>
+    <string name="wave_speed">波の速さ</string>
+    <string name="wave_speed_sub">形が動く速さ</string>
+    <string name="wave_count">波の数</string>
+    <string name="wave_count_sub">形の周りを流れる波紋の数</string>
+    <string name="look_colours">色</string>
+    <string name="colour_front">前面レイヤー</string>
+    <string name="colour_front_sub">録音中の最上位レイヤー</string>
+    <string name="colour_middle">中間レイヤー</string>
+    <string name="colour_middle_sub">2 番目のレイヤー</string>
+    <string name="colour_back">背面レイヤー</string>
+    <string name="colour_back_sub">3 番目のレイヤー</string>
+    <string name="colour_ring">アクセントリング</string>
+    <string name="colour_ring_sub">ボタンとプレビューの吹き出しの周り</string>
+    <string name="not_a_colour">有効な色ではありません</string>
+    <string name="reset_defaults">デフォルトに戻す</string>
+    <string name="reset_confirm">サイズ、アニメーション、色をリセットしますか？</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">今日のリクエスト: %1$d / %2$d</string>
+    <string name="usage_tokens">この 1 分間のトークン: %1$d / %2$d</string>
+    <string name="usage_audio">今日の音声（このスマートフォンで集計）: %1$d 分（1 日の無料上限 %2$d 時間）</string>
+    <string name="usage_console">プランと請求</string>
+    <string name="usage_console_sub">Groq コンソールを開く</string>
+    <string name="usage_none">最初の音声入力の後に表示されます。タップして Groq コンソールを開きます。</string>
+    <string name="usage_warn_requests">Groq: %2$s の今日のリクエストを %1$d%% 使用しました</string>
+    <string name="usage_warn_audio">Groq: %2$s の今日の無料音声枠を約 %1$d%% 使用しました</string>
+
+    <!-- Stats -->
+    <string name="stats_title">あなたの音声入力</string>
+    <string name="stats_spoken">話した時間</string>
+    <string name="stats_words">単語</string>
+    <string name="stats_dictations">音声入力</string>
+    <string name="stats_average">平均</string>
+    <string name="stats_longest">最長</string>
+    <string name="stats_streak">日連続</string>
+    <string name="stats_wpm">あなたは 1 分間に約 %1$d 語話します。スマートフォンでの入力より約 %2$d× 速いペースです。</string>
+    <string name="stats_chart">過去 14 日間（分）</string>
+
+    <!-- About -->
+    <string name="diagnostics">診断</string>
+    <string name="diagnostics_sub">トラブルシューティング用の、直近の音声入力、エラー、サービスのイベント</string>
+    <string name="privacy_policy">プライバシー ポリシー</string>
+    <string name="terms">利用規約</string>
+    <string name="licenses">オープンソース ライセンス</string>
+    <string name="licenses_text">VitalySpeak は、Apache License 2.0 に基づく以下のオープンソース ライブラリを使用しています:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nライセンス全文: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">バージョン</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">音声入力を検索</string>
+    <string name="history_no_match">「%1$s」に一致する項目はありません。</string>
+    <string name="state_done">完了</string>
+    <string name="state_raw">未整形</string>
+    <string name="state_pending">文字起こしが必要 · %1$d/%2$d</string>
+    <string name="state_recording">録音中</string>
+    <string name="audio_saved">音声を保存済み</string>
+    <string name="not_transcribed">（未変換）</string>
+    <string name="cleaned">整形済みテキスト</string>
+    <string name="cleaned_missing">整形されていません。「整形を再試行」をタップしてください。</string>
+    <string name="raw">元の文字起こし</string>
+    <string name="raw_missing">%2$d 件中 %1$d 件の部分がまだ文字起こしされていません。音声は保存されています。「再試行」をタップしてください。</string>
+    <string name="copy_cleaned">整形済みテキストをコピー</string>
+    <string name="copy_raw">元の文字起こしをコピー</string>
+    <string name="retry_transcription">文字起こしを再試行</string>
+    <string name="retry_cleanup">整形を再試行</string>
+    <string name="redo_cleanup">もう一度整形</string>
+    <string name="working_background">バックグラウンドで処理中…</string>
+    <string name="delete_confirm">この音声入力を削除しますか？</string>
+    <string name="delete_confirm_audio">この音声入力と保存された音声を削除しますか？</string>
+    <string name="copied">コピーしました（%1$d 文字）</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">VitalySpeak をオンにする前に</string>
+    <string name="disclosure_uses_title">VitalySpeak がユーザー補助サービスを使う理由</string>
+    <string name="disclosure_uses">VitalySpeak は音声入力ツールです。Android のユーザー補助 API を次の目的で使用します:\n\n• 他のアプリの上にフローティングのマイクボタンを表示する\n• テキストフィールドがアクティブになったことを検出し、入力中にのみボタンを表示する\n• 音声入力したテキストをそのフィールドに挿入する\n• （任意）録音中に音量ダウンまたはヘッドセットのボタンで音声コマンドを区切る</string>
+    <string name="disclosure_never_title">決して行わないこと</string>
+    <string name="disclosure_never">VitalySpeak は、画面や他のアプリの内容を読み取ったり、保存・送信したりすることはありません。キー入力の記録や、ユーザーに代わっての操作も行いません。広告や分析ツールもありません。</string>
+    <string name="disclosure_data_title">あなたの録音</string>
+    <string name="disclosure_data">マイクはボタンをタップした後にのみ使用されます。録音はご自身の API キーで Groq, Inc. に送信され、文字起こしと（AI 整形がオンの場合）整形が行われ、テキストがスマートフォンに返されます。開発者には何も送信されません。録音は、保持を選択しない限り文字起こし後にスマートフォンから削除されます。テキストの履歴は、削除するまでスマートフォンに残ります。</string>
+    <string name="disclosure_policy_link">プライバシー ポリシーを読む</string>
+    <string name="disclosure_agree">同意して設定を開く</string>
+    <string name="disclosure_decline">後で</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">VitalySpeak マイク。タップで音声入力を開始・停止、長押しでアプリを開きます。</string>
+    <string name="cmd_start">⌘ コマンド</string>
+    <string name="cmd_end">■ コマンド終了</string>
+    <string name="cmd_hint">⌘ AI への指示を話してください</string>
+    <string name="btn_cancel">✕ キャンセル</string>
+    <string name="btn_screen_off">☾ 画面オフ</string>
+    <string name="pocket_title">録音を継続中</string>
+    <string name="pocket_countdown">%1$d 秒後に画面が暗くなります…</string>
+    <string name="pocket_continues">ダブルタップするか電源ボタンを押すと戻ります</string>
+    <string name="pocket_recording">録音中 · %1$s</string>
+    <string name="dot_size_toast">ボタンのサイズ %1$d%%</string>
+    <string name="listening">聞き取り中…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">VitalySpeak アプリでマイクへのアクセスを許可してください</string>
+    <string name="err_mic_busy">マイクは別のアプリで使用中です</string>
+    <string name="err_no_key">VitalySpeak アプリで Groq API キーを追加してください</string>
+    <string name="err_storage_full">スマートフォンのストレージがほぼいっぱいのため、録音を安全に続けられません</string>
+    <string name="err_storage_write">ストレージエラーです。保存された部分を文字起こしします。</string>
+    <string name="err_no_audio">音声が録音されませんでした</string>
+    <string name="err_transcribe_kept">%1$d 件の部分で Groq に接続できませんでした。録音は保存されています。VitalySpeak の［履歴］から再試行してください。</string>
+    <string name="err_retry_failed">%1$d 件の部分をまだ文字起こしできませんでした。再試行用に保存されています。</string>
+    <string name="stop_max_length">4 時間に達しました。すべてを文字起こしします。</string>
+    <string name="stop_low_storage">ストレージがほぼいっぱいです。すべてを文字起こしします。</string>
+    <string name="cancelled">キャンセルしました。何も送信されていません。</string>
+    <string name="finishing_parts">%2$d 件中 %1$d 件の部分を処理中…</string>
+    <string name="no_speech">音声が検出されませんでした</string>
+    <string name="groq_busy">Groq が混み合っています。%1$d 秒後に完了します…</string>
+    <string name="cleanup_partial">%1$d 件の部分で整形をスキップしました。その部分は元のテキストのままです。</string>
+    <string name="applying_commands">コマンドを適用中…</string>
+    <string name="commands_partial">一部のコマンドを適用できませんでした。末尾に一覧表示されています。</string>
+    <string name="not_applied">未適用</string>
+    <string name="saved_to_history">履歴に保存しました</string>
+    <string name="copied_to_clipboard">テキストフィールドが見つかりません。テキストはクリップボードにあります。</string>
+    <string name="cleanup_failed_again">整形に再度失敗しました。元のテキストは保存されています。</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">セットアップの通知</string>
+    <string name="notif_off_title">VitalySpeak がオフになっています</string>
+    <string name="notif_off_text">Android がユーザー補助サービスをオフにしました。タップして再度オンにしてください。</string>
+</resources>

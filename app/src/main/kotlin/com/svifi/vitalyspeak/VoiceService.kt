@@ -127,10 +127,10 @@ class VoiceService : AccessibilityService(), Overlay.Callbacks {
     val log = ArrayDeque<String>()
     private val clock = SimpleDateFormat("HH:mm:ss", Locale.US)
 
-    fun note(msg: String) = main.post {
+    fun note(msg: String) { main.post {
         log.addFirst("${clock.format(Date())} $msg")
         while (log.size > 15) log.removeLast()
-    }
+    } }
 
     @Volatile var lastRaw = ""
         private set
@@ -386,9 +386,11 @@ class VoiceService : AccessibilityService(), Overlay.Callbacks {
 
     // ================= commands =================
 
-    fun toggleCommand() = main.post {
-        if (state != State.RECORDING) return@post
-        val sess = session ?: return@post
+    fun toggleCommand() { main.post { toggleCommandNow() } }
+
+    private fun toggleCommandNow() {
+        if (state != State.RECORDING) return
+        val sess = session ?: return
         val from = commandFrom
         if (from == null) {
             commandFrom = audioPos()

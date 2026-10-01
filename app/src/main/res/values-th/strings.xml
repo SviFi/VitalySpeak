@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_description">VitalySpeak จะแสดงปุ่มไมโครโฟนแบบลอยขณะที่คุณพิมพ์ แตะปุ่มเพื่อพูดแทนการพิมพ์ เสียงพูดของคุณจะถูกถอดเป็นข้อความและใส่ลงในช่องที่คุณกำลังพิมพ์ VitalySpeak ใช้บริการนี้เพื่อแสดงปุ่ม ตรวจจับเมื่อมีการใช้ช่องข้อความ ใส่ข้อความที่คุณพูด และ (ไม่บังคับ) ใช้ปุ่มลดเสียงเป็นปุ่มคำสั่งขณะบันทึกเท่านั้น แอปจะไม่อ่าน เก็บ หรือแชร์เนื้อหาบนหน้าจอของคุณ</string>
+
+    <!-- Common -->
+    <string name="back">กลับ</string>
+    <string name="save">บันทึก</string>
+    <string name="use">ใช้</string>
+    <string name="close">ปิด</string>
+    <string name="copy">คัดลอก</string>
+    <string name="delete">ลบ</string>
+    <string name="reset">รีเซ็ต</string>
+    <string name="default_value">ค่าเริ่มต้น</string>
+    <string name="not_now">ไว้ทีหลัง</string>
+    <string name="open_settings">เปิดการตั้งค่า</string>
+    <string name="no_browser">ไม่พบเบราว์เซอร์</string>
+    <string name="status_ok">เรียบร้อย</string>
+    <string name="status_missing">ยังไม่ได้ตั้งค่า</string>
+    <string name="status_recommended">แนะนำ</string>
+
+    <!-- Home: status -->
+    <string name="status">สถานะ</string>
+    <string name="status_ready">พร้อมใช้งาน เปิดแป้นพิมพ์ในแอปใดก็ได้แล้วแตะปุ่มไมโครโฟน</string>
+    <string name="status_incomplete">ตั้งค่ายังไม่เสร็จ: %1$s ดูด้านล่าง</string>
+
+    <!-- Home: sections -->
+    <string name="sec_history">ประวัติ</string>
+    <string name="sec_setup">การตั้งค่าเริ่มต้น</string>
+    <string name="sec_languages">ภาษา</string>
+    <string name="sec_dictation">การพูดเป็นข้อความ</string>
+    <string name="sec_cleanup">เกลาข้อความด้วย AI</string>
+    <string name="sec_models">โมเดล</string>
+    <string name="sec_appearance">รูปลักษณ์</string>
+    <string name="sec_usage">การใช้งาน Groq (โดยประมาณ)</string>
+    <string name="sec_about">เกี่ยวกับ</string>
+
+    <!-- History row -->
+    <string name="history_row">รายการพูดทั้งหมด</string>
+    <string name="history_needs_service">เปิดบริการการช่วยเหลือพิเศษเพื่อดูประวัติของคุณ</string>
+    <string name="history_empty">ยังไม่มีรายการพูด</string>
+    <plurals name="history_count">
+        <item quantity="other">%d รายการ</item>
+    </plurals>
+    <plurals name="history_pending">
+        <item quantity="other">มี %1$d รายการบันทึกเสียงที่ยังไม่ได้ถอดเป็นข้อความ แตะเพื่อลองอีกครั้ง (ทั้งหมด %2$d)</item>
+    </plurals>
+
+    <!-- Setup -->
+    <string name="setup_mic">ไมโครโฟน</string>
+    <string name="mic_ok">อนุญาตแล้ว</string>
+    <string name="mic_missing">แตะเพื่ออนุญาตให้เข้าถึงไมโครโฟน</string>
+    <string name="setup_access">บริการการช่วยเหลือพิเศษ</string>
+    <string name="access_ok">เปิดอยู่และทำงานแล้ว</string>
+    <string name="access_stuck">เปิดอยู่แต่ไม่ทำงาน แตะ แล้วปิดและเปิดใหม่อีกครั้ง</string>
+    <string name="access_off">ปิดอยู่ แตะเพื่อเปิด</string>
+    <string name="access_help">Android จะเปิดหน้าการช่วยเหลือพิเศษของ VitalySpeak\n\n1. เปิด \"VitalySpeak\"\n2. ยืนยันด้วย \"อนุญาต\"\n3. กลับมาที่นี่ คุณจะเห็นเครื่องหมายถูกสีเขียว\n\nหากเห็นรายการการช่วยเหลือพิเศษทั่วไปแทน ให้เปิด \"แอปที่ติดตั้ง\" (หรือ \"แอปที่ดาวน์โหลด\") แล้วเลือก VitalySpeak\n\nหากสวิตช์เป็นสีเทา (\"การตั้งค่าที่ถูกจำกัด\"): เปิดการตั้งค่า แอป VitalySpeak แตะเมนู ⋮ แล้วเลือก \"อนุญาตการตั้งค่าที่ถูกจำกัด\" จากนั้นลองอีกครั้ง</string>
+    <string name="access_help_running">บริการเปิดอยู่และทำงานแล้ว กำลังเปิดหน้าการตั้งค่า</string>
+    <string name="setup_key">คีย์ API ของ Groq</string>
+    <string name="key_missing">แตะเพื่อเพิ่มคีย์ของคุณ สร้างคีย์ได้ฟรีที่ console.groq.com</string>
+    <string name="key_help">VitalySpeak ส่งเสียงที่บันทึกไปยัง Groq โดยใช้คีย์ของคุณเอง คีย์จะเก็บไว้ในโทรศัพท์เครื่องนี้เท่านั้น</string>
+    <string name="get_key">รับคีย์</string>
+    <string name="key_first">เพิ่มคีย์ API ของ Groq ก่อน</string>
+    <string name="setup_battery">แบตเตอรี่: ไม่จำกัด</string>
+    <string name="battery_ok">Android จะไม่ทำให้ VitalySpeak เข้าสู่โหมดพัก</string>
+    <string name="battery_missing">แนะนำ: ป้องกันไม่ให้ Android หยุด VitalySpeak ชั่วคราวขณะทำงานเบื้องหลัง</string>
+    <string name="battery_ok_help">ไม่จำกัดอยู่แล้ว ในโทรศัพท์ Samsung ให้ตรวจสอบการตั้งค่า แบตเตอรี่ ขีดจำกัดการใช้งานพื้นหลังด้วย: VitalySpeak ต้องไม่อยู่ใน \"แอปที่อยู่ในโหมดพัก\" หรือ \"แอปที่อยู่ในโหมดพักลึก\"</string>
+    <string name="setup_alerts">การแจ้งเตือนการตั้งค่า</string>
+    <string name="alerts_ok">คุณจะได้รับแจ้งหาก Android ปิด VitalySpeak</string>
+    <string name="alerts_missing">แนะนำ: รับการแจ้งเตือนหาก Android ปิด VitalySpeak</string>
+
+    <!-- Languages -->
+    <string name="speech_languages">ภาษาที่คุณพูด</string>
+    <string name="app_language">ภาษาของแอป</string>
+    <string name="app_language_system">เหมือนกับโทรศัพท์</string>
+    <string name="app_language_service">ปุ่มลอยจะเปลี่ยนภาษาเมื่อบริการเริ่มทำงานครั้งถัดไป</string>
+    <string name="languages_intro">เลือกภาษาที่คุณใช้พูด วางภาษาที่ใช้บ่อยที่สุดไว้ลำดับแรก และเพิ่มภาษาอื่นที่คุณพูดปนด้วย การตั้งค่านี้ไม่เปลี่ยนภาษาของแอป</string>
+    <string name="languages_yours">ภาษาของคุณ</string>
+    <string name="languages_primary">หลัก</string>
+    <string name="languages_primary_sub">ใช้เมื่อเสียงพูดไม่ชัดเจน</string>
+    <string name="languages_make_primary">แตะเพื่อตั้งเป็นภาษาหลัก</string>
+    <string name="languages_remove">นำ %1$s ออก</string>
+    <string name="languages_add">เพิ่มภาษา</string>
+    <string name="languages_search">ค้นหาภาษา</string>
+    <string name="languages_why_title">ทำไมเรื่องนี้จึงสำคัญ</string>
+    <string name="languages_why">ระบบรู้จำเสียงพูดรู้จักประมาณ 100 ภาษา หากปล่อยให้เดาเอง บางครั้งระบบจะเลือกภาษาผิด สำเนียงที่ชัดมากหรือวลีสั้นๆ อาจออกมาเป็นภาษาอื่น หรือถูกแปลไป\n\n• เมื่อเลือกภาษาเดียว ระบบจะรู้แน่ชัดว่าควรคาดหวังอะไร ซึ่งเป็นตัวเลือกที่แม่นยำและเร็วที่สุด\n• เมื่อเลือกหลายภาษา VitalySpeak จะตรวจสอบว่ารู้จำได้เป็นภาษาใด หากไม่ใช่ภาษาของคุณ ส่วนนั้นจะถูกถอดเป็นข้อความใหม่ด้วยภาษาหลักของคุณ\n• ภาษาของคุณจะถูกส่งต่อไปยังการเกลาข้อความด้วย AI ด้วย เพื่อให้ทุกภาษายังคงเหมือนที่คุณพูดทุกประการ แม้คุณจะสลับภาษากลางประโยค และจะไม่แปลเด็ดขาด\n\nดังนั้นให้เพิ่มเฉพาะภาษาที่คุณใช้จริงเท่านั้น</string>
+
+    <!-- Dictation -->
+    <string name="only_while_typing">แสดงปุ่มเฉพาะขณะพิมพ์</string>
+    <string name="only_while_typing_sub">ปุ่มจะปรากฏเมื่อช่องข้อความทำงานอยู่ กดค้างที่ปุ่มเพื่อเปิดหน้าจอนี้</string>
+    <string name="live_preview">แสดงตัวอย่างสด</string>
+    <string name="live_preview_sub">แสดงคำพูดของคุณข้างปุ่มขณะพูด (ส่งคำขอสั้นๆ เพิ่มเติมไปยัง Groq)</string>
+    <string name="vocabulary">คำศัพท์</string>
+    <string name="vocabulary_none">ไม่มี</string>
+    <string name="vocabulary_hint">ชื่อ ผลิตภัณฑ์ คำเฉพาะ…</string>
+    <string name="vocabulary_help">ชื่อและคำเฉพาะที่คุณใช้ คั่นด้วยเครื่องหมายจุลภาค การเกลาข้อความด้วย AI จะใช้คำเหล่านี้แก้การสะกด เฉพาะในจุดที่คุณพูดคำนั้นจริงๆ</string>
+    <string name="command_keys">ปุ่มลดเสียงสำหรับคำสั่ง</string>
+    <string name="command_keys_sub">ขณะบันทึก ปุ่มลดเสียงหรือปุ่มบนหูฟังจะเริ่มและจบคำสั่ง ⌘ ซึ่งเป็นคำสั่งสำหรับ AI แทนที่จะเป็นข้อความ</string>
+    <string name="keep_audio">เก็บไฟล์เสียง</string>
+    <string name="keep_audio_sub">ปิด: ลบเสียงที่บันทึกหลังถอดเป็นข้อความแล้ว เปิด: เก็บไว้ในโทรศัพท์เครื่องนี้ (ประมาณ 115 MB ต่อชั่วโมง)</string>
+
+    <!-- Cleanup -->
+    <string name="cleanup">เกลาข้อความด้วย AI</string>
+    <string name="cleanup_sub">ตัดคำฟุ่มเฟือย แก้เครื่องหมายวรรคตอนและข้อผิดพลาดในการรู้จำ</string>
+    <string name="style_standard">เป็นธรรมชาติ</string>
+    <string name="style_standard_sub">คำพูดของคุณเอง แบบเรียบร้อยขึ้น</string>
+    <string name="style_formal">สละสลวย</string>
+    <string name="style_formal_sub">ประโยคสมบูรณ์ น้ำเสียงเป็นทางการ</string>
+    <string name="style_notes">บันทึกย่อ</string>
+    <string name="style_notes_sub">หัวข้อสั้นๆ และหัวข้อย่อย</string>
+    <string name="style_custom">กำหนดเอง</string>
+    <string name="style_custom_sub">คำแนะนำของคุณเอง</string>
+    <string name="custom_instructions">คำแนะนำที่กำหนดเอง</string>
+    <string name="custom_instructions_empty">แตะเพื่อเขียนคำแนะนำ</string>
+    <string name="custom_hint">ตัวอย่าง: เขียนเป็นย่อหน้าสั้นๆ ใช้การสะกดแบบอังกฤษ</string>
+    <string name="custom_help">เพิ่มต่อจากกฎการเกลาข้อความพื้นฐาน (คงภาษาของคุณไว้ ตัดคำฟุ่มเฟือย ไม่เพิ่มเนื้อหาใดๆ)</string>
+
+    <!-- Models -->
+    <string name="model_stt">การรู้จำเสียงพูด</string>
+    <string name="model_llm">โมเดลเกลาข้อความ</string>
+    <string name="model_stable">เสถียร</string>
+    <string name="model_preview">ตัวอย่าง</string>
+    <string name="model_other">อื่นๆ… (ป้อน ID โมเดล)</string>
+    <string name="model_id">ID โมเดล</string>
+    <string name="check_updates">ตรวจหาโมเดลใหม่และอัปเดต</string>
+    <string name="checking">กำลังตรวจสอบ…</string>
+    <string name="never_checked">ยังไม่เคยตรวจสอบ</string>
+    <string name="last_checked">ตรวจสอบล่าสุด %1$s</string>
+    <string name="check_failed">ตรวจสอบไม่สำเร็จ: %1$s</string>
+    <string name="all_up_to_date">ทุกอย่างเป็นเวอร์ชันล่าสุดแล้ว</string>
+    <string name="alert_update">มีอัปเดตแอป</string>
+    <string name="alert_update_sub">%1$s แตะเพื่อดาวน์โหลด</string>
+    <string name="alert_stt_gone">โมเดลเสียงพูดใช้งานไม่ได้</string>
+    <string name="alert_llm_gone">โมเดลเกลาข้อความใช้งานไม่ได้</string>
+    <string name="alert_gone_fix">%1$s ใช้กับคีย์ของคุณไม่ได้อีกต่อไป แตะเพื่อเปลี่ยนเป็น %2$s</string>
+    <string name="alert_gone_pick">%1$s ใช้กับคีย์ของคุณไม่ได้อีกต่อไป แตะเพื่อเลือกโมเดลอื่น</string>
+    <string name="alert_switched">เปลี่ยนโมเดลแล้ว</string>
+    <string name="alert_switched_sub">ตอนนี้ใช้ %1$s (เดิม %2$s) แตะเพื่อเลิกทำ</string>
+    <string name="alert_upgrade">มีโมเดลที่ใหม่กว่า</string>
+    <string name="alert_recommended">โมเดลที่แนะนำ</string>
+    <plurals name="alert_new_models">
+        <item quantity="other">โมเดล Groq ใหม่ %d รายการ</item>
+    </plurals>
+    <string name="upgrade_title">เปลี่ยนเป็น %1$s ไหม</string>
+    <string name="upgrade_text">ปัจจุบัน: %1$s (%2$s)\nใหม่: %3$s (%4$s)</string>
+    <string name="upgrade_same_line">โมเดลตระกูลเดียวกัน เวอร์ชันใหม่กว่า</string>
+    <string name="upgrade_other_line">เป็นโมเดลต่างตระกูล ใหม่กว่าไม่ได้แปลว่าดีกว่าเสมอไป ลองพูดดูสักสองสามครั้ง คุณเลิกทำได้ด้วยการแตะครั้งเดียว</string>
+    <string name="switch_model">เปลี่ยน</string>
+    <string name="dont_suggest">ไม่ต้องแนะนำ</string>
+
+    <!-- Appearance -->
+    <string name="look">รูปลักษณ์และภาพเคลื่อนไหว</string>
+    <string name="look_sub">ขนาดปุ่ม การตอบสนองต่อเสียง คลื่น สี</string>
+    <string name="look_dot">ปุ่ม</string>
+    <string name="dot_size">ขนาด</string>
+    <string name="dot_size_sub">คุณยังใช้สองนิ้วบีบปุ่มเพื่อปรับขนาดได้ด้วย</string>
+    <string name="look_animation">ภาพเคลื่อนไหวขณะบันทึก</string>
+    <string name="reaction">การตอบสนองต่อเสียง</string>
+    <string name="reaction_sub">รูปทรงเปลี่ยนตามเสียงของคุณมากน้อยเพียงใด</string>
+    <string name="reaction_calm">นุ่มนวล</string>
+    <string name="reaction_lively">มีชีวิตชีวา</string>
+    <string name="reaction_wild">จัดเต็ม</string>
+    <string name="wave_speed">ความเร็วคลื่น</string>
+    <string name="wave_speed_sub">รูปทรงเคลื่อนไหวเร็วแค่ไหน</string>
+    <string name="wave_count">คลื่น</string>
+    <string name="wave_count_sub">จำนวนระลอกคลื่นรอบรูปทรง</string>
+    <string name="look_colours">สี</string>
+    <string name="colour_front">ชั้นหน้า</string>
+    <string name="colour_front_sub">ชั้นบนสุดขณะบันทึก</string>
+    <string name="colour_middle">ชั้นกลาง</string>
+    <string name="colour_middle_sub">ชั้นที่สอง</string>
+    <string name="colour_back">ชั้นหลัง</string>
+    <string name="colour_back_sub">ชั้นที่สาม</string>
+    <string name="colour_ring">วงแหวนเน้น</string>
+    <string name="colour_ring_sub">รอบปุ่มและบับเบิลแสดงตัวอย่าง</string>
+    <string name="not_a_colour">สีไม่ถูกต้อง</string>
+    <string name="reset_defaults">รีเซ็ตเป็นค่าเริ่มต้น</string>
+    <string name="reset_confirm">รีเซ็ตขนาด ภาพเคลื่อนไหว และสีไหม</string>
+
+    <!-- Usage -->
+    <string name="usage_requests">คำขอวันนี้: %1$d จาก %2$d</string>
+    <string name="usage_tokens">โทเค็นในนาทีนี้: %1$d จาก %2$d</string>
+    <string name="usage_audio">เสียงวันนี้ (นับในโทรศัพท์เครื่องนี้): %1$d นาที จากโควตาฟรีรายวัน %2$d ชม.</string>
+    <string name="usage_console">แพ็กเกจและการเรียกเก็บเงิน</string>
+    <string name="usage_console_sub">เปิดคอนโซล Groq</string>
+    <string name="usage_none">จะแสดงหลังจากที่คุณพูดครั้งแรก แตะเพื่อเปิดคอนโซล Groq</string>
+    <string name="usage_warn_requests">Groq: ใช้คำขอของวันนี้สำหรับ %2$s ไปแล้ว %1$d%%</string>
+    <string name="usage_warn_audio">Groq: ใช้เสียงฟรีของวันนี้สำหรับ %2$s ไปแล้วประมาณ %1$d%%</string>
+
+    <!-- Stats -->
+    <string name="stats_title">สถิติการพูดของคุณ</string>
+    <string name="stats_spoken">เวลาพูด</string>
+    <string name="stats_words">คำ</string>
+    <string name="stats_dictations">รายการ</string>
+    <string name="stats_average">เฉลี่ย</string>
+    <string name="stats_longest">นานที่สุด</string>
+    <string name="stats_streak">วันติดต่อกัน</string>
+    <string name="stats_wpm">คุณพูดประมาณ %1$d คำต่อนาที เร็วกว่าการพิมพ์บนโทรศัพท์ราว %2$d×</string>
+    <string name="stats_chart">14 วันที่ผ่านมา (นาที)</string>
+
+    <!-- About -->
+    <string name="diagnostics">การวินิจฉัย</string>
+    <string name="diagnostics_sub">รายการพูดล่าสุด ข้อผิดพลาด และเหตุการณ์ของบริการ สำหรับการแก้ปัญหา</string>
+    <string name="privacy_policy">นโยบายความเป็นส่วนตัว</string>
+    <string name="terms">ข้อกำหนดการใช้งาน</string>
+    <string name="licenses">ใบอนุญาตโอเพนซอร์ส</string>
+    <string name="licenses_text">VitalySpeak ใช้ไลบรารีโอเพนซอร์สต่อไปนี้ ภายใต้ Apache License 2.0:\n\n• OkHttp (Square, Inc.)\n• AndroidX: AppCompat, Core (The Android Open Source Project)\n• Material Components for Android (Google LLC)\n\nข้อความใบอนุญาตฉบับเต็ม: apache.org/licenses/LICENSE-2.0</string>
+    <string name="version">เวอร์ชัน</string>
+    <string name="version_sub">%1$s</string>
+
+    <!-- History screen -->
+    <string name="history_search">ค้นหารายการพูด</string>
+    <string name="history_no_match">ไม่พบรายการที่ตรงกับ \"%1$s\"</string>
+    <string name="state_done">เรียบร้อย</string>
+    <string name="state_raw">ยังไม่ได้เกลา</string>
+    <string name="state_pending">ต้องถอดเป็นข้อความ · %1$d/%2$d</string>
+    <string name="state_recording">กำลังบันทึก</string>
+    <string name="audio_saved">บันทึกเสียงไว้แล้ว</string>
+    <string name="not_transcribed">(ยังไม่ได้ถอดเป็นข้อความ)</string>
+    <string name="cleaned">ข้อความที่เกลาแล้ว</string>
+    <string name="cleaned_missing">ยังไม่มีข้อความที่เกลา แตะ \"ลองเกลาอีกครั้ง\"</string>
+    <string name="raw">ข้อความถอดเสียงต้นฉบับ</string>
+    <string name="raw_missing">ยังไม่ได้ถอดเป็นข้อความ %1$d จาก %2$d ส่วน บันทึกเสียงไว้แล้ว: แตะ \"ลองอีกครั้ง\"</string>
+    <string name="copy_cleaned">คัดลอกข้อความที่เกลาแล้ว</string>
+    <string name="copy_raw">คัดลอกข้อความถอดเสียงต้นฉบับ</string>
+    <string name="retry_transcription">ลองถอดเป็นข้อความอีกครั้ง</string>
+    <string name="retry_cleanup">ลองเกลาอีกครั้ง</string>
+    <string name="redo_cleanup">เกลาใหม่</string>
+    <string name="working_background">กำลังทำงานเบื้องหลัง…</string>
+    <string name="delete_confirm">ลบรายการพูดนี้ไหม</string>
+    <string name="delete_confirm_audio">ลบรายการพูดนี้และเสียงที่บันทึกไว้ไหม</string>
+    <string name="copied">คัดลอกแล้ว (%1$d อักขระ)</string>
+
+    <!-- Disclosure -->
+    <string name="disclosure_title">ก่อนเปิดใช้ VitalySpeak</string>
+    <string name="disclosure_uses_title">ทำไม VitalySpeak จึงใช้บริการการช่วยเหลือพิเศษ</string>
+    <string name="disclosure_uses">VitalySpeak เป็นเครื่องมือพูดเป็นข้อความ แอปใช้ API การช่วยเหลือพิเศษของ Android เพื่อ:\n\n• แสดงปุ่มไมโครโฟนแบบลอยเหนือแอปอื่น\n• รู้ว่าเมื่อใดช่องข้อความทำงานอยู่ เพื่อให้ปุ่มปรากฏเฉพาะขณะคุณพิมพ์\n• ใส่ข้อความที่คุณพูดลงในช่องนั้น\n• (ไม่บังคับ) ให้ปุ่มลดเสียงหรือปุ่มบนหูฟังทำเครื่องหมายคำสั่งที่พูดขณะบันทึก</string>
+    <string name="disclosure_never_title">สิ่งที่แอปไม่ทำเด็ดขาด</string>
+    <string name="disclosure_never">VitalySpeak ไม่อ่าน เก็บ หรือส่งเนื้อหาบนหน้าจอของคุณหรือของแอปอื่น ไม่บันทึกการกดแป้นพิมพ์ ไม่ดำเนินการใดๆ แทนคุณ และไม่มีโฆษณาหรือการวิเคราะห์ข้อมูล</string>
+    <string name="disclosure_data_title">เสียงที่คุณบันทึก</string>
+    <string name="disclosure_data">ไมโครโฟนจะทำงานหลังจากที่คุณแตะปุ่มเท่านั้น เสียงที่บันทึกจะถูกส่งไปยัง Groq, Inc. ด้วยคีย์ API ของคุณเอง เพื่อถอดเป็นข้อความและ (หากเปิดการเกลาข้อความด้วย AI) เกลาข้อความ จากนั้นข้อความจะกลับมาที่โทรศัพท์ของคุณ ไม่มีข้อมูลใดส่งไปยังนักพัฒนา เสียงที่บันทึกจะถูกลบออกจากโทรศัพท์หลังถอดเป็นข้อความ เว้นแต่คุณเลือกเก็บไว้ ส่วนประวัติข้อความจะอยู่ในโทรศัพท์จนกว่าคุณจะลบ</string>
+    <string name="disclosure_policy_link">อ่านนโยบายความเป็นส่วนตัว</string>
+    <string name="disclosure_agree">ยอมรับและเปิดการตั้งค่า</string>
+    <string name="disclosure_decline">ไว้ทีหลัง</string>
+
+    <!-- Overlay -->
+    <string name="dot_description">ไมโครโฟน VitalySpeak แตะเพื่อเริ่มหรือหยุดพูดเป็นข้อความ กดค้างเพื่อเปิดแอป</string>
+    <string name="cmd_start">⌘ คำสั่ง</string>
+    <string name="cmd_end">■ จบคำสั่ง</string>
+    <string name="cmd_hint">⌘ บอกว่าต้องการให้ AI ทำอะไร</string>
+    <string name="btn_cancel">✕ ยกเลิก</string>
+    <string name="btn_screen_off">☾ ปิดหน้าจอ</string>
+    <string name="pocket_title">ยังคงบันทึกอยู่</string>
+    <string name="pocket_countdown">หน้าจอจะหรี่ใน %1$d…</string>
+    <string name="pocket_continues">แตะสองครั้งหรือกดปุ่มเปิด/ปิดเพื่อกลับมา</string>
+    <string name="pocket_recording">กำลังบันทึก · %1$s</string>
+    <string name="dot_size_toast">ขนาดปุ่ม %1$d%%</string>
+    <string name="listening">กำลังฟัง…</string>
+
+    <!-- Service messages -->
+    <string name="err_mic_permission">อนุญาตให้เข้าถึงไมโครโฟนในแอป VitalySpeak</string>
+    <string name="err_mic_busy">แอปอื่นกำลังใช้ไมโครโฟนอยู่</string>
+    <string name="err_no_key">เพิ่มคีย์ API ของ Groq ในแอป VitalySpeak</string>
+    <string name="err_storage_full">พื้นที่เก็บข้อมูลในโทรศัพท์ใกล้เต็ม จึงบันทึกเสียงได้ไม่ปลอดภัย</string>
+    <string name="err_storage_write">พื้นที่เก็บข้อมูลมีข้อผิดพลาด กำลังถอดส่วนที่บันทึกไว้เป็นข้อความ</string>
+    <string name="err_no_audio">ไม่ได้บันทึกเสียงใดๆ</string>
+    <string name="err_transcribe_kept">ติดต่อ Groq ไม่ได้สำหรับ %1$d ส่วน เสียงที่บันทึกยังเก็บไว้อยู่: เปิด VitalySpeak ประวัติ เพื่อลองอีกครั้ง</string>
+    <string name="err_retry_failed">ยังถอดเป็นข้อความไม่ได้ %1$d ส่วน เก็บไว้เพื่อลองใหม่ภายหลัง</string>
+    <string name="stop_max_length">ครบ 4 ชั่วโมงแล้ว กำลังถอดทั้งหมดเป็นข้อความ</string>
+    <string name="stop_low_storage">พื้นที่เก็บข้อมูลใกล้เต็ม กำลังถอดทั้งหมดเป็นข้อความ</string>
+    <string name="cancelled">ยกเลิกแล้ว ไม่มีการส่งข้อมูลใดๆ</string>
+    <string name="finishing_parts">กำลังทำส่วนที่ %1$d จาก %2$d ให้เสร็จ…</string>
+    <string name="no_speech">ไม่พบเสียงพูด</string>
+    <string name="groq_busy">Groq ไม่ว่าง จะเสร็จใน %1$d วินาที…</string>
+    <string name="cleanup_partial">ข้ามการเกลาข้อความสำหรับ %1$d ส่วน ส่วนนั้นยังคงเป็นข้อความต้นฉบับ</string>
+    <string name="applying_commands">กำลังใช้คำสั่งของคุณ…</string>
+    <string name="commands_partial">ใช้คำสั่งบางรายการไม่ได้ คำสั่งเหล่านั้นแสดงไว้ท้ายข้อความ</string>
+    <string name="not_applied">ไม่ได้ใช้</string>
+    <string name="saved_to_history">บันทึกลงในประวัติแล้ว</string>
+    <string name="copied_to_clipboard">ไม่พบช่องข้อความ ข้อความอยู่ในคลิปบอร์ดแล้ว</string>
+    <string name="cleanup_failed_again">เกลาข้อความไม่สำเร็จอีกครั้ง ข้อความต้นฉบับยังบันทึกไว้อยู่</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel">การแจ้งเตือนการตั้งค่า</string>
+    <string name="notif_off_title">VitalySpeak ถูกปิดอยู่</string>
+    <string name="notif_off_text">Android ปิดบริการการช่วยเหลือพิเศษของแอปนี้ แตะเพื่อเปิดอีกครั้ง</string>
+</resources>
